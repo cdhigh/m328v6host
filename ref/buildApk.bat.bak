@@ -1,0 +1,11 @@
+::chcp 65001
+set curDir=%~dp0
+set desktop=%USERPROFILE%\Desktop
+echo %curDir%
+echo %desktop%
+cd ..
+::call flutter build apk --target-platform android-arm --obfuscate --split-debug-info=build\debug-info
+call flutter build apk
+del /F /S /Q %desktop%\m328v6.apk
+copy /B build\app\outputs\flutter-apk\app-release.apk %desktop%\m328v6.apk
+pause

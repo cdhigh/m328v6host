@@ -1,0 +1,6 @@
+chcp 65001
+
+set curDir=%~dp0
+cd ..
+call flutter build windows
+pause
