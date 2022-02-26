@@ -51,7 +51,8 @@ Future<bool> checkUpdateNow({bool silent=true}) async {
   //具体版本的详细信息
   final lastestVersion = getVersionDetails(ret, lastest);
   if (lastestVersion != null) {
-    BotToast.showText(text: "There is a new version (%s), the download link has been copied to the clipboard".i18n.fill([lastest]));
+    BotToast.showText(text: "There is a new version (%s), the download link has been copied to the clipboard".i18n.fill([lastest]),
+      duration: const Duration(seconds: 5));
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       pasteText(lastestVersion.androidFile);
     } else {
@@ -66,15 +67,19 @@ Future<bool> checkUpdateNow({bool silent=true}) async {
 ///连接服务器，检查更新，返回更新信息包
 Future<VersionModel?> getUpdateInfo() async {
   final url = Uri.parse(kVersionJsonUri);
-  final response = await http.get(url);
+  final response = await http.get(url).timeout(const Duration(seconds: 5),
+    onTimeout: () {return http.Response('Error', 408);},);
   if (response.statusCode == 200) {
     try {
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       return VersionModel.fromJson(jsonResponse);
-      } catch (e) {
-        debugPrint(e.toString());
-        return null;
-      }
+    } on FormatException catch (e) {
+      debugPrint(e.toString());  //change log after
+      return null;
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
   } else {
     return null;
   }

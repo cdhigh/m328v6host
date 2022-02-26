@@ -34,7 +34,7 @@ class VersionModel {
   factory VersionModel.fromJson(Map<String, dynamic> data) {
     return VersionModel(
       lastest: data['lastest'] ?? "",
-      versionList: (data['history'] ?? []).map((i)=>SingleVersion.fromJson(i)).toList(),
+      versionList: List<SingleVersion>.from((data['history'] ?? []).map((i)=>SingleVersion.fromJson(i))),
     );
   }
 }
