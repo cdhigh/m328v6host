@@ -7,6 +7,6 @@
       "android": "https://github.com/cdhigh/m328v6host/releases/download/v1.0.0/m328v6_V1.0.0.apk",
       "windows": "https://github.com/cdhigh/m328v6host/releases/download/v1.0.0/m328v6_win_V1.0.0.zip",
       "whatsnew": "初始版本"
-    },
-  ],
+    }
+  ]
 }
