@@ -13,7 +13,7 @@ import '../common/widget_utils.dart';
 import '../common/globals.dart';
 import 'version_models.dart';
 
-const kVersionJsonUri = 'https://github.com/cdhigh/m328v6host/versions/version.json';
+const kVersionJsonUri = 'https://raw.githubusercontent.com/cdhigh/m328v6host/main/versions/version.json';
 
 ///现在检查更新版本
 /// version: 目前的版本
