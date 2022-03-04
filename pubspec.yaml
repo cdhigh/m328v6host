@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0
+version: 1.1.0
 
 environment:
   sdk: ">=2.16.1 <3.0.0"
@@ -52,13 +52,19 @@ dependencies:
   flutter_bluetooth_serial: ^0.4.0  #for android
   #serial_port_win32: ^0.4.9 #for windows
   permission_handler: ^9.1.0
-  http: ^0.13.4
-  pausable_timer: ^1.0.0+4
-  flutter_switch: ^0.3.2
+  http: ^0.13.4 #auto check update
+  pausable_timer: ^1.0.0+4 #query version of device
+  flutter_switch: ^0.3.2 #on/off in AppBar
+  syncfusion_flutter_xlsio: ^19.4.53-beta
+  syncfusion_officechart: ^19.4.54-beta
+  #filesystem_picker: ^2.0.0 #browse the file system and pick a folder
+  path_provider: ^2.0.9
+  path: ^1.8.0
+  file_picker: ^4.5.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  #flutter_test:
+  #  sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

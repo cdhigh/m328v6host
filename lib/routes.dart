@@ -10,6 +10,7 @@ import 'connection.dart';
 import 'delay_period_on_off.dart';
 import 'switch_mode.dart';
 import 'help_page.dart';
+import 'export_data.dart';
 
 //为什么用函数 onGenerateRoute, 而不用 变量 routes
 //是因为 MaterialApp通过onGenerateRoute才方便传递参数给其他路由，尽管现在还没使用此特性
@@ -25,6 +26,7 @@ MaterialPageRoute routesPath(RouteSettings settings) {
     '/delay_period_on_off': (context) => I18n(child: const DelayPeriodOnOffPage(),),
     '/mode': (context) => I18n(child: const SwitchModePage(),),
     '/help': (context) => I18n(child: const HelpPage(),),
+    '/export': (context) => I18n(child: const ExportPage(),),
   };
   WidgetBuilder builder = routes[settings.name] ?? routes['/']!;
   return MaterialPageRoute(builder: (ctx) => builder(ctx));

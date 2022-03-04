@@ -3,60 +3,7 @@
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart'; //for sum
 import '../common/globals.dart';
-
-///用于电压历史数据滤波
-class _VoltHistoryFilter {
-  static const maxFilterNum = 10; //最多10个数据进行平滑
-
-  final _list = List<double>.filled(maxFilterNum, 0.0);
-  var _cnt = 0;  //数据个数
-  var _idx = 0;  //下一个数据的索引
-  var _prevValue = 0.0;
-
-  ///往滤波器里面添加一个数据，并且返回一个滤波后的数据
-  double add(double volt) {
-    assert(Global.curvaFilterDotNum <= maxFilterNum);
-
-    //避免因为传输误码等导致解析失败，产生偶尔的零，来两个零才输出零
-    if (volt == 0.0) {
-      if (_prevValue != 0.0) {
-        final prevTemp = _prevValue;
-        _prevValue = 0.0;
-        return prevTemp;
-      } else { //清空缓冲区，返回零
-        reset();
-        return 0.0;
-      }
-    }
-
-    _prevValue = volt;
-    _list[_idx] = volt;
-    _idx++;
-    if (_idx >= Global.curvaFilterDotNum) {
-      _idx = 0;
-    }
-    
-    if (_cnt >= Global.curvaFilterDotNum) {
-      //仅保留三位小数，避免曲线不够平滑
-      return ((_list.sum / Global.curvaFilterDotNum) * 1000).round() / 1000;
-    } else {
-      _cnt++;
-      return volt;
-    }
-  }
-
-  //复位过滤器
-  void reset() {
-    for (var i = 0; i < maxFilterNum; i++) {
-      _list[_idx] = 0.0;
-    }
-    _prevValue = 0.0;
-    _cnt = 0;
-    _idx = 0;
-  }
-}
 
 ///用于Provider的容器类
 class VoltHistoryProvider extends ChangeNotifier {
@@ -72,7 +19,7 @@ class VoltHistoryProvider extends ChangeNotifier {
   //double get minV => min<double>(_minV, (_maxV > 1.0) ? (_maxV - 1.0) : 0.0);
   double get minV => _minV;
   int get dotNum => _vHistory.length;
-  List<double> get vHistory => _vHistory; //暴露此列表有些不合适，以后再改吧
+  List<double> get vHistory => _vHistory; //暴露此列表有些不合适，但是效率高，以后再改吧
 
   ///添加一个实时电压
   void add(double volt) {
@@ -136,5 +83,77 @@ class VoltHistoryProvider extends ChangeNotifier {
   void resetFilter() {
     _filter.reset();
   }
+
+  ///创建一个原始数据备份返回，用于数据导出
+  List<double> cloneList() {
+    return [..._vHistory];
+  }
+
+  ///返回一个迭代器，第一个元素为索引，第二个元素为元素本身
+  Iterable<T> mapIndexed<T>(T Function(int index, double elem) convert) sync* {
+    for (var index = 0; index < _vHistory.length; index++) {
+      yield convert(index, _vHistory[index]);
+    }
+  }
 }
 
+///用于电压历史数据滤波
+class _VoltHistoryFilter {
+  static const maxFilterNum = 10; //最多10个数据进行平滑
+
+  final _list = List<double>.filled(maxFilterNum, 0.0);
+  var _cnt = 0;  //数据个数
+  var _idx = 0;  //下一个数据的索引
+  var _prevValue = 0.0;
+
+  ///往滤波器里面添加一个数据，并且返回一个滤波后的数据
+  double add(double volt) {
+    assert(Global.curvaFilterDotNum <= maxFilterNum);
+
+    //避免因为传输误码等导致解析失败，产生偶尔的零，来两个零才输出零
+    if (volt == 0.0) {
+      if (_prevValue != 0.0) {
+        final prevTemp = _prevValue;
+        _prevValue = 0.0;
+        return prevTemp;
+      } else { //清空缓冲区，返回零
+        reset();
+        return 0.0;
+      }
+    }
+
+    //对阀值进行处理
+    if ((volt - _prevValue).abs() > Global.curvaFilterThreshold) {
+      reset();
+    }
+
+    _prevValue = volt;
+    _list[_idx] = volt;
+    _idx++;
+    if (_idx >= Global.curvaFilterDotNum) {
+      _idx = 0;
+    }
+    
+    if (_cnt >= Global.curvaFilterDotNum) {
+      var sum = 0.0;
+      for (var i = 0; i < Global.curvaFilterDotNum; i++) {
+        sum += _list[i];
+      }
+      //仅保留三位小数，避免曲线不够平滑
+      return ((sum / Global.curvaFilterDotNum) * 1000).round() / 1000;
+    } else {
+      _cnt++;
+      return volt;
+    }
+  }
+
+  //复位过滤器
+  void reset() {
+    for (var i = 0; i < maxFilterNum; i++) {
+      _list[_idx] = 0.0;
+    }
+    _prevValue = 0.0;
+    _cnt = 0;
+    _idx = 0;
+  }
+}

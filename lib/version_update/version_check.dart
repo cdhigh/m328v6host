@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import '../i18n/common.i18n.dart';
 import '../common/widget_utils.dart';
 import '../common/globals.dart';
+import '../common/common_utils.dart';
 import 'version_models.dart';
 
 const kVersionJsonUri = 'https://raw.githubusercontent.com/cdhigh/m328v6host/main/versions/version.json';
@@ -18,10 +19,10 @@ const kVersionJsonUri = 'https://raw.githubusercontent.com/cdhigh/m328v6host/mai
 ///现在检查更新版本
 /// version: 目前的版本
 /// silent: 是否静默检查
-/// 返回是否有新版本
-Future<bool> checkUpdateNow({bool silent=true}) async {
+/// 如果有心版本，返回新版本详细信息，否则返回null
+Future<SingleVersion?> checkUpdate({bool silent=true}) async {
   if (Global.version.isEmpty) {
-    return false;
+    return null;
   }
 
   Global.lastCheckUpdateTime = DateTime.now();
@@ -29,7 +30,7 @@ Future<bool> checkUpdateNow({bool silent=true}) async {
   if (!silent) {
     BotToast.showLoading();
   }
-  final ret = await getUpdateInfo();
+  final ret = await getAllUpdateInfo();
   if (!silent) {
     BotToast.closeAllLoading();
   }
@@ -37,35 +38,38 @@ Future<bool> checkUpdateNow({bool silent=true}) async {
     if (!silent) {
       showToast("Check for update failed".i18n);
     }
-    return false;
+    return null;
   }
 
   final lastest = ret.lastest;
-  if (lastest.isEmpty || (lastest.compareTo(Global.version) <= 0)) {
+  if (lastest.isEmpty || !isVersionGreaterThan(lastest, Global.version)) {
     if (!silent) {
       showToast("Your version is up to date".i18n);
     }
-    return false;
+    return null;
   }
 
   //具体版本的详细信息
   final lastestVersion = getVersionDetails(ret, lastest);
   if (lastestVersion != null) {
-    BotToast.showText(text: "There is a new version (%s), the download link has been copied to the clipboard".i18n.fill([lastest]),
-      duration: const Duration(seconds: 5));
+    if (silent) { //如果是静默检查，则检查到新版本后显示一个Toast，否则调用方会显示一个对话框
+      BotToast.showText(text: "There is a new version (%s), the download link has been copied to the clipboard".i18n.fill([lastest]),
+        duration: const Duration(seconds: 5));
+    }
+    
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       pasteText(lastestVersion.androidFile);
     } else {
       pasteText(lastestVersion.windowsFile);
     }
-    return true;
+    return lastestVersion;
   } else {
-    return false;
+    return null;
   }
 }
 
 ///连接服务器，检查更新，返回更新信息包
-Future<VersionModel?> getUpdateInfo() async {
+Future<VersionModel?> getAllUpdateInfo() async {
   final url = Uri.parse(kVersionJsonUri);
   final response = await http.get(url).timeout(const Duration(seconds: 5),
     onTimeout: () {return http.Response('Error', 408);},);

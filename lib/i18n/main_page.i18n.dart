@@ -102,6 +102,14 @@ extension Localization on String {
     {
       "en_us": "Discharge has ended",
       "zh_cn": "放电已经结束",
+    } +
+    {
+      "en_us": "Disconnect",
+      "zh_cn": "断开连接",
+    } +
+    {
+      "en_us": "Connect",
+      "zh_cn": "连接",
     };
 
   String get i18n => localize(this, t);

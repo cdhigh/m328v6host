@@ -52,8 +52,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       
       //数据组
       buildSettingGroupTile('Data'.i18n),
+      SettingTile(title: 'Auto reconnect'.i18n, subTitle: 'Auto reconnect after connection interruption'.i18n,
+            switchValue: Global.autoReconnect, switchCallback: (_)=>onTapAutoReconnect())
+          .intoGestureDetector(onTap: onTapAutoReconnect),
       SettingTile(title: 'Number of points for smooth curve'.i18n, subTitle: Text(Global.curvaFilterDotNum.toString()))
         .intoInkWell(onTap: onTapDotSmoothNum),
+      SettingTile(title: 'Threshold for smooth curve'.i18n, subTitle: Text(Global.curvaFilterThreshold.toStringAsFixed(2) + " V"))
+        .intoInkWell(onTap: onTapSmoothThreshold),
       SettingTile(title: 'Curve line start color'.i18n, subTitle: displayCurvaStartColor())
         .intoInkWell(onTap: onTapCurvaStartColor),
       SettingTile(title: 'Curve line end color'.i18n, subTitle: displayCurvaEndColor())
@@ -61,11 +66,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
       //版本号
       buildSettingGroupTile('Version'.i18n),
-      SettingTile(title: 'Current version'.i18n, subTitle: (Global.version != "") ? (" V" + Global.version) : ""),
+      SettingTile(title: 'Current version'.i18n, subTitle: (Global.version != "") ? ("V" + Global.version) : ""),
       SettingTile(title: 'Check frequency'.i18n, subTitle: displayCheckFrequency())
         .intoInkWell(onTap: onTapCheckFrequency),
       SettingTile(title: 'Check for update now'.i18n, subTitle: "https//github.com/cdhigh/m328v6host")
-        .intoInkWell(onTap: () {checkUpdateNow(silent: false);}),
+        .intoInkWell(onTap: checkUpdateNow),
 
       const SizedBox(height: 100),
     ]));
@@ -294,6 +299,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     }
   }
 
+  ///点击了‘自动重连’功能
+  void onTapAutoReconnect() {
+    setState(() => Global.autoReconnect = !Global.autoReconnect);
+    Global.saveProfile();
+  }
+
   ///点击了“用于平滑曲线的点数”
   void onTapDotSmoothNum() async {
     //简单的闭包函数，根据当前平滑点数创建不同的对话框行
@@ -332,6 +343,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     if ((ret != null) && (ret > 0) && (ret < 10)) {
       setState(() {Global.curvaFilterDotNum = ret;});
       Global.bus.sendBroadcast(EventBus.curvaFilterDotNumChanged, arg: ret.toString());
+    }
+  }
+
+  ///点击了曲线平滑阀值
+  void onTapSmoothThreshold() async {
+    String? ret = await showInputDialog(context: context,
+      title: "Enter a value from 0.00 to 1.00 (V)".i18n,
+      initialText: Global.curvaFilterThreshold.toStringAsFixed(2),
+      formatters: [DecimalTextInputFormatter(), CustomMaxValueInputFormatter(1.0)],
+    );
+
+    if (ret != null) {
+      final value = double.tryParse(ret);
+      if ((value == null) || (value < 0.0) || (value > 1.0)) {
+        showToast("The value must be greater than 0.00 and less than 1.00".i18n);
+      } else {
+        setState(() {Global.curvaFilterThreshold = value;});
+      }
     }
   }
 
@@ -380,6 +409,29 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       setState(() {Global.checkUpdateFrequency = ret;});
       Global.saveProfile();
     }
+  }
+
+  ///点击了现在检查新版本
+  void checkUpdateNow() async {
+    final ret = await checkUpdate(silent: false);
+    if (ret == null) {
+      return;
+    }
+
+    final newVer = ret.version;
+    final whatsnew = ret.whatsNew.replaceAll("<br/>", "\n");
+    showOkAlertDialog(context: context, title: "Found new version [%s]".i18n.fill([newVer]), 
+      content:  Column(mainAxisSize: MainAxisSize.min, 
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Whatsnew:".i18n, style: const TextStyle(fontWeight: FontWeight.bold)),
+          const Divider(),
+          Text(whatsnew),
+          const Divider(),
+          Padding(padding: const EdgeInsets.only(top: 20), 
+            child: Text("[The download link has been copied to the clipboard]".i18n, textScaleFactor: 0.8)),
+        ],),
+    );
   }
    
 }

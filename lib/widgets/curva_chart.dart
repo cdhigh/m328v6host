@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:collection/collection.dart'; //for mapIndexed
+//import 'package:collection/collection.dart'; //for mapIndexed
 import '../common/globals.dart';
 import '../common/common_utils.dart';
 import '../models/volt_history_provider.dart';
@@ -80,7 +80,7 @@ LineChartData _fillCurvaData(VoltHistoryProvider vhProvider, AppInfoProvider app
     maxY: vhProvider.maxV,  //Y轴最大值
     lineBarsData: [ //曲线实际数据，如果需要多个曲线，添加多个 LineChartBarData()
       LineChartBarData(
-        spots: vhProvider.vHistory.mapIndexed((idx, elem) => FlSpot(idx.toDouble(), elem)).toList(),
+        spots: vhProvider.mapIndexed<FlSpot>((idx, elem) => FlSpot(idx.toDouble(), elem)).toList(),
         isCurved: false,
         colors: <Color>[appInfo.curvaStartColor, appInfo.curvaEndColor],
         barWidth: 2, //曲线宽度

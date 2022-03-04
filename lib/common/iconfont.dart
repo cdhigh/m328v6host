@@ -6,5 +6,12 @@ import 'package:flutter/widgets.dart';
 class IconFont {
   static const String _family = 'iconfont';
   IconFont._();
+  static const IconData device3 = IconData(0xe785, fontFamily: _family);
+  static const IconData device2 = IconData(0xe664, fontFamily: _family);
+  static const IconData device = IconData(0xe642, fontFamily: _family);
+  static const IconData fileType = IconData(0xe618, fontFamily: _family);
+  static const IconData connect = IconData(0xe6c0, fontFamily: _family);
+  static const IconData disconnect = IconData(0xe66b, fontFamily: _family);
+  static const IconData dot3 = IconData(0xe656, fontFamily: _family);
   static const IconData serialPort = IconData(0xe895, fontFamily: _family);
 }

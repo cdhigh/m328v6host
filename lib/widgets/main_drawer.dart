@@ -33,7 +33,7 @@ class MainDrawer extends ConsumerWidget {
         final iStart = portName.indexOf("[");
         //final iEnd = portName.indexOf("]");
         if (iStart >= 0) {
-          portName = portName.substring(0, iStart);
+          portName = portName.substring(0, iStart).trim();
         }
       }
     }
@@ -55,7 +55,7 @@ class MainDrawer extends ConsumerWidget {
               Icon(IconFont.serialPort, color: Colors.white54)],
           ),
           Column(children: [
-            if (!portConnected) ListTile(leading: const Icon(Icons.bluetooth),
+            if (!portConnected) ListTile(leading: const Icon(IconFont.connect),
               title: Text("Connect".i18n),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
@@ -63,7 +63,7 @@ class MainDrawer extends ConsumerWidget {
                 Navigator.pushNamed(context, "/connection");
               },
             ),
-            if (portConnected) ListTile(leading: const Icon(Icons.bluetooth_disabled),
+            if (portConnected) ListTile(leading: const Icon(IconFont.disconnect),
               title: Text("Disconnect [%s]".i18n.fill([portName])),
               onTap: () {
                 Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "0", sendAsync: false);
@@ -87,9 +87,12 @@ class MainDrawer extends ConsumerWidget {
                 connProvider.load.setLoadOn(false);
               },
             ),
+            ExpansionTile(title: Text("Device Operations".i18n), 
+              leading: const Icon(IconFont.device3),
+              children: <Widget>[MainDrawerDeviceOperations(topLoadMenu: topLoadMenu)]),
             ExpansionTile(title: Text("Other Operations".i18n), 
               leading: const Icon(Icons.account_tree),
-              children: <Widget>[MainDrawerOperations(topLoadMenu: topLoadMenu)]),
+              children: const <Widget>[MainDrawerOtherOperations()]),
             const Divider(),
             ListTile(title: Text("Settings".i18n),
               leading: const Icon(Icons.settings),
@@ -112,9 +115,9 @@ class MainDrawer extends ConsumerWidget {
 }
 
 ///侧滑菜单-针对下位机的操作列表
-class MainDrawerOperations extends ConsumerWidget {
+class MainDrawerDeviceOperations extends ConsumerWidget {
   final bool topLoadMenu; //Load On/Load Off菜单是否置于顶层
-  const MainDrawerOperations({Key? key, required this.topLoadMenu}) : super(key: key);
+  const MainDrawerDeviceOperations({Key? key, required this.topLoadMenu}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -206,6 +209,27 @@ class MainDrawerOperations extends ConsumerWidget {
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             Navigator.pushNamed(context, "/delay_period_on_off");
+          },
+        ),
+      ],
+    );
+  }
+}
+
+
+///侧滑菜单-其他操作列表
+class MainDrawerOtherOperations extends ConsumerWidget {
+  const MainDrawerOtherOperations({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: <Widget>[
+        ListTile(title: Text("Export".i18n),
+          trailing: const Icon(Icons.arrow_forward),
+          onTap: () {
+            Navigator.of(context).pop(); //关闭drawer
+            Navigator.pushNamed(context, "/export");
           },
         ),
       ],

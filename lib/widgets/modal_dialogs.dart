@@ -1,6 +1,7 @@
 /// 定义几种弹出的模态对话框
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../common/my_widget_chain.dart';
@@ -20,8 +21,8 @@ Future<bool?> showOkCancelAlertDialog({required BuildContext context, required S
           title: Text(title),
           content: content,
           actions: <Widget>[
-            Text(cancelText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop(false)),
-            Text(okText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop(true)),
+            Text(cancelText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop<bool>(false)),
+            Text(okText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop<bool>(true)),
           ],
         );
       },
@@ -48,8 +49,8 @@ Future<void> showOkAlertDialog({required BuildContext context, required String t
 }
 
 ///弹出输入框，要求输入一个字符串
-Future<String> showInputDialog({required BuildContext context, required String title, String? okText, String? cancelText,
-    String? initialText, TextInputType? keyboardType}) async {
+Future<String?> showInputDialog({required BuildContext context, required String title, String? okText, String? cancelText,
+    String? initialText, TextInputType? keyboardType, List<TextInputFormatter>? formatters}) async {
   okText ??= 'Okay'.i18n;
   cancelText ??= 'Cancel'.i18n;
   var controller = TextEditingController();
@@ -65,18 +66,18 @@ Future<String> showInputDialog({required BuildContext context, required String t
         title: Text(title),
         content: Row(
           children: <Widget>[
-            Expanded(child: TextField(autofocus: true, 
-              keyboardType: keyboardType, controller: controller))
+            Expanded(child: TextField(autofocus: true, keyboardType: keyboardType, controller: controller,
+              inputFormatters: formatters,))
           ]),
         actions: <Widget>[
             Text(cancelText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop()),
-            Text(okText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop(controller.text.trim())),
+            Text(okText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop<String>(controller.text.trim())),
           ],
       );
     },
   );
 
-  return ret ?? "";
+  return ret;
 }
 
 ///显示取色对话框
@@ -104,7 +105,7 @@ Future<Color?> showColorPickerDialog({required BuildContext context, String? tit
         ),
         actions: <Widget>[
           Text(cancelText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop()),
-          Text(okText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop(currentColor)),
+          Text(okText!, style: const TextStyle(color: Colors.black)).intoTextButton(onPressed: ()=>Navigator.of(ctx).pop<Color>(currentColor)),
         ],
       );
     }
@@ -112,3 +113,34 @@ Future<Color?> showColorPickerDialog({required BuildContext context, String? tit
 
   return ret;
 }
+
+///TextField可用的几个定制的inputFormatter
+///DecimalTextInputFormatter: 仅允许输入一个数字
+class DecimalTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final regEx = RegExp(r'^\d*\.?\d*');
+    final String newStr = regEx.stringMatch(newValue.text) ?? '';
+    return (newStr == newValue.text) ? TextEditingValue(text: newStr) : oldValue;
+  }
+}
+
+///仅允许小于某个浮点数的数值
+class CustomMaxValueInputFormatter extends TextInputFormatter {
+  final double maxInputValue;
+  CustomMaxValueInputFormatter(this.maxInputValue);
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final TextSelection newSel = newValue.selection;
+    String truncated = newValue.text;
+    final double? value = double.tryParse(newValue.text);
+    if (value == null) {
+      return newValue;
+    } else if (value > maxInputValue) {
+        truncated = maxInputValue.toString();
+    }
+    return TextEditingValue(text: truncated, selection: newSel);
+  }
+}
+

@@ -19,6 +19,7 @@ import 'common/globals.dart';
 import 'common/event_bus.dart';
 import 'common/serial_resp_buffer.dart';
 import 'common/widget_utils.dart';
+import 'common/iconfont.dart';
 import 'models/connection_provider.dart';
 import 'models/running_data_provider.dart';
 import 'models/app_info_provider.dart';
@@ -30,6 +31,7 @@ import 'widgets/modal_dialogs.dart';
 import 'widgets/colored_safe_area.dart';
 import 'widgets/curva_chart.dart';
 import 'version_update/version_check.dart';
+import 'uni_serial.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -41,16 +43,19 @@ class MainPage extends ConsumerStatefulWidget {
 class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   AppLifecycleState _lifeState = AppLifecycleState.inactive;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  //var _realBkColor = Colors.white; //用户设置的背景色和flutter的背景色混合后的颜色，在build设置为正确的值
   double _scrWidth = 100.0; //随便给一个值，保证不为空，会在build里面设置为正确的值
   double _segDisplaySize = 1; //电压电流字体大小随屏幕大小变化，尽量填满水平方向
   var availablePorts = []; //系统中的串口列表
-  //SerialPortReader? _srlReader; //用于读取串口数据的对象
   final _srlBuff = SerialRespBuffer(256); //串口接收缓存
+  final _uniSerial = UniSerial();
+  bool _prevReceivedOff = true; //上次接收到的报文是否是OFF状态
 
   //如隔一段时间后没有收到EXTRA数据，重发一次请求额外数据的命令，避免下位机中间复位了
   late final PausableTimer _timerForExtraData;
   var _lastSetLoadOffTime = DateTime.now();
+  //如果异常中断并且启用了“自动重连”选项，则每隔5s自动尝试重连一次
+  late final PausableTimer _timerForReconnect;
+  DateTime _lostConnectionTime = DateTime(2022); //丢失连接时间，自动重连限时5分钟内
   
   @override
   bool get wantKeepAlive =>true;
@@ -67,14 +72,44 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
 
     _timerForExtraData = PausableTimer(const Duration(seconds: 3), qeuryVersionPeriodic);
     //_timerForExtraData.start(); //需要等连接后再启动定时器
+    _timerForReconnect = PausableTimer(const Duration(seconds: 1), reconnectPeriodic);
   }
 
   //每隔一段时间重发一次请求额外数据的命令，避免下位机中间复位了
   void qeuryVersionPeriodic() {
-    final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
+    final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     load.requestExtraData();
     Future.delayed(const Duration(milliseconds: 500)).then((_) => load.queryVersion());
     _timerForExtraData..reset()..start();
+  }
+
+  //如果异常中断并且启用了“自动重连”选项，则每隔5s自动尝试重连一次
+  void reconnectPeriodic() async {
+    final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
+    final lostSeconds = DateTime.now().difference(_lostConnectionTime).inSeconds;
+    if (connProvider.name.isNotEmpty || (lostSeconds > (5 * 60))) { //重连成功或超时5分钟，不需要再执行
+      return;
+    }
+
+    final name = Global.lastSerialPort;
+    final baudRate = Global.lastBaudRate;
+    if (name.isEmpty || (baudRate < 9600) || (baudRate > 115200)) {
+      return;
+    }
+
+    bool ret = false;
+    try {
+      ret = await _uniSerial.open(name, baudRate);
+    } catch (e) {
+      ret = false;
+    }
+
+    if (ret) { //如果重连成功
+      connProvider.setPort(name, baudRate);
+      Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "1", sendAsync: false);
+    } else { //2s后继续重试
+      _timerForReconnect..reset()..start();
+    }
   }
 
   ///确定是否需要检查新版本，如果有新版本，提示用户
@@ -86,19 +121,20 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     final now = DateTime.now();
     final days = now.difference(Global.lastCheckUpdateTime).inDays;
     if (days >= Global.checkUpdateFrequency) {
-      checkUpdateNow(silent: true);
+      checkUpdate(silent: true);
     }
   }
 
   @override
   void dispose() {
     _timerForExtraData.cancel();
+    _timerForReconnect.cancel();
     Global.bus.removeListener(EventBus.connectionChanged, connectionChanged);
     Global.bus.removeListener(EventBus.curvaFilterDotNumChanged, curvaFilterDotNumChanged);
     Global.bus.removeListener(EventBus.setLoadOnOff, setLoadOnOffReceived);
     Wakelock.disable();
     WidgetsBinding.instance?.removeObserver(this);
-    ref.watch<ConnectionProvider>(Global.connectionProvider).closePort();
+    ref.read<ConnectionProvider>(Global.connectionProvider).closePort();
     super.dispose();
   }
 
@@ -121,20 +157,28 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   ///连接状态变化的事件
   void connectionChanged(String isConnect) {
     if (mounted) {
-      final connProvider = ref.watch<ConnectionProvider>(Global.connectionProvider);
+      final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
       if (isConnect == "1") { //连接
+        //注册监听函数
         connProvider.serial.registerListenFunction(newSrlDataReceived);
+
         //连接后马上查询下位机版本号，请求上报额外数据
         Future.delayed(const Duration(milliseconds: 500)).then((_) => connProvider.load.queryVersion());
         Future.delayed(const Duration(seconds: 1)).then((_) => connProvider.load.requestExtraData());
         _timerForExtraData..reset()..start();
+        _timerForReconnect.pause();
       } else { //断开连接
-        final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
+        final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
         connProvider.serial.close();
         connProvider.closePort();
         rdProvider.reset();
         _timerForExtraData.pause();
-        if (Global.keepScreenOn != KeepScreenOption.always) { //关闭屏幕常亮
+
+        //-1表示异常中断，如果启用“自动重连”，则启动重连定时器
+        if ((isConnect == "-1") && Global.autoReconnect) {
+          _lostConnectionTime = DateTime.now();
+          _timerForReconnect..reset()..start();
+        } else if (Global.keepScreenOn != KeepScreenOption.always) { //关闭屏幕常亮
           Wakelock.disable();
         }
       }
@@ -145,14 +189,18 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
 
   ///平滑点数有变化，清空缓冲区内的点数滤波器
   void curvaFilterDotNumChanged([_]) {
-    final vhProvider = ref.watch<VoltHistoryProvider>(Global.vHistoryProvider);
-    vhProvider.resetFilter();
+    if (mounted) {
+      final vhProvider = ref.read<VoltHistoryProvider>(Global.vHistoryProvider);
+      vhProvider.resetFilter();
+    }
   }
 
   ///接收到打开关闭放电的消息，保存现在的时间，避免弹出放电停止提示
   void setLoadOnOffReceived(String isOn) {
-    if (isOn == "0") {
-      _lastSetLoadOffTime = DateTime.now();
+    if (mounted) {
+      if (isOn == "0") {
+        _lastSetLoadOffTime = DateTime.now();
+      }
     }
   }
 
@@ -195,27 +243,48 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           }),
         title: Text(((portName == "") ? "Unconnected".i18n : "Connected".i18n)),
         titleSpacing: 1.0,
-        actions: (portName == "") ? null :
-          <Widget>[Padding(padding: const EdgeInsets.only(right: 15), child: FlutterSwitch(
-            width: 80.0,
-            height: 35.0,
-            valueFontSize: 18.0,
-            toggleSize: 30.0,
-            borderRadius: 18,
-            value: rdProvider.running,
-            activeColor: Colors.green,
-            inactiveColor: Colors.red[600]!,
-            activeTextColor: Colors.white,
-            inactiveTextColor: Colors.white,
-            activeText: "ON",
-            inactiveText: "OFF",
-            showOnOff: true,
-            switchBorder: Border.all(color: Colors.white60, width: 1.0,),
-            onToggle:onTapAppBarSwitch,),),
-          ],
+        actions: buildAppBarActions((portName != ""), rdProvider.running),
       ) : null,
       body: (orientation == Orientation.portrait) ? portraitUi(context) : landscapeUi(context),
     ));
+  }
+
+  ///构建AppBar右侧的按钮
+  List<Widget> buildAppBarActions(bool isConnected, bool isRunning) {
+    return <Widget>[
+      Padding(padding: const EdgeInsets.only(right: 20), child:
+        IconButton(icon: Icon(isConnected ? IconFont.disconnect : IconFont.connect, color: Colors.white), 
+        tooltip: isConnected ? "Disconnect".i18n : "Connect".i18n,
+        constraints: const BoxConstraints(),
+        padding: EdgeInsets.zero,
+        iconSize: 40,
+        onPressed: () {
+          if (isConnected) {
+            Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "0", sendAsync: false);
+          } else {
+            Navigator.pushNamed(context, "/connection");
+          }},
+      ),),
+      
+      //开始放电和结束放电的按钮
+      Padding(padding: const EdgeInsets.only(right: 15), child: FlutterSwitch(
+        disabled: !isConnected,
+        width: 80.0,
+        height: 35.0,
+        valueFontSize: 18.0,
+        toggleSize: 30.0,
+        borderRadius: 18,
+        value: isRunning,
+        activeColor: Colors.green,
+        inactiveColor: Colors.red[600]!,
+        activeTextColor: Colors.white,
+        inactiveTextColor: Colors.white,
+        activeText: "ON",
+        inactiveText: "OFF",
+        showOnOff: true,
+        switchBorder: Border.all(color: Colors.white60, width: 1.0,),
+        onToggle:onTapAppBarSwitch,),),
+    ];
   }
 
   ///构建主页中间显示的竖屏界面
@@ -620,12 +689,13 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       }
 
       //从未放电到放电状态，则自动清除原先的曲线数据，如果需要，启用屏幕常亮
-      if (!rdProvider.running && !isOff) {
+      if (_prevReceivedOff && !isOff) {
         vhProvider.clear();
         if (Global.keepScreenOn == KeepScreenOption.onWhenDischarge) {
           Wakelock.enable();
         }
       }
+      _prevReceivedOff = isOff;
 
       //从放电状态到未放电状态，如果需要，关闭屏幕常亮
       if (rdProvider.running && isOff) {
@@ -693,6 +763,24 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
                 rdProvider.periodOff = value;
                 break;
             }
+            rdProvider.notifyDataChanged();
+          }
+        }
+      } else if (respCmd == "V".codeUnitAt(0)) { //设置/查询当前电压的返回包
+        if (size >= 7) {
+          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
+          if ((value != null) && (value >= 0) && (value <= 65000)) {
+            rdProvider.vNow = value / 1000;
+            rdProvider.powerIn = (((rdProvider.vNow ~/ 10)  * rdProvider.iNow).toInt() ~/ 10000) / 10;
+            rdProvider.notifyDataChanged();
+          }
+        }
+      } else if (respCmd == "I".codeUnitAt(0)) {//设置/查询当前电流的返回包
+        if (size >= 7) {
+          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
+          if ((value != null) && (value >= 0) && (value <= 15000)) {
+            rdProvider.iNow = value / 1000;
+            rdProvider.powerIn = (((rdProvider.vNow ~/ 10)  * rdProvider.iNow).toInt() ~/ 10000) / 10;
             rdProvider.notifyDataChanged();
           }
         }

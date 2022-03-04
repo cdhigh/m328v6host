@@ -27,7 +27,7 @@ DART_LIBSERIAL_PAT = re.compile(r"^(/{0,2})(import 'package:flutter_libserialpor
 DART_LIBSERIAL_STUB_PAT = re.compile(r"^(/{0,2})(import 'flutter_libserialport_stub.dart' as lib_serial;.*)$")
 
 #"lib/common/globals.dart
-GLOBAL_VERSION_PAT = re.compile(r"^( *static +const +version += +[\"'])(1.0.0)([\"'].*)$")
+GLOBAL_VERSION_PAT = re.compile(r"^( *static +const +version += +[\"'])([0-9\.]+)([\"'].*)$")
 
 VERSION_MASK = 0x01
 YAML_LIBSERIAL_MASK = 0x02

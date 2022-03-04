@@ -243,7 +243,8 @@ class UniSerial {
   }
 
   ///连接被关闭后发送端口关闭广播
+  /// 用参数-1表示异常关闭
   void sendDisconnectBroadcast([_]) {
-    Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "0", sendAsync: false);
+    Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "-1", sendAsync: false);
   }
 }

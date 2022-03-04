@@ -25,7 +25,7 @@ class SettingTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget titleWidget = Text(title)
-      .intoPadding(padding: const EdgeInsets.only(bottom: 3.0))
+      .intoPadding(padding: const EdgeInsets.only(bottom: 5.0))
       .addNeighbor(subTitle is String 
         ? Text(subTitle, style: TextStyle(color: Global.isDarkMode ? Colors.white38 : Colors.grey[800]), 
           textScaleFactor: 0.9, maxLines: subMaxLines, overflow: TextOverflow.ellipsis)

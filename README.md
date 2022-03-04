@@ -1,15 +1,21 @@
-# m328v6上位机APP  
+# m328v6数控电子负载上位机APP  
 
-这个是针对一乐论坛 M8V6数控电子负载 的 升级版 M328V6数控电子负载 的新版上位机。  
-[M328V6数控电子负载](https://www.yleee.com.cn/thread-90734-1-1.html)  
+这个是一乐论坛[M8V6数控电子负载]的升级版[M328V6数控电子负载]的新版上位机。  
+[M328V6数控电子负载制作链接](https://www.yleee.com.cn/thread-90734-1-1.html)  
 
 ## 特性：  
-1. 支持Android, iOS, Windows, Mac OS, Linux   
+1. 支持Android, iOS, Windows, Mac OS, Linux(注1,2)   
 2. 支持多语种   
-3. 支持OTG有线连接USB串口和无线连接蓝牙串口   
+3. 支持OTG有线连接USB串口/无线连接蓝牙串口/主板原生串口   
 4. 支持全功能的控制下位机   
-5. 支持放电曲线显示   
-6. 支持保持屏幕常亮   
+5. 支持放电曲线显示    
+6. 支持保持屏幕常亮    
+
+*注1：仅提供Android/Windows二进制包，其他平台需要自己编译*    
+*注2：windows版本仅支持64位Windows7及更新的系统*    
+
+
+
 
 ## 屏幕截图：  
 

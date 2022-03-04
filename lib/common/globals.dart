@@ -27,14 +27,14 @@ enum KeepScreenOption {
 ///小部分为程序共用的变量
 class Global {
   //版本号注意需要使用单引号，让buildXXX.py能找的到
-  static const version = '1.0.0';
+  static const version = '1.1.0';
   static const buildNumber = "";
+
+  static late final SharedPreferences prefs;
 
   static bool firstTimeRuning = true; //是否是本应用第一次运行
   static int checkUpdateFrequency = 7; //检查新版本频率（天数）
   static DateTime lastCheckUpdateTime = DateTime(1970); //上次检查新版本的时标
-  static int defaultBaudRate = 19200; //默认波特率
-  static late final SharedPreferences prefs;
   static String selectedLanguage = ''; //当前选择的语种，空则为自动
   static String selectedTheme = '';    //当前选择的主题，空则为自动
   static Color homePageBackgroundColor = const Color(0xff0e0e0e); //主导航页面的背景颜色
@@ -43,10 +43,11 @@ class Global {
   static KeepScreenOption keepScreenOn = KeepScreenOption.always;
   static DateTime lastPaused = DateTime.now(); //上次切换到后台的时间
   static DateTime lastHeartBeat = DateTime.now(); //上次接收到下位机的时间
-  static bool offlineMode = false; //是否处于离线模式
   static String lastSerialPort = "";
   static int lastBaudRate = 19200;
+  static bool autoReconnect = true;  //是否异常中断后自动重连
   static int curvaFilterDotNum = 3; //放电曲线的平滑点数
+  static double curvaFilterThreshold = 0.1; //放电曲线平滑阀值，大于此数值的点不被平均滤波
 
   //各种tile的背景色和分割色
   static Color get tileBkColor => Colors.white;
@@ -69,11 +70,16 @@ class Global {
       keepScreenOn = KeepScreenOption.values[onValue];
       lastSerialPort = prefs.getString('lastSerialPort') ?? "";
       lastBaudRate = prefs.getInt('lastBaudRate') ?? 19200;
+      autoReconnect = prefs.getBool('autoReconnect') ?? true;
       curvaFilterDotNum = prefs.getInt('curvaFilterDotNum') ?? 3;
       if (curvaFilterDotNum == 0) {
         curvaFilterDotNum = 1;
-      } else if (curvaFilterDotNum > 10) {
-        curvaFilterDotNum = 10;
+      } else if (curvaFilterDotNum > 9) {
+        curvaFilterDotNum = 9;
+      }
+      curvaFilterThreshold = prefs.getDouble('curvaFilterThreshold') ?? 0.1;
+      if (curvaFilterThreshold > 1.0) {
+        curvaFilterThreshold = 1.0;
       }
     } catch (e) {
       //print(e.toString());
@@ -93,7 +99,9 @@ class Global {
     prefs.setInt("keepScreenOn", keepScreenOn.index);
     prefs.setString("lastSerialPort", lastSerialPort);
     prefs.setInt('lastBaudRate', lastBaudRate);
+    prefs.setBool('autoReconnect', autoReconnect);
     prefs.setInt('curvaFilterDotNum', curvaFilterDotNum);
+    prefs.setDouble('curvaFilterThreshold', curvaFilterThreshold);
   }
 
   ///这个全局key要注册到MaterialApp的navigatorKey属性

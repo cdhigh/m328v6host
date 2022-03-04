@@ -44,8 +44,8 @@ extension Localization on String {
       "zh_cn": "清除电量",
     } +
     {
-      "en_us": "Other Operations",
-      "zh_cn": "其他操作",
+      "en_us": "Device Operations",
+      "zh_cn": "设备操作",
     } +
     {
       "en_us": "Ra On",
@@ -94,6 +94,14 @@ extension Localization on String {
     {
       "en_us": "Help",
       "zh_cn": "帮助",
+    } +
+    {
+      "en_us": "Other Operations",
+      "zh_cn": "其他操作",
+    } +
+    {
+      "en_us": "Export",
+      "zh_cn": "导出",
     };
 
   String get i18n => localize(this, t);

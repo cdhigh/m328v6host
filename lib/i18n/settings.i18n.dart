@@ -176,6 +176,14 @@ extension Localization on String {
       "zh_cn": "数据",
     } +
     {
+      "en_us": "Auto reconnect",
+      "zh_cn": "自动重连",
+    } +
+    {
+      "en_us": "Auto reconnect after connection interruption",
+      "zh_cn": "连接异常断开后自动尝试重新连接",
+    } +
+    {
       "en_us": "Number of points for smooth curve",
       "zh_cn": "用于平滑曲线的点数",
     } +
@@ -210,8 +218,31 @@ extension Localization on String {
     {
       "en_us": "%s days",
       "zh_cn": "%s 天",
+    } +
+    {
+      "en_us": "Threshold for smooth curve",
+      "zh_cn": "曲线平滑电压门限",
+    } +
+    {
+      "en_us": "Enter a value from 0.00 to 1.00 (V)",
+      "zh_cn": "输入一个0.00到1.00的数值 (伏)",
+    } +
+    {
+      "en_us": "The value must be greater than 0.00 and less than 1.00",
+      "zh_cn": "数值必须大于0.00并且小于1.00",
+    } +
+    {
+      "en_us": "Found new version [%s]",
+      "zh_cn": "发现新版本 [%s]",
+    } +
+    {
+      "en_us": "Whatsnew:",
+      "zh_cn": "版本特性:",
+    } +
+    {
+      "en_us": "[The download link has been copied to the clipboard]",
+      "zh_cn": "[下载链接已经拷贝到系统剪贴板]",
     };
-
 
   String get i18n => localize(this, t);
   

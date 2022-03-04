@@ -14,6 +14,26 @@ String readableSeconds(int seconds) {
   }
 }
 
+///比较两个版本号，确定新版本号是否比老版本号更新，
+///版本号格式为：1.1.0，可能在最后还有一个修订版本号: 1.1.0+1，但是会忽略修订版本号(我不用修订版本号)
+bool isVersionGreaterThan(String newVersion, String currVersion){
+  final newV = newVersion.replaceAll("+", ".").split(".");
+  final currV = currVersion.replaceAll("+", ".").split(".");
+  final maxSeg = min(newV.length, currV.length);
+  for (var i = 0 ; i <= maxSeg - 1; i++) {
+    final vn = int.tryParse(newV[i]);
+    final vc = int.tryParse(currV[i]);
+    if ((vn == null) || (vc == null)) {
+      return false;
+    }
+    
+    if (vn != vc) {
+      return (vn > vc);
+    }
+  }
+  return false;
+}
+
 ///将字节数转换为可以直读的字符串（比如：xxx KB, xxx MB）
 String formatBytes(int bytes, {int decimals=2}) {
   if (bytes <= 0) {

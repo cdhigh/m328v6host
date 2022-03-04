@@ -9,15 +9,15 @@ extension Localization on String {
     } +
     {
       "en_us": "Double-click 'Vset' to set a new value",
-      "zh_cn": "双击 '截止电压' 可以设置新的电压值",
+      "zh_cn": "双击[截止电压]可以设置新的电压值",
     } +
     {
       "en_us": "Double-click 'Iset' to set a new value",
-      "zh_cn": "双击 '放电电流' 可以设置新的电流值",
+      "zh_cn": "双击[放电电流]可以设置新的电流值",
     } +
     {
       "en_us": "Double-click 'Capacity' to clear Ah of device",
-      "zh_cn": "双击 '容量' 可以清零设备的容量值",
+      "zh_cn": "双击[容量]可以清零设备的容量值",
     } +
     {
       "en_us": "Swipe on the left side of the screen to popup the menu",
