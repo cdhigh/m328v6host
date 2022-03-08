@@ -242,6 +242,10 @@ extension Localization on String {
     {
       "en_us": "[The download link has been copied to the clipboard]",
       "zh_cn": "[下载链接已经拷贝到系统剪贴板]",
+    } +
+    {
+      "en_us": "Download",
+      "zh_cn": "下载",
     };
 
   String get i18n => localize(this, t);

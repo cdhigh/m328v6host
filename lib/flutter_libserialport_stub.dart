@@ -8,11 +8,16 @@ library flutter_libserialport;
 /// 4. flutter clean
 /// 5. flutter build apk
 //export 'package:flutter_libserialport/flutter_libserialport.dart';
+import 'dart:typed_data';
+import 'dart:async';
+import 'dart:io';
 
 class SerialPort {
   static final availablePorts = <String>[];
   int get transport => 0;
+  static OSError? get lastError => const OSError("", 0);
   SerialPort(String name);
+  void write(Uint8List data) {}
 }
 
 class SerialPortTransport {
@@ -36,4 +41,7 @@ class SerialPortFlowControl  {
 
 class SerialPortReader {
   SerialPortReader(dynamic port);
+  void close() {}
+
+  Stream<Uint8List> get stream => Stream<Uint8List>.periodic(const Duration(days : 1));
 }

@@ -1,7 +1,6 @@
 # m328v6数控电子负载上位机APP  
 
-这个是一乐论坛[M8V6数控电子负载]的升级版[M328V6数控电子负载]的新版上位机。  
-[M328V6数控电子负载制作链接](https://www.yleee.com.cn/thread-90734-1-1.html)  
+这个是一乐论坛[**M8V6数控电子负载**]的升级版[**M328V6数控电子负载**]的新版上位机。  
 
 ## 特性：  
 1. 支持Android, iOS, Windows, Mac OS, Linux(注1,2)   
@@ -17,7 +16,7 @@
 
 
 
-## 屏幕截图：  
+## 屏幕截图(V1.0.0)：  
 
 ![ScreenshotPortrait](https://raw.githubusercontent.com/cdhigh/m328v6host/main/ref/Screenshots/ScrShotPortrait.png)
 

@@ -20,6 +20,7 @@ class _HelpPageState extends State<HelpPage> {
     "Double-click 'Vset' to set a new value".i18n,
     "Double-click 'Iset' to set a new value".i18n,
     "Double-click 'Capacity' to clear Ah of device".i18n,
+    "Double-click 'Curva area' to clear curva data".i18n,
   ];
   
   //所有需要带链接的帮助信息都放在这里

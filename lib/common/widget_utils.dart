@@ -37,8 +37,9 @@ Widget buildEmptyRow(double height, {bool hasTopBorder=false, bool hasBottomBord
 }
 
 ///显示简单的Toast，可以在任何地方调用
-void showToast(String text, {TextStyle textStyle = const TextStyle(fontSize: 17, color: Colors.white)}) {
-  BotToast.showText(text: text, duration: const Duration(seconds: 3), textStyle: textStyle);
+void showToast(String text, {TextStyle textStyle = const TextStyle(fontSize: 17, color: Colors.white), 
+  Duration duration = const Duration(seconds: 3)}) {
+  BotToast.showText(text: text, duration: duration, textStyle: textStyle);
 }
 
 ///显示简单的顶端通知信息

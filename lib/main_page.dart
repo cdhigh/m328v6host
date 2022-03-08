@@ -71,8 +71,10 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     Future.delayed(const Duration(seconds: 5)).then(checkNewVersion); //延时确定是否需要检查新版本
 
     _timerForExtraData = PausableTimer(const Duration(seconds: 3), qeuryVersionPeriodic);
+    _timerForExtraData.pause();
     //_timerForExtraData.start(); //需要等连接后再启动定时器
     _timerForReconnect = PausableTimer(const Duration(seconds: 1), reconnectPeriodic);
+    _timerForReconnect.pause();
   }
 
   //每隔一段时间重发一次请求额外数据的命令，避免下位机中间复位了
@@ -97,17 +99,17 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       return;
     }
 
-    bool ret = false;
+    String ret = "";
     try {
       ret = await _uniSerial.open(name, baudRate);
     } catch (e) {
-      ret = false;
+      ret = e.toString();
     }
 
-    if (ret) { //如果重连成功
+    if (ret.isEmpty) { //如果重连成功
       connProvider.setPort(name, baudRate);
       Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "1", sendAsync: false);
-    } else { //2s后继续重试
+    } else { //1s后继续重试
       _timerForReconnect..reset()..start();
     }
   }
@@ -158,6 +160,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   void connectionChanged(String isConnect) {
     if (mounted) {
       final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
+      _timerForReconnect.pause();
+      
       if (isConnect == "1") { //连接
         //注册监听函数
         connProvider.serial.registerListenFunction(newSrlDataReceived);
@@ -166,10 +170,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         Future.delayed(const Duration(milliseconds: 500)).then((_) => connProvider.load.queryVersion());
         Future.delayed(const Duration(seconds: 1)).then((_) => connProvider.load.requestExtraData());
         _timerForExtraData..reset()..start();
-        _timerForReconnect.pause();
       } else { //断开连接
         final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
-        connProvider.serial.close();
         connProvider.closePort();
         rdProvider.reset();
         _timerForExtraData.pause();
@@ -293,7 +295,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     return Container(padding: const EdgeInsets.all(10.0), 
       color: Global.isDarkMode ? Colors.transparent : appInfo.homePageBackgroundColor,
       child: ListView(children: [
-        const CurvaChart(),
+        GestureDetector(child: const CurvaChart(), onDoubleTap: onDoubleTapCurvaChart),
         buildVISetDisplay(context),
         buildVIDisplay(context),
         buildOtherDisplayData(context),
@@ -435,7 +437,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       color: Global.isDarkMode ? Colors.transparent : appInfo.homePageBackgroundColor,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [CurvaChartLandscape(scrWidth: _scrWidth),
+        children: [
+          GestureDetector(child: CurvaChartLandscape(scrWidth: _scrWidth), onDoubleTap: onDoubleTapCurvaChart),
           SingleChildScrollView(child: Column(mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end, 
             children: buildRawDataDisplayLandscape(context),
@@ -596,6 +599,15 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       if (ok == true) {
         connProvider.load.clearAh();
       }
+    }
+  }
+
+  ///双击曲线区域弹出提问，是否需要清除曲线数据
+  void onDoubleTapCurvaChart() async {
+    final bool? ok = await showOkCancelAlertDialog(context: context, title: "Confirm".i18n, content: Text("Clear curva data?".i18n));
+    if (ok == true) {
+      final vhProvider = ref.read<VoltHistoryProvider>(Global.vHistoryProvider);
+      vhProvider.clear();
     }
   }
 

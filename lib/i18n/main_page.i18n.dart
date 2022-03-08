@@ -84,6 +84,10 @@ extension Localization on String {
       "zh_cn": "清除容量?",
     } +
     {
+      "en_us": "Clear curva data?",
+      "zh_cn": "清除曲线数据?",
+    } +
+    {
       "en_us": "Turn on the electronic load?",
       "zh_cn": "打开负载开始放电?",
     } +

@@ -20,6 +20,10 @@ extension Localization on String {
       "zh_cn": "双击[容量]可以清零设备的容量值",
     } +
     {
+      "en_us": "Double-click 'Curva area' to clear curva data",
+      "zh_cn": "双击[曲线区域]可以清除曲线数据",
+    } +
+    {
       "en_us": "Swipe on the left side of the screen to popup the menu",
       "zh_cn": "从屏幕左侧往里滑可以弹出操作菜单",
     };

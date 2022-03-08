@@ -2,9 +2,11 @@
 /// 配置页面ui实现
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../common/globals.dart';
 import '../common/my_widget_chain.dart';
 import '../common/widget_utils.dart';
@@ -413,14 +415,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   ///点击了现在检查新版本
   void checkUpdateNow() async {
-    final ret = await checkUpdate(silent: false);
-    if (ret == null) {
+    final newVer = await checkUpdate(silent: false);
+    if (newVer == null) {
       return;
     }
 
-    final newVer = ret.version;
-    final whatsnew = ret.whatsNew.replaceAll("<br/>", "\n");
-    showOkAlertDialog(context: context, title: "Found new version [%s]".i18n.fill([newVer]), 
+    final newVerNo = newVer.version;
+    final whatsnew = newVer.whatsNew.replaceAll("<br/>", "\n");
+    final ret = await showOkCancelAlertDialog(context: context, title: "Found new version [%s]".i18n.fill([newVerNo]), 
+      okText: "Download".i18n,
       content:  Column(mainAxisSize: MainAxisSize.min, 
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -432,6 +435,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             child: Text("[The download link has been copied to the clipboard]".i18n, textScaleFactor: 0.8)),
         ],),
     );
+    if (ret == true) {
+      if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
+        launch(newVer.androidFile);
+      } else {
+        launch(newVer.windowsFile);
+      }
+    }
   }
    
 }

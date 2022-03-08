@@ -14,8 +14,10 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as sb_an
 //编译apk需要注释掉 flutter_libserialport，取消注释 flutter_libserialport_stub
 //import 'package:flutter_libserialport/flutter_libserialport.dart' as lib_serial;
 import 'flutter_libserialport_stub.dart' as lib_serial;
+import 'i18n/common.i18n.dart';
 import 'common/globals.dart';
 import 'common/event_bus.dart';
+import 'common/widget_utils.dart';
 
 ///对外统一接口的串口操作类
 class UniSerial {
@@ -24,7 +26,8 @@ class UniSerial {
   int _baudRate = 19200; //当前打开的串口波特率
   final _desc = <String, String>{}; //每个端口的描述
   final _portType = <String, String>{}; //每个端口的类型,"USB"/"BLUETOOTH"/"WIFI"/"NATIVE"/"UNKNOWN"
-  dynamic _reader; //for desktop
+  lib_serial.SerialPortReader? _reader; //for desktop
+  StreamSubscription<Uint8List>? _streamrSubscript; //监听端口数据的流订阅句柄
   final _bluetooth = sb_android.FlutterBluetoothSerial.instance;
 
   //Singleton
@@ -99,9 +102,9 @@ class UniSerial {
     return _portType[name] ?? "UNKNOWN";
   }
 
-  //创建一个串口，成功返回true
+  //创建一个串口，成功返回空字符串，否则返回错误描述字符串，如果没有特定错误，则字符串为"Error"
   //此函数内部可能会抛出异常
-  Future<bool> open(String name, int baudRate) async {
+  Future<String> open(String name, int baudRate) async {
     assert(name.isNotEmpty && (baudRate >= 9600) && (baudRate <= 115200));
     _port = null;
     _name = "";
@@ -114,7 +117,7 @@ class UniSerial {
         final iStart = name.indexOf("[");
         final iEnd = name.indexOf("]");
         if ((iStart < 0) || (iEnd < 0)) {
-          return false;
+          return "Name of device invalid".i18n;
         }
 
         final addr = name.substring(iStart + 1, iEnd);
@@ -123,35 +126,49 @@ class UniSerial {
           _port = connection;
           _name = name;
           _baudRate = baudRate;
-          return true;
+          return "";
         } catch (e) {
-          return false;
+          return e.toString();
         }
       } else {
         final ports = await serial_android.UsbSerial.listDevices();
         final idx = ports.indexWhere((elem) => elem.deviceName == name);
         if (idx < 0) {
-          return false;
+          return "Name of device invalid".i18n;
         }
 
-        final port = await ports[idx].create();
-        final ret = (await port?.open()) ?? false;
+        serial_android.UsbPort? port;
+        bool ret;
+        try {
+          port = await ports[idx].create();
+          ret = (await port?.open()) ?? false;
+        } catch (e) {
+          return e.toString();
+        }
+
         if ((port == null) || (!ret)) {
-          return false;
+          return "Error";
         } else {
           _port = port;
           port.setPortParameters(baudRate, serial_android.UsbPort.DATABITS_8, serial_android.UsbPort.STOPBITS_1, serial_android.UsbPort.PARITY_NONE);
           _name = name;
           _baudRate = baudRate;
-          return true;
+          return "";
         }
       }
     } else {
       //final port = serial_win.SerialPort(name, openNow: false, BaudRate: baudRate);
-      _port = lib_serial.SerialPort(name);
-      if (!_port.openReadWrite()) {
-        return false;
+      try {
+        _port = lib_serial.SerialPort(name);
+        if (!_port.openReadWrite()) {
+          final lastError = lib_serial.SerialPort.lastError;
+          final errStr = transWindowsErrorNo(lastError?.errorCode ?? 0);
+          return errStr.isEmpty ? lastError.toString() : errStr;
+        }
+      } catch (e) {
+        return e.toString();
       }
+
       //需要先打开端口再配置端口参数
       final cfg = lib_serial.SerialPortConfig();
       cfg.baudRate = baudRate;
@@ -164,7 +181,7 @@ class UniSerial {
       
       _name = name;
       _baudRate = baudRate;
-      return true;
+      return "";
     }
   }
 
@@ -177,9 +194,11 @@ class UniSerial {
 
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       if (_port is sb_android.BluetoothConnection) {
-        _port.input.listen(func, onDone: sendDisconnectBroadcast, onError: sendDisconnectBroadcast);
+        sb_android.BluetoothConnection p = _port;
+        _streamrSubscript = p.input?.listen(func, onError: ([_]) {sendDisconnectBroadcast("-1");});
       } else {
-        _port.inputStream.listen(func, onDone: sendDisconnectBroadcast, onError: sendDisconnectBroadcast);
+        serial_android.UsbPort p = _port;
+        _streamrSubscript = p.inputStream?.listen(func, onError: ([_]) {sendDisconnectBroadcast("-1");});
       }
     } else {
       //Windows需要先注册监听函数，再打开端口
@@ -194,7 +213,7 @@ class UniSerial {
       }*/
 
       _reader = lib_serial.SerialPortReader(_port);
-      _reader.stream.listen(func, onDone: sendDisconnectBroadcast, onError: sendDisconnectBroadcast);
+      _streamrSubscript = _reader!.stream.listen(func, onDone: ([_]) {sendDisconnectBroadcast("-1");}, onError: ([_]) {sendDisconnectBroadcast("-1");});
     }
     
     return true;
@@ -202,41 +221,60 @@ class UniSerial {
 
   ///往串口写一个字节串，此函数可能会抛出异常
   void write(Uint8List data) async {
-    //assert(_port != null);
     if (_port == null) {
       return;
     }
 
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       if (_port is sb_android.BluetoothConnection) {
-        _port.output.add(data);
-        await _port.output.allSent;
+        sb_android.BluetoothConnection p = _port;
+        try {
+          p.output.add(data);
+          await p.output.allSent;
+        } catch (e) {
+          sendDisconnectBroadcast("-1");
+        }
       } else {
-        await _port.write(data);
+        serial_android.UsbPort p = _port;
+        try {
+          await p.write(data);
+        } catch (e) {
+          sendDisconnectBroadcast("-1");
+        }
       }
     } else {
       //assert(_port?.isOpened);
       //_port.writeBytesFromUint8List(data);
-      _port.write(data);
+      lib_serial.SerialPort p = _port;
+      try {
+        p.write(data);
+      } catch (e) {
+        sendDisconnectBroadcast("-1");
+      }
     }
   }
 
   ///关闭串口
   void close() {
     try {
+      _streamrSubscript?.cancel();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    try {
       _reader?.close();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    try {
       _port?.close();
-      //if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia || (_listenFunc == null)) {
-      //  _port?.close();
-      //} else {
-      //  _port?.closeOnListen(onListen: () => debugPrint(_port?.isOpened.toString()));
-      //}
     } catch (e) {
       debugPrint(e.toString());
     }
 
     _port = null;
     _reader = null;
+    _streamrSubscript = null;
     _desc.clear();
     _name = "";
     _baudRate = 19200;
@@ -244,7 +282,50 @@ class UniSerial {
 
   ///连接被关闭后发送端口关闭广播
   /// 用参数-1表示异常关闭
-  void sendDisconnectBroadcast([_]) {
-    Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "-1", sendAsync: false);
+  void sendDisconnectBroadcast(String bcFlag) {
+    if (bcFlag == "0") {
+      showNotification("sendDisconnectBroadcast: $bcFlag");
+    } else {
+      showToast("sendDisconnectBroadcast: $bcFlag");
+    }
+    Global.bus.sendBroadcast(EventBus.connectionChanged, arg: bcFlag, sendAsync: false);
   }
+
+  ///将Windows的一些常用系统错误码翻译为字符串，
+  ///因为Windows返回的部分错误信息为误码（编码关系），暂时找不到很好的方法解码不让乱码，先这样用着
+  String transWindowsErrorNo(int errorNo) {
+    switch (errorNo) {
+      case 1:
+        return 'Incorrect function';
+      case 2:
+        return 'The system cannot find the file specified';
+      case 3:
+        return 'The system cannot find the path specified';
+      case 4:
+        return 'The system cannot open the file';
+      case 5:
+        return 'Access is denied';
+      case 6:
+        return 'The handle is invalid';
+      case 7:
+        return 'The storage control blocks were destroyed';
+      case 8:
+        return 'Not enough memory resources are available to process this command';
+      case 21:
+        return 'The device is not ready';
+      case 22:
+        return 'The device does not recognize the command';
+      case 29:
+        return 'The system cannot write to the specified device';
+      case 30:
+        return 'The system cannot read from the specified device';
+      case 31:
+        return 'A device attached to the system is not functioning';
+      case 32:
+        return 'The process cannot access the file because it is being used by another process';
+      default:
+        return '';
+    }
+  }
+
 }

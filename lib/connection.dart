@@ -168,15 +168,19 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
     }
 
     final connProvider = ref.watch<ConnectionProvider>(Global.connectionProvider);
-    bool ret = false;
+    String ret = "";
     try {
       ret = await _uniSerial.open(name, baudRate);
     } catch (e) {
-      ret = false;
+      ret = e.toString();
     }
 
-    if (!ret) {
-      showToast("Open device failed".i18n);
+    if (ret.isNotEmpty) {
+      if (ret == "Error") { //没有具体错误信息
+        showToast("Open device failed".i18n);
+      } else {
+        showToast("Open device failed".i18n + "\n$ret");
+      }
       return;
     }
 

@@ -74,7 +74,12 @@ extension Localization on String {
     {
       "en_us": "There is a new version (%s), the download link has been copied to the clipboard",
       "zh_cn": "发现新版本(%s), 下载链接已经拷贝到系统剪贴板",
+    } +
+    {
+      "en_us": "Name of device invalid",
+      "zh_cn": "设备名字错误",
     };
+
 
   String get i18n => localize(this, t);
   
