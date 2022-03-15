@@ -1,6 +1,13 @@
 {
-  "lastest": "1.1.0",
+  "lastest": "1.2.0",
   "history": [
+    {
+      "version": "1.2.0",
+      "build": "2022-03-16",
+      "android": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.0/m328v6_V1.2.0.apk",
+      "windows": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.0/m328v6_win_V1.2.0.zip",
+      "whatsnew": "1.增加测试电源输出能力测试项<br/>2.增加测试电源短路保护测试项<br/>3.修正没有网络时检查版本更新会导致界面卡死的BUG"
+    },
     {
       "version": "1.1.0",
       "build": "2022-03-04",
