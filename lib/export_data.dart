@@ -56,6 +56,8 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   Widget buildMainList(BuildContext context) {
     _vhProvider = ref.watch<VoltHistoryProvider>(Global.vHistoryProvider);
     _dotNum = _vhProvider.dotNum;
+    bool btnEnabled = (_dotNum > 0) && _folderCtrller.text.isNotEmpty && _nameCtrller.text.isNotEmpty;
+    
     return Container(padding: const EdgeInsets.all(10), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -76,8 +78,9 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           Padding(padding: const EdgeInsets.only(top: 5), child: Text("Export folder".i18n),),
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child: TextField(controller: _folderCtrller,
+              onChanged: (_) {setState((){});},
               decoration: InputDecoration(
-                labelText: _folderCtrller.text != "" ? null : "Select a folder to save".i18n,
+                labelText: _folderCtrller.text.isNotEmpty ? null : "Select a folder to save".i18n,
                 prefixIcon: const Icon(Icons.folder_open)),
             ),),
             IconButton(icon: const Icon(IconFont.dot3), onPressed: () async {
@@ -89,20 +92,22 @@ class _ExportPageState extends ConsumerState<ExportPage> {
             }),],),
           Padding(padding: const EdgeInsets.only(top: 5), child: Text("File name".i18n),),
           TextField(controller: _nameCtrller,
+            onChanged: (_) {setState((){});},
             decoration: InputDecoration(
-              labelText: _nameCtrller.text != "" ? null : "Enter a name to save".i18n,
+              labelText: _nameCtrller.text.isNotEmpty ? null : "Enter a name to save".i18n,
               prefixIcon: const Icon(Icons.file_copy_outlined)),
           ),
           Padding(padding: const EdgeInsets.only(top: 5), child: Text("Remark".i18n),),
           TextField(controller: _remarkCtrller,
+            onChanged: (_) {setState((){});},
             decoration: InputDecoration(
-              labelText: _remarkCtrller.text != "" ? null : "Enter a remark".i18n,
+              labelText: _remarkCtrller.text.isNotEmpty ? null : "Enter a remark".i18n,
               prefixIcon: const Icon(Icons.comment_bank_outlined)),
           ),
           Padding(padding: const EdgeInsets.all(20), child: 
             ConstrainedBox(constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               child: ElevatedButton(
-                onPressed: (_dotNum > 0) ? doExport : null, 
+                onPressed: btnEnabled ? doExport : null, 
                 child: Text("Export".i18n)),
             ),),
       ]),);
@@ -207,15 +212,18 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       var status = await Permission.storage.status;
       if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
         await Permission.storage.request();
-        fetchDefaultExportDir();
       }
-    } else {
-      fetchDefaultExportDir();
     }
+
+    fetchDefaultExportDir();
   }
 
   ///根据系统不同返回默认的导出目录
   void fetchDefaultExportDir() async {
+    if (_folderCtrller.text.isNotEmpty) {
+      return;
+    }
+    
     var ret = "";
     if (Platform.isAndroid || Platform.isFuchsia) {
       //使用path_provider返回的Download目录在Android11上是应用内Download目录，外部无法存取

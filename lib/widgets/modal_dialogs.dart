@@ -125,7 +125,7 @@ class DecimalTextInputFormatter extends TextInputFormatter {
   }
 }
 
-///仅允许小于某个浮点数的数值
+///TextField: 仅允许小于某个浮点数的数值
 class CustomMaxValueInputFormatter extends TextInputFormatter {
   final double maxInputValue;
   CustomMaxValueInputFormatter(this.maxInputValue);
@@ -138,9 +138,24 @@ class CustomMaxValueInputFormatter extends TextInputFormatter {
     if (value == null) {
       return newValue;
     } else if (value > maxInputValue) {
-        truncated = maxInputValue.toString();
+      truncated = maxInputValue.toString();
     }
     return TextEditingValue(text: truncated, selection: newSel);
   }
 }
 
+///TextField: 要求为一个百分比的数，自动在最后添加百分号
+class ValuePercentageInputFormatter extends TextInputFormatter {
+  
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final TextSelection newSel = newValue.selection;
+    String truncated = newValue.text.replaceAll("%", "");
+    final double? value = double.tryParse(truncated);
+    if (value == null) {
+      return oldValue;
+    } else {
+      return TextEditingValue(text: truncated + "%", selection: newSel);
+    }
+  }
+}

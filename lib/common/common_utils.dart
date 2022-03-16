@@ -99,9 +99,16 @@ bool isNotNullEmpty(dynamic v) {
   return ((v != null) && v.isNotEmpty);
 }
 
-///根据指定长度截断字符串，添加省略号
-String truncateWithEllipsis(String myString, int cutoff) {
-  return (myString.length <= cutoff)
-    ? myString
-    : '${myString.substring(0, cutoff)}...';
+///字符串的几个扩展
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
+
+  ///根据指定长度截断字符串，添加省略号
+  String truncateWithEllipsis(int cutoff) {
+    return (length <= cutoff) ? this : '${substring(0, cutoff)}...';
+  }
 }
+
+

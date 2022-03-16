@@ -72,7 +72,6 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
 
     _timerForExtraData = PausableTimer(const Duration(seconds: 3), qeuryVersionPeriodic);
     _timerForExtraData.pause();
-    //_timerForExtraData.start(); //需要等连接后再启动定时器
     _timerForReconnect = PausableTimer(const Duration(seconds: 1), reconnectPeriodic);
     _timerForReconnect.pause();
   }
@@ -81,8 +80,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   void qeuryVersionPeriodic() {
     final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     load.requestExtraData();
-    Future.delayed(const Duration(milliseconds: 500)).then((_) => load.queryVersion());
-    _timerForExtraData..reset()..start();
+    Future.delayed(const Duration(milliseconds: 100)).then((_) => load.queryVersion());
+    //_timerForExtraData..reset()..start();
   }
 
   //如果异常中断并且启用了“自动重连”选项，则每隔5s自动尝试重连一次
@@ -167,8 +166,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         connProvider.serial.registerListenFunction(newSrlDataReceived);
 
         //连接后马上查询下位机版本号，请求上报额外数据
-        Future.delayed(const Duration(milliseconds: 500)).then((_) => connProvider.load.queryVersion());
-        Future.delayed(const Duration(seconds: 1)).then((_) => connProvider.load.requestExtraData());
+        Future.delayed(const Duration(milliseconds: 250)).then((_) => connProvider.load.queryVersion());
+        Future.delayed(const Duration(seconds: 500)).then((_) => connProvider.load.requestExtraData());
         _timerForExtraData..reset()..start();
       } else { //断开连接
         final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
@@ -632,8 +631,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     //debugPrint(String.fromCharCodes(bag));
 
     final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
+    final first5Chars = (size > 5) ? String.fromCharCodes(bag, 0, 5) : "";
 
-    if ((size >= 32) && (String.fromCharCodes(bag, 0, 5) == "EXTRA")) { //额外数据
+    if ((size >= 32) && (first5Chars == "EXTRA")) { //额外数据
       //debugPrint(String.fromCharCodes(bag));
       int? wh;
       int? rSet;
@@ -681,13 +681,12 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       rdProvider.notifyDataChanged();
 
       //每次收到EXTRA数据就复位请求额外数据的定时器
-      //只有连续5s没有收到额外数据才重新下发请求命令
+      //只有连续3s没有收到额外数据才重新下发请求命令
       _timerForExtraData..reset()..start();
     } else if (size >= 29) {   //老版本M8V6定义的数据
       //debugPrint(String.fromCharCodes(bag));
       final vhProvider = ref.watch<VoltHistoryProvider>(Global.vHistoryProvider);
 
-      String statusStr = String.fromCharCodes(bag, 0, 5);
       int? iNow;
       int? vNow = int.tryParse(String.fromCharCodes(bag, 6, 11));
       int? ah = int.tryParse(String.fromCharCodes(bag, 12, 17));
@@ -695,9 +694,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       int? ra = int.tryParse(String.fromCharCodes(bag, 24, 29));
       
       bool isOff = true;
-      if (statusStr != "OFF  ") {
+      if (first5Chars != "OFF  ") {
         isOff = false;
-        iNow = int.tryParse(statusStr);
+        iNow = int.tryParse(first5Chars);
       }
 
       //从未放电到放电状态，则自动清除原先的曲线数据，如果需要，启用屏幕常亮
@@ -734,7 +733,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       
       iNow ??= 0;
       vNow ??= 0;
-      
+
       rdProvider.iNow = iNow / 1000;
       rdProvider.vNow = vNow / 1000;
 
@@ -747,8 +746,11 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       rdProvider.ra = (ra != null) ? (ra / 1000) : 0.0;
       
       rdProvider.notifyDataChanged();
-    //其他回复命令
-    } else if (bag.first == ">".codeUnitAt(0)) {
+    } else if ((size >= 13) && (bag[6] == ",".codeUnitAt(0))) { //VIL数据(实时电压电流LOG)
+      rdProvider.vNow = double.tryParse(String.fromCharCodes(bag, 0, 6)) ?? 0.0;
+      rdProvider.iNow = double.tryParse(String.fromCharCodes(bag, 7, 13)) ?? 0.0;
+      rdProvider.notifyDataChanged();
+    } else if (bag.first == ">".codeUnitAt(0)) { //其他回复命令
       final respCmd = bag[1];
       if (respCmd == 'b'.codeUnitAt(0)) { //查询版本的返回命令
         if (size >= 13) {
@@ -783,7 +785,30 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
           if ((value != null) && (value >= 0) && (value <= 65000)) {
             rdProvider.vNow = value / 1000;
-            rdProvider.powerIn = (((rdProvider.vNow ~/ 10)  * rdProvider.iNow).toInt() ~/ 10000) / 10;
+            rdProvider.powerIn = (((value ~/ 10)  * (rdProvider.iNow * 1000).toInt()).toInt() ~/ 10000) / 10;
+            rdProvider.notifyDataChanged();
+            //debugPrint("Response of V: ${rdProvider.vNow}, power: ${rdProvider.powerIn}, i: ${rdProvider.iNow}");
+          }
+        }
+      } else if (respCmd == "I".codeUnitAt(0)) {//设置/查询当前电流的返回包
+        if (size >= 7) {
+          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
+          if ((value != null) && (value >= 0) && (value <= 15000)) {
+            rdProvider.iNow = value / 1000;
+            rdProvider.powerIn = ((((rdProvider.vNow * 1000).toInt() ~/ 10)  * value).toInt() ~/ 10000) / 10;
+            rdProvider.notifyDataChanged();
+            //debugPrint("Response of I: ${rdProvider.iNow}, power: ${rdProvider.powerIn}, i: ${rdProvider.iNow}");
+          }
+        }
+      }
+    } else if (bag.first == "?".codeUnitAt(0)) { //电压电流的返回
+      final respCmd = bag[1];
+      if (respCmd == "V".codeUnitAt(0)) { //设置/查询当前电压的返回包
+        if (size >= 7) {
+          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
+          if ((value != null) && (value >= 0) && (value <= 65000)) {
+            rdProvider.vNow = value / 1000;
+            rdProvider.powerIn = (((value ~/ 10)  * (rdProvider.iNow * 1000).toInt()).toInt() ~/ 10000) / 10;
             rdProvider.notifyDataChanged();
           }
         }
@@ -792,7 +817,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
           if ((value != null) && (value >= 0) && (value <= 15000)) {
             rdProvider.iNow = value / 1000;
-            rdProvider.powerIn = (((rdProvider.vNow ~/ 10)  * rdProvider.iNow).toInt() ~/ 10000) / 10;
+            rdProvider.powerIn = ((((rdProvider.vNow * 1000).toInt() ~/ 10)  * value).toInt() ~/ 10000) / 10;
             rdProvider.notifyDataChanged();
           }
         }

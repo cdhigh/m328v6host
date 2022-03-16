@@ -9,6 +9,12 @@ __VERSION__ = "v1.0 2022-02-22"
 
 #构建的命令，这些命令会逐个运行
 cmdList = ["flutter clean", "flutter pub get", "flutter build apk"]
+#cmdList = ["flutter pub get", "flutter build apk"]
+
+#经过多次测试，发现将此文件恢复到默认状态即可每次编译成功
+FLUTTER_DIR = r"D:/flutter"
+GEN_SNAPSHOT_FILE = os.path.join(FLUTTER_DIR, "bin/cache/artifacts/engine/android-arm-release/windows-x64/gen_snapshot.EXE")
+GEN_SNAPSHOT_ORIGNAL_FILE = os.path.join(FLUTTER_DIR, "bin/cache/artifacts/engine/android-arm-release/windows-x64/gen_snapshot_orignal.EXE")
 
 M328V6_DIR = os.path.dirname(__file__)
 PUB_YAML_FILE = os.path.join(M328V6_DIR, "pubspec.yaml")
@@ -126,6 +132,17 @@ def process():
     else:
         print("Desktop path : {}".format(deskPath))
 
+    #恢复gen_snapshot.exe
+    if os.path.exists(GEN_SNAPSHOT_ORIGNAL_FILE):
+        try:
+            os.remove(GEN_SNAPSHOT_FILE)
+        except Exception as e:
+            print("Delete gen_snapshot.exe failed: {}".format(str(e)))
+
+        shutil.copyfile(GEN_SNAPSHOT_ORIGNAL_FILE, GEN_SNAPSHOT_FILE)
+    else: #第一次编译，备份gen_snapshot.exe
+        shutil.copyfile(GEN_SNAPSHOT_FILE, GEN_SNAPSHOT_ORIGNAL_FILE)
+    
     #先备份要修改的文件
     bakDir = os.path.join(M328V6_DIR, "buildBak")
     bakPubspecYaml = os.path.join(bakDir, "pubspec.yaml")
@@ -213,7 +230,7 @@ def process():
                 os.remove(desktopApk)
             print("\n\nCopy apk file to {}\n\n".format(desktopApk))
             shutil.copyfile(FINAL_APK_FILE, desktopApk)
-    except Execution as e:
+    except Exception as e:
         print("\n\nCopy apk file failed: {}\n\n".format(ste(e)))
     
     #恢复备份文件

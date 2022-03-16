@@ -12,8 +12,8 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as sb_an
 //import 'package:serial_port_win32/serial_port_win32.dart' as serial_win;
 
 //编译apk需要注释掉 flutter_libserialport，取消注释 flutter_libserialport_stub
-//import 'package:flutter_libserialport/flutter_libserialport.dart' as lib_serial;
-import 'flutter_libserialport_stub.dart' as lib_serial;
+import 'package:flutter_libserialport/flutter_libserialport.dart' as lib_serial;
+//import 'flutter_libserialport_stub.dart' as lib_serial;
 import 'i18n/common.i18n.dart';
 import 'common/globals.dart';
 import 'common/event_bus.dart';
@@ -248,6 +248,7 @@ class UniSerial {
       lib_serial.SerialPort p = _port;
       try {
         p.write(data);
+        p.drain();
       } catch (e) {
         sendDisconnectBroadcast("-1");
       }

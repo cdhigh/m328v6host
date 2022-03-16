@@ -3,6 +3,7 @@
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'i18n/switch_mode.i18n.dart';
 import 'common/globals.dart';
@@ -18,23 +19,23 @@ class SwitchModePage extends ConsumerStatefulWidget {
 
 class _SwitchModePageState extends ConsumerState<SwitchModePage> {
   final _modeParamctrller = TextEditingController();
-  late String _modeStr;
-  late bool isCR, isCP;
+  String _modeStr = "CC";
+  bool isCR = false, isCP = false;
   
   @override
   void initState() {
     super.initState();
-
-    final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
-    _modeStr = rdProvider.mode;
-    isCR = (_modeStr == "CR");
-    isCP = (_modeStr == "CP");
-
-    if (isCR) {
-      _modeParamctrller.text = rdProvider.rSet.toString();
-    } else if (isCP) {
-      _modeParamctrller.text = rdProvider.pSet.toString();
-    }
+    SchedulerBinding.instance?.addPostFrameCallback((_) {
+      final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
+      _modeStr = rdProvider.mode;
+      isCR = (_modeStr == "CR");
+      isCP = (_modeStr == "CP");
+      if (isCR) {
+        _modeParamctrller.text = rdProvider.rSet.toString();
+      } else if (isCP) {
+        _modeParamctrller.text = rdProvider.pSet.toString();
+      }
+    });
   }
 
   @override
@@ -53,7 +54,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
     return Container(padding: const EdgeInsets.all(10), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownButton(value: _modeStr, 
+          SizedBox(width: 300, child: DropdownButton(value: _modeStr, 
             isExpanded: true,
             items: [
               DropdownMenuItem(value: "CC", child: Text("CC Mode".i18n)),
@@ -62,8 +63,8 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
             onChanged: (newValue) {setState(() {
               _modeStr = newValue.toString();
               _modeParamctrller.text = "";
-              });},),
-          TextField(controller: _modeParamctrller,
+          });},),),
+          SizedBox(width: 300, child: TextField(controller: _modeParamctrller,
             enabled: isCR || isCP,
             //keyboardType: TextInputType.number,
             onTap: () {},
@@ -72,7 +73,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
                 : (isCP ? "set the power value (W)".i18n : ""),
               prefixIcon: isCR ? const Icon(Icons.dynamic_form_outlined) 
                 : (isCP ? const Icon(Icons.battery_charging_full) : null),
-            ),),
+          ),),),
           Padding(padding: const EdgeInsets.all(20), child: 
             ConstrainedBox(constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               child: ElevatedButton(
@@ -95,7 +96,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
         load.switchToCR(resistor);
         await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CR mode successfully".i18n));
       } else {
-        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Resistor value is invalid".i18n));
+        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Resistance must be greater than zero ohm and less than 65 ohms".i18n));
       }
     } else if (_modeStr == "CP") {
       double? power = double.tryParse(_modeParamctrller.text);
@@ -103,7 +104,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
         load.switchToCP(power);
         await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CP mode successfully".i18n));
       } else {
-        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Power value is invalid".i18n));
+        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Power must be greater than zero watt and less than 6553 watts".i18n));
       }
     }
   }

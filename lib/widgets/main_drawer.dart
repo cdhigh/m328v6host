@@ -223,8 +223,28 @@ class MainDrawerOtherOperations extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final connProvider = ref.watch<ConnectionProvider>(Global.connectionProvider);
+    bool loadMenuEnabled = (connProvider.name != "");
+    
     return Column(
       children: <Widget>[
+        ListTile(title: Text("Test max capcity".i18n),
+          enabled: loadMenuEnabled,
+          trailing: const Icon(Icons.arrow_forward),
+          onTap: () {
+            Navigator.of(context).pop(); //关闭drawer
+            Navigator.pushNamed(context, "/max_i_tester");
+          },
+        ),
+        ListTile(title: Text("Test short circuit".i18n),
+          enabled: loadMenuEnabled,
+          trailing: const Icon(Icons.arrow_forward),
+          onTap: () {
+            Navigator.of(context).pop(); //关闭drawer
+            Navigator.pushNamed(context, "/sc_tester");
+          },
+        ),
+        const Divider(),
         ListTile(title: Text("Export".i18n),
           trailing: const Icon(Icons.arrow_forward),
           onTap: () {

@@ -100,6 +100,14 @@ extension Localization on String {
       "zh_cn": "其他操作",
     } +
     {
+      "en_us": "Test max capcity",
+      "zh_cn": "测试电源输出能力",
+    } +
+    {
+      "en_us": "Test short circuit",
+      "zh_cn": "测试电源短路保护",
+    } +
+    {
       "en_us": "Export",
       "zh_cn": "导出",
     };

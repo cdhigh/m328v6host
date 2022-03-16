@@ -30,7 +30,7 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
   var _availablePorts = <String>[];
   final _baudCtrllers = <String, TextEditingController>{};
   late final sb_android.FlutterBluetoothSerial _bluetooth;
-  var _bluetoothIsOn = true;
+  bool? _bluetoothIsOn;
   sb_android.BluetoothState? _prevBluetoothIson;
   Timer? _timerForUpdateBtState;
 
@@ -68,8 +68,8 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
     List<Widget>? actions;
 
     //在标题栏上显示当前蓝牙开关状态
-    if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
-      if (_bluetoothIsOn) {
+    if ((_bluetoothIsOn != null) && (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia)) {
+      if (_bluetoothIsOn!) {
         actions = <Widget>[IconButton(onPressed: requestCloseBT, icon: const Icon(Icons.bluetooth))];
       } else {
         actions = <Widget>[IconButton(onPressed: requestOpenBT, icon: const Icon(Icons.bluetooth_disabled))];

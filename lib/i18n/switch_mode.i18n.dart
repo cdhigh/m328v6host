@@ -36,12 +36,12 @@ extension Localization on String {
       "zh_cn": "错误",
     } +
     {
-      "en_us": "Resistor value is invalid",
-      "zh_cn": "阻值非法",
+      "en_us": "Resistance must be greater than zero ohm and less than 65 ohms",
+      "zh_cn": "阻值必须大于零欧姆并小于65欧姆",
     } +
     {
-      "en_us": "Power value is invalid",
-      "zh_cn": "功率值非法",
+      "en_us": "Power must be greater than zero watt and less than 6553 watts",
+      "zh_cn": "功率值必须大于零瓦并小于6553瓦",
     } +
     {
       "en_us": "Success",
@@ -49,15 +49,15 @@ extension Localization on String {
     } +
     {
       "en_us": "set CC mode successfully",
-      "zh_cn": "设置 恒流模式 成功",
+      "zh_cn": "设置[恒流模式]成功",
     } +
     {
       "en_us": "set CR mode successfully",
-      "zh_cn": "设置 恒阻模式 成功",
+      "zh_cn": "设置[恒阻模式]成功",
     } +
     {
       "en_us": "set CP mode successfully",
-      "zh_cn": "设置 恒功率模式 成功",
+      "zh_cn": "设置[恒功率模式]成功",
     };
 
   String get i18n => localize(this, t);

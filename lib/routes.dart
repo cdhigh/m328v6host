@@ -11,6 +11,8 @@ import 'delay_period_on_off.dart';
 import 'switch_mode.dart';
 import 'help_page.dart';
 import 'export_data.dart';
+import 'load_testers/max_i_tester.dart';
+import 'load_testers/short_circuit_tester.dart';
 
 //为什么用函数 onGenerateRoute, 而不用 变量 routes
 //是因为 MaterialApp通过onGenerateRoute才方便传递参数给其他路由，尽管现在还没使用此特性
@@ -27,6 +29,8 @@ MaterialPageRoute routesPath(RouteSettings settings) {
     '/mode': (context) => I18n(child: const SwitchModePage(),),
     '/help': (context) => I18n(child: const HelpPage(),),
     '/export': (context) => I18n(child: const ExportPage(),),
+    '/max_i_tester': (context) => I18n(child: const MaxITesterPage(),),
+    '/sc_tester': (context) => I18n(child: const ScTesterPage(),),
   };
   WidgetBuilder builder = routes[settings.name] ?? routes['/']!;
   return MaterialPageRoute(builder: (ctx) => builder(ctx));

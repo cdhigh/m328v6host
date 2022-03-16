@@ -54,7 +54,7 @@ Future<SingleVersion?> checkUpdate({bool silent=true}) async {
   if (lastestVersion != null) {
     if (silent) { //如果是静默检查，则检查到新版本后显示一个Toast，否则调用方会显示一个对话框
       BotToast.showText(text: "There is a new version (%s), the download link has been copied to the clipboard".i18n.fill([lastest]),
-        duration: const Duration(seconds: 5));
+        duration: const Duration(seconds: 30), clickClose: true);
     }
     
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
@@ -71,8 +71,14 @@ Future<SingleVersion?> checkUpdate({bool silent=true}) async {
 ///连接服务器，检查更新，返回更新信息包
 Future<VersionModel?> getAllUpdateInfo() async {
   final url = Uri.parse(kVersionJsonUri);
-  final response = await http.get(url).timeout(const Duration(seconds: 5),
-    onTimeout: () {return http.Response('Error', 408);},);
+  http.Response response;
+  try {
+    response = await http.get(url).timeout(const Duration(seconds: 10),
+      onTimeout: () => http.Response('Timeout', 408),);
+  } catch (e) {
+    debugPrint(e.toString());
+    return null;
+  }
   if (response.statusCode == 200) {
     try {
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;

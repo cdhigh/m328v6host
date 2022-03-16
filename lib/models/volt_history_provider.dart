@@ -111,7 +111,7 @@ class _VoltHistoryFilter {
     assert(Global.curvaFilterDotNum <= maxFilterNum);
 
     //避免因为传输误码等导致解析失败，产生偶尔的零，来两个零才输出零
-    if (volt == 0.0) {
+    /*if (volt == 0.0) {
       if (_prevValue != 0.0) {
         final prevTemp = _prevValue;
         _prevValue = 0.0;
@@ -120,7 +120,7 @@ class _VoltHistoryFilter {
         reset();
         return 0.0;
       }
-    }
+    }*/
 
     //对阀值进行处理
     if ((volt - _prevValue).abs() > Global.curvaFilterThreshold) {

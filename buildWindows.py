@@ -228,7 +228,7 @@ def process():
                 os.remove(desktopZip)
             print("\n\nCompressing release directory to {}\n\n".format(desktopZip))
             zipDirectoryToFile(FINAL_EXE_DIR, desktopZip)
-    except Execution as e:
+    except Exception as e:
         print("\n\nCompress release directory failed: {}\n\n".format(ste(e)))
     
     #恢复备份文件

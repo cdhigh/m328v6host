@@ -30,7 +30,7 @@ extension AsListLow16Bits on int {
 ///表示一个下位机
 class M328v6Load {
   final _uniSerial = UniSerial();
-
+  
   //Singleton
   M328v6Load._internal(); //私有构造函数
   static final M328v6Load _singleton = M328v6Load._internal(); //保存单例
@@ -78,6 +78,14 @@ class M328v6Load {
     
     int onoff = isOn ? 0x31 : 0x30;
     final cmd = Uint8List.fromList(["^".codeUnitAt(0), "L".codeUnitAt(0), onoff, r"$".codeUnitAt(0)]);
+    sendCmd(cmd);
+    //print('setLoadOn:$isOn');
+  }
+
+  ///设置电流PWM微调使能开关：^F1$
+  void setFinePwmOn(bool isOn) {
+    int onoff = isOn ? 0x31 : 0x30;
+    final cmd = Uint8List.fromList(["^".codeUnitAt(0), "F".codeUnitAt(0), onoff, r"$".codeUnitAt(0)]);
     sendCmd(cmd);
   }
 
@@ -210,7 +218,18 @@ class M328v6Load {
     sendCmd(cmd);
   }
 
-  ///强制完全开通MOS，进行短路测试，将电子负载做为电流表使用时也是强制完全开通MOS
+  ///设置数据上报类型开关：^U11$
+  ///baseData:0-关闭基本数据上传，1-M8V6兼容格式上传，2-实时电压电流LOG上传
+  ///extraData:false-关闭额外数据上传，true-打开额外数据上传
+  void setDataReportType({required int baseData, required bool extraData}) {
+    assert((baseData >= 0) && (baseData <= 2));
+    final baseOnoff = (baseData == 1) ? 0x31 : ((baseData == 0) ? 0x30 : 0x32);
+    final extraOnoff = extraData ? 0x31 : 0x30;
+    final cmd = Uint8List.fromList(["^".codeUnitAt(0), "U".codeUnitAt(0), baseOnoff, extraOnoff, r"$".codeUnitAt(0)]);
+    sendCmd(cmd);
+  }
+
+  ///强制完全导通MOS，进行短路测试，将电子负载做为电流表使用时也是强制完全开通MOS
   /// 注意之后需要调用 restoreMos() 恢复正常工作状态
   void fullOpenMos() {
     final cmd = Uint8List.fromList(r"^S11111$".codeUnits);

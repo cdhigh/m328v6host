@@ -44,11 +44,11 @@ extension Localization on String {
       "zh_cn": "不保持屏幕常亮",
     } +
     {
-      "en_us": "Keep the screen on during discharge",
+      "en_us": "Keep screen on during discharge",
       "zh_cn": "在放电过程中保持屏幕常亮",
     } +
     {
-      "en_us": "Keep the screen on while the app is running",
+      "en_us": "Keep screen on while the app is running",
       "zh_cn": "在应用运行时保持屏幕常亮",
     } +
     {
@@ -180,7 +180,7 @@ extension Localization on String {
       "zh_cn": "自动重连",
     } +
     {
-      "en_us": "Auto reconnect after connection interruption",
+      "en_us": "Auto reconnect if connection interruption",
       "zh_cn": "连接异常断开后自动尝试重新连接",
     } +
     {
@@ -224,12 +224,12 @@ extension Localization on String {
       "zh_cn": "曲线平滑电压门限",
     } +
     {
-      "en_us": "Enter a value from 0.00 to 1.00 (V)",
-      "zh_cn": "输入一个0.00到1.00的数值 (伏)",
+      "en_us": "Enter a value from 0.000 to 1.000 (V)",
+      "zh_cn": "输入一个0.000到1.000的数值 (伏)",
     } +
     {
-      "en_us": "The value must be greater than 0.00 and less than 1.00",
-      "zh_cn": "数值必须大于0.00并且小于1.00",
+      "en_us": "The value must be greater than 0.000 and less than 1.000",
+      "zh_cn": "数值必须大于0.000并且小于1.000",
     } +
     {
       "en_us": "Found new version [%s]",
@@ -246,6 +246,10 @@ extension Localization on String {
     {
       "en_us": "Download",
       "zh_cn": "下载",
+    } +
+    {
+      "en_us": "The link of the official site has been copied to the clipboard",
+      "zh_cn": "此App官方网址已经拷贝到系统剪贴板",
     };
 
   String get i18n => localize(this, t);

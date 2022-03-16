@@ -40,7 +40,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   ///构建页面主体的ListView
   Widget buildMainList(BuildContext context) {
-    return Container(padding: const EdgeInsets.all(10.0), child: ListView(children: [
+    return Container(padding: const EdgeInsets.all(15), child: ListView(children: [
       //通用组
       buildSettingGroupTile('General'.i18n),
       SettingTile(title: 'Language', subTitle: displaySelectedLanguage())
@@ -54,12 +54,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       
       //数据组
       buildSettingGroupTile('Data'.i18n),
-      SettingTile(title: 'Auto reconnect'.i18n, subTitle: 'Auto reconnect after connection interruption'.i18n,
+      SettingTile(title: 'Auto reconnect'.i18n, subTitle: 'Auto reconnect if connection interruption'.i18n,
             switchValue: Global.autoReconnect, switchCallback: (_)=>onTapAutoReconnect())
           .intoGestureDetector(onTap: onTapAutoReconnect),
       SettingTile(title: 'Number of points for smooth curve'.i18n, subTitle: Text(Global.curvaFilterDotNum.toString()))
         .intoInkWell(onTap: onTapDotSmoothNum),
-      SettingTile(title: 'Threshold for smooth curve'.i18n, subTitle: Text(Global.curvaFilterThreshold.toStringAsFixed(2) + " V"))
+      SettingTile(title: 'Threshold for smooth curve'.i18n, subTitle: Text(Global.curvaFilterThreshold.toStringAsFixed(3) + " V"))
         .intoInkWell(onTap: onTapSmoothThreshold),
       SettingTile(title: 'Curve line start color'.i18n, subTitle: displayCurvaStartColor())
         .intoInkWell(onTap: onTapCurvaStartColor),
@@ -72,7 +72,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       SettingTile(title: 'Check frequency'.i18n, subTitle: displayCheckFrequency())
         .intoInkWell(onTap: onTapCheckFrequency),
       SettingTile(title: 'Check for update now'.i18n, subTitle: "https//github.com/cdhigh/m328v6host")
-        .intoInkWell(onTap: checkUpdateNow),
+        .intoInkWell(onTap: checkUpdateNow, onLongPress: () {
+          pasteText("https//github.com/cdhigh/m328v6host");
+          showToast("The link of the official site has been copied to the clipboard".i18n);
+        }),
 
       const SizedBox(height: 100),
     ]));
@@ -261,9 +264,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       case KeepScreenOption.never:
         return 'Does not keep the screen always on'.i18n;
       case KeepScreenOption.onWhenDischarge:
-        return 'Keep the screen on during discharge'.i18n;
+        return 'Keep screen on during discharge'.i18n;
       default:
-        return 'Keep the screen on while the app is running'.i18n;
+        return 'Keep screen on while the app is running'.i18n;
     }
   }
 
@@ -351,15 +354,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   ///点击了曲线平滑阀值
   void onTapSmoothThreshold() async {
     String? ret = await showInputDialog(context: context,
-      title: "Enter a value from 0.00 to 1.00 (V)".i18n,
-      initialText: Global.curvaFilterThreshold.toStringAsFixed(2),
+      title: "Enter a value from 0.000 to 1.000 (V)".i18n,
+      initialText: Global.curvaFilterThreshold.toStringAsFixed(3),
       formatters: [DecimalTextInputFormatter(), CustomMaxValueInputFormatter(1.0)],
     );
 
     if (ret != null) {
       final value = double.tryParse(ret);
       if ((value == null) || (value < 0.0) || (value > 1.0)) {
-        showToast("The value must be greater than 0.00 and less than 1.00".i18n);
+        showToast("The value must be greater than 0.000 and less than 1.000".i18n);
       } else {
         setState(() {Global.curvaFilterThreshold = value;});
       }

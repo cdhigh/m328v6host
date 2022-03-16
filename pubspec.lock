@@ -99,6 +99,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  dylib:
+    dependency: transitive
+    description:
+      name: dylib
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.2+1"
   equatable:
     dependency: transitive
     description:
@@ -153,6 +160,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
+  flutter_libserialport:
+    dependency: "direct main"
+    description:
+      name: flutter_libserialport
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.3"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -247,6 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
+  libserialport:
+    dependency: transitive
+    description:
+      name: libserialport
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0+3"
   lints:
     dependency: transitive
     description:
@@ -510,7 +531,14 @@ packages:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.4.54"
+    version: "19.4.55"
+  syncfusion_flutter_gauges:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_gauges
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "19.4.55"
   syncfusion_flutter_xlsio:
     dependency: "direct main"
     description:

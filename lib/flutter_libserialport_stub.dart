@@ -1,5 +1,6 @@
 library flutter_libserialport;
 ///因为有了lib_serial，编译APK偶尔能编译通过，大部分时间都失败，每次纯属运气，所以在这里做一个桩
+/// 当然，有了这个桩也不是每次都编译通过，只是通过概率高一些而已
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 如果要编译APK：
 /// 1. 在 pubspec.yaml 里面注释掉 flutter_libserialport
@@ -18,6 +19,7 @@ class SerialPort {
   static OSError? get lastError => const OSError("", 0);
   SerialPort(String name);
   void write(Uint8List data) {}
+  void drain() {}
 }
 
 class SerialPortTransport {
