@@ -31,9 +31,9 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
       isCR = (_modeStr == "CR");
       isCP = (_modeStr == "CP");
       if (isCR) {
-        _modeParamctrller.text = rdProvider.rSet.toString();
+        _modeParamctrller.text = rdProvider.rSet.toStringAsFixed(2);
       } else if (isCP) {
-        _modeParamctrller.text = rdProvider.pSet.toString();
+        _modeParamctrller.text = rdProvider.pSet.toStringAsFixed(2);
       }
     });
   }
@@ -66,7 +66,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
           });},),),
           SizedBox(width: 300, child: TextField(controller: _modeParamctrller,
             enabled: isCR || isCP,
-            //keyboardType: TextInputType.number,
+            keyboardType: TextInputType.number,
             onTap: () {},
             decoration: InputDecoration(
               labelText: isCR ? "set the resistor value (Ohm)".i18n 
@@ -92,19 +92,19 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
       await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CC mode successfully".i18n));
     } else if (_modeStr == "CR") {
       double? resistor = double.tryParse(_modeParamctrller.text);
-      if ((resistor != null) && (resistor > 0.0) && (resistor < 65.535)) {
+      if ((resistor != null) && (resistor > 0.0) && (resistor < 655.0)) {
         load.switchToCR(resistor);
         await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CR mode successfully".i18n));
       } else {
-        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Resistance must be greater than zero ohm and less than 65 ohms".i18n));
+        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Resistance must be greater than zero ohm and less than 655 ohms".i18n));
       }
     } else if (_modeStr == "CP") {
       double? power = double.tryParse(_modeParamctrller.text);
-      if ((power != null) && (power > 0.0) && (power < 6553)) {
+      if ((power != null) && (power > 0.0) && (power < 650.0)) {
         load.switchToCP(power);
         await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CP mode successfully".i18n));
       } else {
-        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Power must be greater than zero watt and less than 6553 watts".i18n));
+        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Power must be greater than zero watt and less than 650 watts".i18n));
       }
     }
   }

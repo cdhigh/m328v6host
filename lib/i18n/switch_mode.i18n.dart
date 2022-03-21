@@ -36,12 +36,12 @@ extension Localization on String {
       "zh_cn": "错误",
     } +
     {
-      "en_us": "Resistance must be greater than zero ohm and less than 65 ohms",
-      "zh_cn": "阻值必须大于零欧姆并小于65欧姆",
+      "en_us": "Resistance must be greater than zero ohm and less than 655 ohms",
+      "zh_cn": "阻值必须大于0欧姆并小于655欧姆",
     } +
     {
-      "en_us": "Power must be greater than zero watt and less than 6553 watts",
-      "zh_cn": "功率值必须大于零瓦并小于6553瓦",
+      "en_us": "Power must be greater than zero watt and less than 650 watts",
+      "zh_cn": "功率值必须大于0瓦并小于650瓦",
     } +
     {
       "en_us": "Success",

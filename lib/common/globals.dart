@@ -27,7 +27,7 @@ enum KeepScreenOption {
 ///小部分为程序共用的变量
 class Global {
   //版本号注意需要使用单引号，让buildXXX.py能找的到
-  static const version = '1.2.0';
+  static const version = '1.2.1';
   static const buildNumber = "";
 
   static late final SharedPreferences prefs;

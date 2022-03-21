@@ -124,7 +124,7 @@ class M328v6Load {
   void switchToCR(double resistor) {
     final cmd = BytesBuilder();
     cmd.add("^MR".codeUnits);
-    cmd.add((resistor * 1000).toInt().asUint8List()); //单位切换为下位机使用的毫欧
+    cmd.add((resistor * 100).toInt().asUint8List()); //单位切换为下位机使用的10毫欧
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -134,7 +134,7 @@ class M328v6Load {
   void switchToCP(double power) {
     final cmd = BytesBuilder();
     cmd.add("^MP".codeUnits);
-    cmd.add((power * 10).toInt().asUint8List()); //单位切换为下位机使用的100毫瓦
+    cmd.add((power * 100).toInt().asUint8List()); //单位切换为下位机使用的10毫瓦
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }

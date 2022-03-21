@@ -1,6 +1,13 @@
 {
-  "lastest": "1.2.0",
+  "lastest": "1.2.1",
   "history": [
+    {
+      "version": "1.2.1",
+      "build": "2022-03-21",
+      "android": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.1/m328v6_V1.2.1.apk",
+      "windows": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.1/m328v6_win_V1.2.1.zip",
+      "whatsnew": "1.双击曲线区域可以查看每次放电的统计信息<br/>2.功率单位修改为10毫瓦<br/>3.恒阻单位修改为10毫欧"
+    },
     {
       "version": "1.2.0",
       "build": "2022-03-16",

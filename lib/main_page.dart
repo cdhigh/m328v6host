@@ -5,6 +5,7 @@
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -32,6 +33,7 @@ import 'widgets/colored_safe_area.dart';
 import 'widgets/curva_chart.dart';
 import 'version_update/version_check.dart';
 import 'uni_serial.dart';
+import 'load_stats_page.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -56,6 +58,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   //如果异常中断并且启用了“自动重连”选项，则每隔5s自动尝试重连一次
   late final PausableTimer _timerForReconnect;
   DateTime _lostConnectionTime = DateTime(2022); //丢失连接时间，自动重连限时5分钟内
+  final _loadStats = <LoadStatsModel>[];  //每次放电的统计信息
+  Offset _tapPosForCurvaDblTap = const Offset(0.0, 0.0);  //保存曲线区域的鼠标位置，用于弹出菜单
   
   @override
   bool get wantKeepAlive =>true;
@@ -294,7 +298,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     return Container(padding: const EdgeInsets.all(10.0), 
       color: Global.isDarkMode ? Colors.transparent : appInfo.homePageBackgroundColor,
       child: ListView(children: [
-        GestureDetector(child: const CurvaChart(), onDoubleTap: onDoubleTapCurvaChart),
+        GestureDetector(child: const CurvaChart(), 
+          onDoubleTap: onDoubleTapCurvaChart,
+          onDoubleTapDown: (TapDownDetails details) {_tapPosForCurvaDblTap = details.globalPosition;},),
         buildVISetDisplay(context),
         buildVIDisplay(context),
         buildOtherDisplayData(context),
@@ -356,7 +362,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         Row(children: [
           SevenSegmentWithSuperText(
             title: "Power".i18n,
-            value: rdProvider.powerIn.toStringAsFixed(1).padLeft(6),
+            value: rdProvider.powerIn.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
           ),
@@ -364,14 +370,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           if (mode == "CR")
           SevenSegmentWithSuperText(
             title: "CR".i18n,
-            value: rdProvider.rSet.toStringAsFixed(3).padLeft(6),
+            value: rdProvider.rSet.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
           ),
           if (mode == "CP")
           SevenSegmentWithSuperText(
             title: "CP".i18n,
-            value: rdProvider.pSet.toStringAsFixed(3).padLeft(6),
+            value: rdProvider.pSet.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
           ),
@@ -388,7 +394,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           Expanded(child: Container()),
           SevenSegmentWithSuperText(
             title: "Energy".i18n,
-            value: rdProvider.wh.toStringAsFixed(1).padLeft(6),
+            value: rdProvider.wh.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.cyan,
           ),
@@ -437,7 +443,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(child: CurvaChartLandscape(scrWidth: _scrWidth), onDoubleTap: onDoubleTapCurvaChart),
+          GestureDetector(child: CurvaChartLandscape(scrWidth: _scrWidth), 
+            onDoubleTap: onDoubleTapCurvaChart,
+            onDoubleTapDown: (TapDownDetails details) {_tapPosForCurvaDblTap = details.globalPosition;},),
           SingleChildScrollView(child: Column(mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end, 
             children: buildRawDataDisplayLandscape(context),
@@ -490,7 +498,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       Padding(padding: const EdgeInsets.only(top: 5, bottom: 5), child: Row(children: [
         Padding(padding: const EdgeInsets.only(right: 20), child: Text("Power".i18n, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
-          value: rdProvider.powerIn.toStringAsFixed(1).padLeft(6),
+          value: rdProvider.powerIn.toStringAsFixed(2).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.amber,
             disabledColor: Colors.amber.withOpacity(0.15),),
       )])),
@@ -507,7 +515,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
         Padding(padding: const EdgeInsets.only(right: 20), child: Text("Energy".i18n, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
-          value: rdProvider.wh.toStringAsFixed(1).padLeft(6),
+          value: rdProvider.wh.toStringAsFixed(2).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.cyan,
             disabledColor: Colors.cyan.withOpacity(0.15),),
       )])),
@@ -532,7 +540,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
         Padding(padding: const EdgeInsets.only(right: 20), child: Text(mode.i18n, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
-          value: (mode == "CR") ? rdProvider.rSet.toStringAsFixed(3).padLeft(6) : rdProvider.pSet.toStringAsFixed(1).padLeft(6),
+          value: (mode == "CR") ? rdProvider.rSet.toStringAsFixed(2).padLeft(6) : rdProvider.pSet.toStringAsFixed(2).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.amber,
             disabledColor: Colors.cyan.withOpacity(0.15),),
       )])),
@@ -601,19 +609,39 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     }
   }
 
-  ///双击曲线区域弹出提问，是否需要清除曲线数据
+  ///双击曲线区域弹出菜单
   void onDoubleTapCurvaChart() async {
-    final bool? ok = await showOkCancelAlertDialog(context: context, title: "Confirm".i18n, content: Text("Clear curva data?".i18n));
-    if (ok == true) {
-      final vhProvider = ref.read<VoltHistoryProvider>(Global.vHistoryProvider);
-      vhProvider.clear();
+    final overlay = Overlay.of(context)?.context.findRenderObject();
+    final size = Overlay.of(context)?.context.size;
+    if ((overlay == null) || (size == null)) {
+      return;
     }
+
+    await showMenu(context: context,
+      elevation: 8.0,
+      position: RelativeRect.fromRect(
+          _tapPosForCurvaDblTap & const Size(40, 40), // smaller rect, the touch area
+          Offset.zero & size // Bigger rect, the entire screen
+          ),
+      items: [
+        PopupMenuItem(child: Text("Clear curva data".i18n),
+          onTap: () {ref.watch<VoltHistoryProvider>(Global.vHistoryProvider).clear();}),
+        PopupMenuItem(child: Text("Show load stats".i18n),
+          enabled: _loadStats.isNotEmpty,
+          onTap: () { //菜单本身就是一个页面，所以需要等此页面关闭后才能打开另一个页面，使用 addPostFrameCallback
+            SchedulerBinding.instance?.addPostFrameCallback((_) {
+              Navigator.pushNamed(context, "/load_stats", 
+                arguments: Map<String, List<LoadStatsModel>>.from({"stats": _loadStats}),);
+            });
+          }),
+      ],
+    );
   }
 
   ///点击标题栏上的Switch按钮，询问是否需要打开关闭放电
   void onTapAppBarSwitch(bool isOff) async {
     final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
-    final txt = isOff ? "Turn on the electronic load?".i18n : "Turn off the electronic load?".i18n;
+    final txt = isOff ? "Turn on the electronic load?\nRemember to clear Ah, if needed".i18n : "Turn off the electronic load?".i18n;
     final bool? ret = await showOkCancelAlertDialog(context: context, title: "Confirm".i18n, 
       content: Text(txt));
     if (ret == true) {
@@ -670,14 +698,19 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         rdProvider.mode = mode;
       }
       if (wh != null) {
-        rdProvider.wh = wh / 10; //下位机的单位为100mwh
+        rdProvider.wh = wh / 100; //下位机的单位为10毫瓦时
       }
       if (rSet != null) {
-        rdProvider.rSet = rSet / 1000; //下位机的单位为毫欧
+        rdProvider.rSet = rSet / 100; //下位机的单位为10毫欧
       }
       if (pSet != null) {
-        rdProvider.pSet = pSet / 10; //下位机的单位为100mw
+        rdProvider.pSet = pSet / 100; //下位机的单位为10毫瓦
       }
+
+      if (_loadStats.isNotEmpty) {
+        _loadStats.last.initialWh ??= rdProvider.wh;
+      }
+
       rdProvider.notifyDataChanged();
 
       //每次收到EXTRA数据就复位请求额外数据的定时器
@@ -686,6 +719,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     } else if (size >= 29) {   //老版本M8V6定义的数据
       //debugPrint(String.fromCharCodes(bag));
       final vhProvider = ref.watch<VoltHistoryProvider>(Global.vHistoryProvider);
+      int loadStatus = 0; //1-开始，2-结束
 
       int? iNow;
       int? vNow = int.tryParse(String.fromCharCodes(bag, 6, 11));
@@ -702,6 +736,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       //从未放电到放电状态，则自动清除原先的曲线数据，如果需要，启用屏幕常亮
       if (_prevReceivedOff && !isOff) {
         vhProvider.clear();
+        loadStatus = 1; //标识放电开始，下面的代码会创建一个放电状态容器
         if (Global.keepScreenOn == KeepScreenOption.onWhenDischarge) {
           Wakelock.enable();
         }
@@ -710,6 +745,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
 
       //从放电状态到未放电状态，如果需要，关闭屏幕常亮
       if (rdProvider.running && isOff) {
+        loadStatus = 2; //标识放电结束，下面的代码会保存更新本次放电信息
         if (Global.keepScreenOn != KeepScreenOption.always) {
           Wakelock.disable();
         }
@@ -737,13 +773,61 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       rdProvider.iNow = iNow / 1000;
       rdProvider.vNow = vNow / 1000;
 
-      //功率需要自己计算，下位机没有上报，
-      //同时为了和下位机显示一致，所以计算公式稍复杂了点，因为下位机仅使用整数运算
-      rdProvider.powerIn = (((vNow ~/ 10)  * iNow).toInt() ~/ 10000) / 10;
+      //功率需要自己计算，下位机没有上报
+      rdProvider.powerIn = calP(vNow, iNow);
       
       rdProvider.ah = (ah != null) ? (ah / 1000) : 0.0;
       rdProvider.rd = (rd != null) ? (rd / 1000) : 0.0;
       rdProvider.ra = (ra != null) ? (ra / 1000) : 0.0;
+
+      //放电状态统计信息
+      if (loadStatus == 1) { //放电开始
+        final lStats = LoadStatsModel(initialV: rdProvider.vNow, initialAh: rdProvider.ah);
+        lStats.rd = rdProvider.rd;
+        lStats.ra = rdProvider.ra;
+        if (_loadStats.length > 16) { //仅保留最近16个记录
+          _loadStats.removeAt(0);
+        }
+        _loadStats.add(lStats); //新增一个统计数据
+      } else if (_loadStats.isNotEmpty) {
+        final lStats = _loadStats.last;
+        if (loadStatus == 2) { //放电结束
+          lStats.endV = rdProvider.vNow;
+          lStats.endI = rdProvider.iNow;
+          lStats.avgV = (lStats.initialV + lStats.endV) / 2;
+          lStats.avgI = ((lStats.initialI ?? 0.0) + lStats.endI) / 2;
+          lStats.ah = lStats.totalAh - lStats.initialAh;
+          lStats.wh = lStats.totalWh - (lStats.initialWh ?? 0.0);
+          lStats.temperature1 = rdProvider.temperature1;
+          lStats.temperature2 = rdProvider.temperature2;
+          lStats.endTime = DateTime.now();
+          lStats.loadTime = lStats.endTime!.difference(lStats.startTime);
+        } else {
+          if (rdProvider.iNow > 0.0) {
+            lStats.initialI ??= rdProvider.iNow;
+          }
+          if (rdProvider.rd > lStats.rd) {
+            lStats.rd = rdProvider.rd;
+          }
+          if (rdProvider.ra > lStats.ra) {
+            lStats.ra = rdProvider.ra;
+          }
+          lStats.totalAh = rdProvider.ah;
+          lStats.totalWh = rdProvider.wh;
+          lStats.ah = lStats.totalAh - lStats.initialAh;
+          lStats.wh = lStats.totalWh - (lStats.initialWh ?? 0.0);
+          lStats.temperature1 = rdProvider.temperature1;
+          lStats.temperature2 = rdProvider.temperature2;
+          if (lStats.mode.isEmpty && rdProvider.mode.isNotEmpty) {
+            lStats.mode = rdProvider.mode;
+            if (lStats.mode == "CR") {
+              lStats.rSet = rdProvider.rSet;
+            } else if (lStats.mode == "CP") {
+              lStats.pSet = rdProvider.pSet;
+            }
+          }
+        }
+      }
       
       rdProvider.notifyDataChanged();
     } else if ((size >= 13) && (bag[6] == ",".codeUnitAt(0))) { //VIL数据(实时电压电流LOG)
@@ -785,7 +869,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
           if ((value != null) && (value >= 0) && (value <= 65000)) {
             rdProvider.vNow = value / 1000;
-            rdProvider.powerIn = (((value ~/ 10)  * (rdProvider.iNow * 1000).toInt()).toInt() ~/ 10000) / 10;
+            rdProvider.powerIn = calP(value, (rdProvider.iNow * 1000).toInt());
             rdProvider.notifyDataChanged();
             //debugPrint("Response of V: ${rdProvider.vNow}, power: ${rdProvider.powerIn}, i: ${rdProvider.iNow}");
           }
@@ -795,7 +879,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
           if ((value != null) && (value >= 0) && (value <= 15000)) {
             rdProvider.iNow = value / 1000;
-            rdProvider.powerIn = ((((rdProvider.vNow * 1000).toInt() ~/ 10)  * value).toInt() ~/ 10000) / 10;
+            rdProvider.powerIn = calP((rdProvider.vNow * 1000).toInt(), value);
             rdProvider.notifyDataChanged();
             //debugPrint("Response of I: ${rdProvider.iNow}, power: ${rdProvider.powerIn}, i: ${rdProvider.iNow}");
           }
@@ -808,7 +892,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
           if ((value != null) && (value >= 0) && (value <= 65000)) {
             rdProvider.vNow = value / 1000;
-            rdProvider.powerIn = (((value ~/ 10)  * (rdProvider.iNow * 1000).toInt()).toInt() ~/ 10000) / 10;
+            rdProvider.powerIn = calP(value, (rdProvider.iNow * 1000).toInt());
             rdProvider.notifyDataChanged();
           }
         }
@@ -817,11 +901,17 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
           if ((value != null) && (value >= 0) && (value <= 15000)) {
             rdProvider.iNow = value / 1000;
-            rdProvider.powerIn = ((((rdProvider.vNow * 1000).toInt() ~/ 10)  * value).toInt() ~/ 10000) / 10;
+            rdProvider.powerIn = calP((rdProvider.vNow * 1000).toInt(), value);
             rdProvider.notifyDataChanged();
           }
         }
       }
     }
+  }
+
+  ///使用和下位机一样的计算功率算法，保证和下位机显示一致(因为下位机仅使用整数运算)
+  ///最后的除以100是因为下位机使用10毫瓦为单位
+  double calP(int v, int i) {
+    return (((v ~/ 10)  * i).toInt() ~/ 1000) / 100;
   }
 }

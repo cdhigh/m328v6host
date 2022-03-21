@@ -11,6 +11,7 @@ import 'delay_period_on_off.dart';
 import 'switch_mode.dart';
 import 'help_page.dart';
 import 'export_data.dart';
+import 'load_stats_page.dart';
 import 'load_testers/max_i_tester.dart';
 import 'load_testers/short_circuit_tester.dart';
 
@@ -29,6 +30,8 @@ MaterialPageRoute routesPath(RouteSettings settings) {
     '/mode': (context) => I18n(child: const SwitchModePage(),),
     '/help': (context) => I18n(child: const HelpPage(),),
     '/export': (context) => I18n(child: const ExportPage(),),
+    '/load_stats': (context) => I18n(child: LoadStatsPage(loadStats: settings.arguments as Map<String, List<LoadStatsModel>>,),),
+    '/export_stats': (context) => I18n(child: ExportLoadStatsPage(loadStats: settings.arguments as Map<String, List<LoadStatsModel>>,),),
     '/max_i_tester': (context) => I18n(child: const MaxITesterPage(),),
     '/sc_tester': (context) => I18n(child: const ScTesterPage(),),
   };

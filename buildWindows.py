@@ -158,31 +158,32 @@ def process():
     shutil.copyfile(UNI_SERIAL_FILE, bakUniSerialDart)
     shutil.copyfile(GLOBAL_FILE, bakGlobalsDart)
 
-    #开始修改文件
-    version, foundFlag = modifyPubspecYaml()
-    if not version:
-        print('\nVersion string not found in pubspec.yaml\n')
-        #恢复备份文件
+    #闭包函数，恢复备份文件
+    def restoreBakFiles():
         os.remove(PUB_YAML_FILE)
         os.remove(UNI_SERIAL_FILE)
         os.remove(GLOBAL_FILE)
         shutil.copyfile(bakPubspecYaml, PUB_YAML_FILE)
         shutil.copyfile(bakUniSerialDart, UNI_SERIAL_FILE)
         shutil.copyfile(bakGlobalsDart, GLOBAL_FILE)
-        shutil.rmtree(bakDir)
+        try:
+            shutil.rmtree(bakDir)
+        except:
+            pass
+
+    #开始修改文件
+    version, foundFlag = modifyPubspecYaml()
+    if not version:
+        print('\nVersion string not found in pubspec.yaml\n')
+        #恢复备份文件
+        restoreBakFiles()
         os.system('pause')
         return
 
     ok = input('\nVersion found [{}]\n\nCorrect?[y/n]'.format(version))
     if ok.lower() not in ('', 'y', 'yes', 'ok'):
         #恢复备份文件
-        os.remove(PUB_YAML_FILE)
-        os.remove(UNI_SERIAL_FILE)
-        os.remove(GLOBAL_FILE)
-        shutil.copyfile(bakPubspecYaml, PUB_YAML_FILE)
-        shutil.copyfile(bakUniSerialDart, UNI_SERIAL_FILE)
-        shutil.copyfile(bakGlobalsDart, GLOBAL_FILE)
-        shutil.rmtree(bakDir)
+        restoreBakFiles()
         return
 
     foundFlag |= modifyUniSerialDart()
@@ -190,25 +191,13 @@ def process():
     if (foundFlag != MODIFIED_ALL_MASK):
         print('foundFlag : 0x{:x} != 0x{:x}!'.format(foundFlag, MODIFIED_ALL_MASK))
         #恢复备份文件
-        os.remove(PUB_YAML_FILE)
-        os.remove(UNI_SERIAL_FILE)
-        os.remove(GLOBAL_FILE)
-        shutil.copyfile(bakPubspecYaml, PUB_YAML_FILE)
-        shutil.copyfile(bakUniSerialDart, UNI_SERIAL_FILE)
-        shutil.copyfile(bakGlobalsDart, GLOBAL_FILE)
-        shutil.rmtree(bakDir)
+        restoreBakFiles()
         return
 
     ok = input('\nPlease confirm modifications in pubspec.yaml/uni_serial.dart/globals.dart\n\nCorrect?[y/n]')
     if ok.lower() not in ('', 'y', 'yes', 'ok'):
         #恢复备份文件
-        os.remove(PUB_YAML_FILE)
-        os.remove(UNI_SERIAL_FILE)
-        os.remove(GLOBAL_FILE)
-        shutil.copyfile(bakPubspecYaml, PUB_YAML_FILE)
-        shutil.copyfile(bakUniSerialDart, UNI_SERIAL_FILE)
-        shutil.copyfile(bakGlobalsDart, GLOBAL_FILE)
-        shutil.rmtree(bakDir)
+        restoreBakFiles()
         return
 
 
@@ -232,17 +221,7 @@ def process():
         print("\n\nCompress release directory failed: {}\n\n".format(ste(e)))
     
     #恢复备份文件
-    os.remove(PUB_YAML_FILE)
-    os.remove(UNI_SERIAL_FILE)
-    os.remove(GLOBAL_FILE)
-    shutil.copyfile(bakPubspecYaml, PUB_YAML_FILE)
-    shutil.copyfile(bakUniSerialDart, UNI_SERIAL_FILE)
-    shutil.copyfile(bakGlobalsDart, GLOBAL_FILE)
-    try:
-        shutil.rmtree(bakDir)
-    except:
-        #print("Cannot delete backup directory {}".format(bakDir))
-        pass
+    restoreBakFiles()
 
     elaspsedTime = datetime.datetime.now() - startTime
     print('\nExecution time : {}\n'.format(elaspsedTime))

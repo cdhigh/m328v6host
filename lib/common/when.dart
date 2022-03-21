@@ -8,6 +8,17 @@
 import 'bisect.dart';
 import '../i18n/common.i18n.dart';
 
+extension WhenDuration on Duration {
+  ///将Duration转换为HH:MM:SS格式的字符串
+  String toTimeString() {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(inSeconds.remainder(60));
+    return "${twoDigits(inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  }
+}
+
+
 extension When on DateTime {
   ///快捷函数，返回: yyyy-mm-dd HH:MM:SS格式
   String toStdString() => format('yyyy-mm-dd HH:MM:SS');
