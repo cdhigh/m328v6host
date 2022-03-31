@@ -72,7 +72,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     Global.bus.addListener(EventBus.connectionChanged, connectionChanged);
     Global.bus.addListener(EventBus.curvaFilterDotNumChanged, curvaFilterDotNumChanged);
     Global.bus.addListener(EventBus.setLoadOnOff, setLoadOnOffReceived);
-    Future.delayed(const Duration(seconds: 5)).then(checkNewVersion); //延时确定是否需要检查新版本
+    Future.delayed(const Duration(seconds: 5), checkNewVersion); //延时确定是否需要检查新版本
 
     _timerForExtraData = PausableTimer(const Duration(seconds: 3), qeuryVersionPeriodic);
     _timerForExtraData.pause();
@@ -84,7 +84,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   void qeuryVersionPeriodic() {
     final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     load.requestExtraData();
-    Future.delayed(const Duration(milliseconds: 100)).then((_) => load.queryVersion());
+    Future.delayed(const Duration(milliseconds: 100), load.queryVersion);
     //_timerForExtraData..reset()..start();
   }
 
@@ -170,8 +170,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         connProvider.serial.registerListenFunction(newSrlDataReceived);
 
         //连接后马上查询下位机版本号，请求上报额外数据
-        Future.delayed(const Duration(milliseconds: 250)).then((_) => connProvider.load.queryVersion());
-        Future.delayed(const Duration(seconds: 500)).then((_) => connProvider.load.requestExtraData());
+        Future.delayed(const Duration(milliseconds: 250), connProvider.load.queryVersion);
+        Future.delayed(const Duration(milliseconds: 500), connProvider.load.requestExtraData);
         _timerForExtraData..reset()..start();
       } else { //断开连接
         final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
@@ -911,7 +911,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
 
   ///使用和下位机一样的计算功率算法，保证和下位机显示一致(因为下位机仅使用整数运算)
   ///最后的除以100是因为下位机使用10毫瓦为单位
+  /// 2022-03-22 配置下位机修改，不需要复杂的计算公式了
   double calP(int v, int i) {
-    return (((v ~/ 10)  * i).toInt() ~/ 1000) / 100;
+    //return (((v ~/ 10)  * i).toInt() ~/ 1000) / 100;
+    return ((v * i) ~/ 10000) / 100;
   }
 }

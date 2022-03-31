@@ -49,27 +49,27 @@ extension Localization on String {
     } +
     {
       "en_us": "Initial Ah",
-      "zh_cn": "初始安时",
+      "zh_cn": "初始容量",
     } +
     {
       "en_us": "Ah",
-      "zh_cn": "本次安时",
+      "zh_cn": "本次容量",
     } +
     {
       "en_us": "Total Ah",
-      "zh_cn": "总安时",
+      "zh_cn": "累积容量",
     } +
     {
       "en_us": "Initial Wh",
-      "zh_cn": "初始瓦时",
+      "zh_cn": "初始能量",
     } +
     {
       "en_us": "Wh",
-      "zh_cn": "本次瓦时",
+      "zh_cn": "本次能量",
     } +
     {
       "en_us": "Total Wh",
-      "zh_cn": "总瓦时",
+      "zh_cn": "累积能量",
     } +
     {
       "en_us": "Mode",

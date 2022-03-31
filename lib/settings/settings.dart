@@ -356,7 +356,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     String? ret = await showInputDialog(context: context,
       title: "Enter a value from 0.000 to 1.000 (V)".i18n,
       initialText: Global.curvaFilterThreshold.toStringAsFixed(3),
-      formatters: [DecimalTextInputFormatter(), CustomMaxValueInputFormatter(1.0)],
+      //formatters: [DecimalTextInputFormatter(), CustomMaxValueInputFormatter(1.0)],
     );
 
     if (ret != null) {

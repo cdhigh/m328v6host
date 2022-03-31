@@ -41,7 +41,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   void initState() {
     super.initState();
     _nameCtrller.text = "m328v6_" + DateTime.now().format('yyyymmdd_HHMMSS') + ".xlsx";
-    Future.delayed(const Duration(milliseconds: 500)).then(requestPermission); //延时确认权限并获取路径
+    Future.delayed(const Duration(milliseconds: 500), requestPermission); //延时确认权限并获取路径
   }
 
   @override

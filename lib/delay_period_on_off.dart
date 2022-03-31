@@ -43,9 +43,9 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
     _timerForData = Timer.periodic(const Duration(seconds: 1), (timer) {
       final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
       load.queryDelayOn();
-      Future.delayed(const Duration(milliseconds: 100)).then((_) => load.queryDelayOff());
-      Future.delayed(const Duration(milliseconds: 200)).then((_) => load.queryPeriodOn());
-      Future.delayed(const Duration(milliseconds: 300)).then((_) => load.queryPeriodOff());
+      Future.delayed(const Duration(milliseconds: 100), load.queryDelayOff);
+      Future.delayed(const Duration(milliseconds: 200), load.queryPeriodOn);
+      Future.delayed(const Duration(milliseconds: 300), load.queryPeriodOff);
     });
   }
 

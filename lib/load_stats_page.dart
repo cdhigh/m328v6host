@@ -206,7 +206,7 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
   void initState() {
     super.initState();
     _nameCtrller.text = "load_stats_" + DateTime.now().format('yyyymmdd_HHMMSS') + ".xlsx";
-    Future.delayed(const Duration(milliseconds: 500)).then(requestPermission); //延时确认权限并获取路径
+    Future.delayed(const Duration(milliseconds: 500), requestPermission); //延时确认权限并获取路径
   }
 
   @override

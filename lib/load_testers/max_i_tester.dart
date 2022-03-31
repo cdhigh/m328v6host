@@ -470,7 +470,7 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
         if (_stepTime == 0) {
           _stepTime = 1;
         }
-        Future.delayed(Duration(milliseconds: (_stepTime * 1000) - 500)).then((_) {
+        Future.delayed(Duration(milliseconds: (_stepTime * 1000) - 500), () {
           load.setI(65.535);
           Future.delayed(const Duration(milliseconds: 100), () => load.setV(65.535));
         });
