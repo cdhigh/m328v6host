@@ -1,6 +1,13 @@
 {
-  "lastest": "1.2.1",
+  "lastest": "1.2.2",
   "history": [
+    {
+      "version": "1.2.2",
+      "build": "2022-04-02",
+      "android": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.2/m328v6_V1.2.2.apk",
+      "windows": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.2/m328v6_win_V1.2.2.zip",
+      "whatsnew": "1.连接电子负载后更快的显示下位机信息"
+    },
     {
       "version": "1.2.1",
       "build": "2022-03-21",
