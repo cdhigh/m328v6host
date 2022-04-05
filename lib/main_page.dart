@@ -80,12 +80,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     _timerForReconnect.pause();
   }
 
-  //每隔一段时间重发一次请求额外数据的命令，避免下位机中间复位了
+  ///如果一段时间后没有收到下位机上报的额外数据包，则重发一次请求额外数据的命令，避免下位机中途复位了
   void qeuryVersionPeriodic() {
     final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     load.requestExtraData();
-    Future.delayed(const Duration(milliseconds: 100), load.queryVersion);
-    //_timerForExtraData..reset()..start();
+    Future.delayed(const Duration(milliseconds: 150), load.queryVersion);
+    if (Global.autoSynchronizeTime) {
+      Future.delayed(const Duration(milliseconds: 300), load.synchronizeTime);
+    }
   }
 
   //如果异常中断并且启用了“自动重连”选项，则每隔5s自动尝试重连一次
@@ -170,8 +172,11 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         connProvider.serial.registerListenFunction(newSrlDataReceived);
 
         //连接后马上查询下位机版本号，请求上报额外数据
-        Future.delayed(const Duration(milliseconds: 250), connProvider.load.queryVersion);
-        Future.delayed(const Duration(milliseconds: 500), connProvider.load.requestExtraData);
+        Future.delayed(const Duration(milliseconds: 150), connProvider.load.queryVersion);
+        Future.delayed(const Duration(milliseconds: 300), connProvider.load.requestExtraData);
+        if (Global.autoSynchronizeTime) {
+          Future.delayed(const Duration(milliseconds: 500), connProvider.load.synchronizeTime);
+        }
         _timerForExtraData..reset()..start();
       } else { //断开连接
         final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);

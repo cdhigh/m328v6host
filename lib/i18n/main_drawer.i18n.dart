@@ -68,6 +68,10 @@ extension Localization on String {
       "zh_cn": "运行时间归零",
     } +
     {
+      "en_us": "Synchronize Time",
+      "zh_cn": "同步下位机时间",
+    } +
+    {
       "en_us": "Mode",
       "zh_cn": "切换工作模式",
     } +

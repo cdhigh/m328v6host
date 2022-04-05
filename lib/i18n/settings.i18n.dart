@@ -184,6 +184,14 @@ extension Localization on String {
       "zh_cn": "连接异常断开后自动尝试重新连接",
     } +
     {
+      "en_us": "Auto synchronize time",
+      "zh_cn": "自动同步时间",
+    } +
+    {
+      "en_us": "Auto synchronize time to load",
+      "zh_cn": "连接后自动同步下位机时间",
+    } +
+    {
       "en_us": "Number of points for smooth curve",
       "zh_cn": "用于平滑曲线的点数",
     } +

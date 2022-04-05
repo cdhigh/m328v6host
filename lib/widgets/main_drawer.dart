@@ -187,6 +187,13 @@ class MainDrawerDeviceOperations extends ConsumerWidget {
             load.clearTime();
           },
         ),
+        ListTile(title: Text("Synchronize Time".i18n),
+          enabled: loadMenuEnabled,
+          onTap: () {
+            Navigator.of(context).pop(); //关闭drawer
+            load.synchronizeTime();
+          },
+        ),
         ListTile(title: Text("Turn off Buzzer".i18n),
           enabled: loadMenuEnabled,
           onTap: () {

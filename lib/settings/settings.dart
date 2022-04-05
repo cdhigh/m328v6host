@@ -11,6 +11,7 @@ import '../common/globals.dart';
 import '../common/my_widget_chain.dart';
 import '../common/widget_utils.dart';
 import '../common/event_bus.dart';
+import '../models/connection_provider.dart';
 import '../i18n/settings.i18n.dart';
 import '../widgets/colored_indicator.dart';
 import '../widgets/modal_dialogs.dart';
@@ -55,8 +56,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       //数据组
       buildSettingGroupTile('Data'.i18n),
       SettingTile(title: 'Auto reconnect'.i18n, subTitle: 'Auto reconnect if connection interruption'.i18n,
-            switchValue: Global.autoReconnect, switchCallback: (_)=>onTapAutoReconnect())
-          .intoGestureDetector(onTap: onTapAutoReconnect),
+          switchValue: Global.autoReconnect, switchCallback: onTapAutoReconnect)
+        .intoGestureDetector(onTap: onTapAutoReconnect),
+      SettingTile(title: 'Auto synchronize time'.i18n, subTitle: 'Auto synchronize time to load'.i18n,
+          switchValue: Global.autoSynchronizeTime, switchCallback: onTapAutoSynchronizeTime)
+        .intoGestureDetector(onTap: onTapAutoSynchronizeTime),
       SettingTile(title: 'Number of points for smooth curve'.i18n, subTitle: Text(Global.curvaFilterDotNum.toString()))
         .intoInkWell(onTap: onTapDotSmoothNum),
       SettingTile(title: 'Threshold for smooth curve'.i18n, subTitle: Text(Global.curvaFilterThreshold.toStringAsFixed(3) + " V"))
@@ -305,9 +309,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   ///点击了‘自动重连’功能
-  void onTapAutoReconnect() {
+  void onTapAutoReconnect([_]) {
     setState(() => Global.autoReconnect = !Global.autoReconnect);
     Global.saveProfile();
+  }
+
+  ///点击了“自动同步时间”功能
+  void onTapAutoSynchronizeTime([_]) {
+    setState(() => Global.autoSynchronizeTime = !Global.autoSynchronizeTime);
+    Global.saveProfile();
+    if (Global.autoSynchronizeTime) {
+      final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
+      load.synchronizeTime();
+    }
   }
 
   ///点击了“用于平滑曲线的点数”

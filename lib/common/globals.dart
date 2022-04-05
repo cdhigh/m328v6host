@@ -43,6 +43,7 @@ class Global {
   static KeepScreenOption keepScreenOn = KeepScreenOption.always;
   static DateTime lastPaused = DateTime.now(); //上次切换到后台的时间
   static DateTime lastHeartBeat = DateTime.now(); //上次接收到下位机的时间
+  static bool autoSynchronizeTime = true;  //连接后自动自动同步下位机时间
   static String lastSerialPort = "";
   static int lastBaudRate = 19200;
   static bool autoReconnect = true;  //是否异常中断后自动重连
@@ -68,6 +69,7 @@ class Global {
       curvaEndColor = Color(prefs.getInt('curvaEndColor') ?? 0xff02d39a);
       final onValue = min<int>((prefs.getInt('keepScreenOn') ?? KeepScreenOption.always.index), KeepScreenOption.always.index);
       keepScreenOn = KeepScreenOption.values[onValue];
+      autoSynchronizeTime = prefs.getBool('autoSynchronizeTime') ?? true;
       lastSerialPort = prefs.getString('lastSerialPort') ?? "";
       lastBaudRate = prefs.getInt('lastBaudRate') ?? 19200;
       autoReconnect = prefs.getBool('autoReconnect') ?? true;
@@ -97,6 +99,7 @@ class Global {
     prefs.setInt('curvaStartColor', curvaStartColor.value);
     prefs.setInt('curvaEndColor', curvaEndColor.value);
     prefs.setInt("keepScreenOn", keepScreenOn.index);
+    prefs.setBool('autoSynchronizeTime', autoSynchronizeTime);
     prefs.setString("lastSerialPort", lastSerialPort);
     prefs.setInt('lastBaudRate', lastBaudRate);
     prefs.setBool('autoReconnect', autoReconnect);
