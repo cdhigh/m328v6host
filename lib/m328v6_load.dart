@@ -11,8 +11,8 @@ import 'common/globals.dart';
 
 ///扩展整形功能
 extension AsListLow16Bits on int {
-  ///将整形的低16位分解为5个ASCII码
-  List<int> asUint8List5() {
+  ///将整形的低16位分解为5个ASCII码，最大65535
+  List<int> asUint8ListL16() {
     final retList = List<int>.filled(5, 0);
     int value = this;
     int idx = 0;
@@ -27,15 +27,15 @@ extension AsListLow16Bits on int {
     return retList;
   }
 
-  ///将整形分解为6个ASCII码
-  List<int> asUint8List6() {
-    final retList = List<int>.filled(6, 0);
+  ///将整形分解为5个ASCII码，最大99999
+  List<int> asUint8List5() {
+    final retList = List<int>.filled(5, 0);
     int value = this;
     int idx = 0;
-    if (value > 999999) {
-      value = 999999;
+    if (value > 99999) {
+      value = 99999;
     }
-    for (int i = 100000; i >= 1; i = i ~/ 10) {
+    for (int i = 10000; i >= 1; i = i ~/ 10) {
         retList[idx] = (value ~/ i) + 0x30;
         idx++;
         value %= i;
@@ -67,7 +67,7 @@ class M328v6Load {
   void setV(double volt) {
     final cmd = BytesBuilder();
     cmd.add("^V".codeUnits);
-    cmd.add((volt * 1000).toInt().asUint8List5());
+    cmd.add((volt * 1000).toInt().asUint8ListL16());
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -77,7 +77,7 @@ class M328v6Load {
   void setI(double i) {
     final cmd = BytesBuilder();
     cmd.add("^I".codeUnits);
-    cmd.add((i * 1000).toInt().asUint8List5());
+    cmd.add((i * 1000).toInt().asUint8ListL16());
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -124,19 +124,19 @@ class M328v6Load {
     sendCmd(cmd);
   }
 
-  ///运行时间清零：^T000000$
+  ///运行时间清零：^T00000$
   void clearTime() {
-    final cmd = Uint8List.fromList(r"^T000000$".codeUnits);
+    final cmd = Uint8List.fromList(r"^T00000$".codeUnits);
     sendCmd(cmd);
   }
 
-  ///将上位机的时间同步到下位机: ^T123456$
+  ///将上位机的时间同步到下位机: ^T12345$
   void synchronizeTime() {
     final now = DateTime.now();
     final int nowSeconds = now.hour * 3600 + now.minute * 60 + now.second;
     final cmd = BytesBuilder();
     cmd.add("^T".codeUnits);
-    cmd.add(nowSeconds.asUint8List6());
+    cmd.add(nowSeconds.asUint8List5());
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -152,7 +152,7 @@ class M328v6Load {
   void switchToCR(double resistor) {
     final cmd = BytesBuilder();
     cmd.add("^MR".codeUnits);
-    cmd.add((resistor * 100).toInt().asUint8List5()); //单位切换为下位机使用的10毫欧
+    cmd.add((resistor * 100).toInt().asUint8ListL16()); //单位切换为下位机使用的10毫欧
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -162,7 +162,7 @@ class M328v6Load {
   void switchToCP(double power) {
     final cmd = BytesBuilder();
     cmd.add("^MP".codeUnits);
-    cmd.add((power * 100).toInt().asUint8List5()); //单位切换为下位机使用的10毫瓦
+    cmd.add((power * 100).toInt().asUint8ListL16()); //单位切换为下位机使用的10毫瓦
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -172,7 +172,7 @@ class M328v6Load {
   void setDelayOn(int seconds) {
     final cmd = BytesBuilder();
     cmd.add("^DSO".codeUnits);
-    cmd.add(seconds.asUint8List5());
+    cmd.add(seconds.asUint8ListL16());
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -188,7 +188,7 @@ class M328v6Load {
   void setDelayOff(int seconds) {
     final cmd = BytesBuilder();
     cmd.add("^DSF".codeUnits);
-    cmd.add(seconds.asUint8List5());
+    cmd.add(seconds.asUint8ListL16());
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -204,9 +204,9 @@ class M328v6Load {
   void setPeriodOnOff(int onSeconds, int offSeconds) {
     final cmd = BytesBuilder();
     cmd.add("^DSP".codeUnits);
-    cmd.add(onSeconds.asUint8List5());
+    cmd.add(onSeconds.asUint8ListL16());
     cmd.add(r"$^DSQ".codeUnits);
-    cmd.add(offSeconds.asUint8List5());
+    cmd.add(offSeconds.asUint8ListL16());
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
@@ -228,7 +228,7 @@ class M328v6Load {
   void setBuzzerTime(int onTime) {
     final cmd = BytesBuilder();
     cmd.add("^B".codeUnits);
-    cmd.add(onTime.asUint8List5());
+    cmd.add(onTime.asUint8ListL16());
     cmd.addByte(r"$".codeUnitAt(0));
     sendCmd(cmd.toBytes());
   }
