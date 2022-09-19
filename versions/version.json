@@ -1,6 +1,14 @@
 {
-  "lastest": "1.2.3",
+  "lastest": "1.2.4",
+  "m328v6_lastest": "V6.36 (220918)",
   "history": [
+    {
+      "version": "1.2.4",
+      "build": "2022-09-18",
+      "android": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.4/m328v6_V1.2.4.apk",
+      "windows": "https://github.com/cdhigh/m328v6host/releases/download/v1.2.4/m328v6_win_V1.2.4.zip",
+      "whatsnew": "1. Bugfix: Android 11/12无法发现蓝牙设备<br/>2. 竖屏界面增加单位显示"
+    },
     {
       "version": "1.2.3",
       "build": "2022-04-03",

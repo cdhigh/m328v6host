@@ -320,14 +320,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Row(children: [
       GestureDetector(onDoubleTap: onDoubleTapVset, child: SevenSegmentWithSuperText(
-        title: "V Set".i18n,
+        title: "V Set".i18n + " (V)",
         value: rdProvider.vSet.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.red,
       ),),
       Expanded(child: Container()),
       GestureDetector(onDoubleTap: onDoubleTapIset, child: SevenSegmentWithSuperText(
-        title: "I Set".i18n,
+        title: "I Set".i18n + " (A)",
         value: rdProvider.iSet.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.blue,
@@ -341,14 +341,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Row(children: [
       SevenSegmentWithSuperText(
-        title: "V".i18n,
+        title: "V".i18n + " (V)",
         value: rdProvider.vNow.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.red,
       ),
       Expanded(child: Container()),
       SevenSegmentWithSuperText(
-        title: "I".i18n,
+        title: "I".i18n + " (A)",
         value: rdProvider.iNow.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.blue,
@@ -366,7 +366,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         //功率和模式（包括参数）
         Row(children: [
           SevenSegmentWithSuperText(
-            title: "Power".i18n,
+            title: "Power".i18n + " (W)",
             value: rdProvider.powerIn.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
@@ -374,14 +374,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           Expanded(child: Container()),
           if (mode == "CR")
           SevenSegmentWithSuperText(
-            title: "CR".i18n,
+            title: "CR".i18n + " (R)",
             value: rdProvider.rSet.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
           ),
           if (mode == "CP")
           SevenSegmentWithSuperText(
-            title: "CP".i18n,
+            title: "CP".i18n + " (W)",
             value: rdProvider.pSet.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
@@ -391,14 +391,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         Row(children: [
           GestureDetector(onDoubleTap: onDoubleTapAh,
             child: SevenSegmentWithSuperText(
-              title: "Capacity".i18n,
+              title: "Capacity".i18n + " (Ah)",
               value: rdProvider.ah.toStringAsFixed(3).padLeft(6),
               size: _segDisplaySize,
               color: Colors.cyan,
           )),
           Expanded(child: Container()),
           SevenSegmentWithSuperText(
-            title: "Energy".i18n,
+            title: "Energy".i18n + " (Wh)",
             value: rdProvider.wh.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.cyan,
@@ -407,14 +407,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         //直流内阻和交流内阻
         Row(children: [
           SevenSegmentWithSuperText(
-            title: "Rd".i18n,
+            title: "Rd".i18n + " (R)",
             value: rdProvider.rd.toStringAsFixed(3).padLeft(6),
             size: _segDisplaySize,
             color: Colors.cyan,
           ),
           Expanded(child: Container()),
           SevenSegmentWithSuperText(
-            title: "Ra".i18n,
+            title: "Ra".i18n + " (R)",
             value: rdProvider.ra.toStringAsFixed(3).padLeft(6),
             size: _segDisplaySize,
             color: Colors.cyan,
@@ -424,14 +424,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         //散热器温度和主板温度
         Row(children: [
           SevenSegmentWithSuperText(
-            title: "Heat sink".i18n,
+            title: "Heat sink".i18n + " (C)",
             value: rdProvider.temperature1.toString().padLeft(2),
             size: _segDisplaySize,
             color: Colors.green,
           ),
           const SizedBox(width: 30),
           SevenSegmentWithSuperText(
-            title: "Board".i18n,
+            title: "Board".i18n + " (C)",
             value: rdProvider.temperature2.toString().padLeft(2),
             size: _segDisplaySize,
             color: Colors.green,

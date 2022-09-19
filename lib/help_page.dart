@@ -31,7 +31,6 @@ class _HelpPageState extends State<HelpPage> {
     {"title": "M8电子负载及交流内阻测试仪V6", "link": "https://www.yleee.com.cn/thread-6795-1-2.html"},
     {"title": "M8电子负载及交流内阻测试仪", "link": "https://www.yleee.com.cn/thread-1603-1-1.html"},
     {"title": "M8电子负载实现四线测量", "link": "https://www.yleee.com.cn/thread-29978-1-1.html"},
-    {"title": "M8V6负载之电压零点补偿", "link": "https://www.yleee.com.cn/thread-56373-1-1.html"},
   ];
 
   @override
