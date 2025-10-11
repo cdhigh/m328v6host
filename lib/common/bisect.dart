@@ -1,6 +1,7 @@
 /// Bisection algorithms translated from [Python's standard library]
 /// (https://docs.python.org/3/library/bisect.html).
 ///https://github.com/Israel77/Bisect/blob/master/lib/bisect.dart
+library;
 
 extension Bisect<E> on List<E> {
   /// Inserts an [element] to a sorted [list] while keeping it sorted,

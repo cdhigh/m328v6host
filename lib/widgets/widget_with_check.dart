@@ -1,12 +1,12 @@
 ///生成一个右边有一个选中符号的Widget行
 ///
+library;
 import 'package:flutter/material.dart';
 
 class WidgetWithCheck extends StatelessWidget {
   final Widget title;
   final Color? iconColor;
-  const WidgetWithCheck(this.title, {Key? key, this.iconColor})
-      : super(key: key);
+  const WidgetWithCheck(this.title, {super.key, this.iconColor});
 
   @override
   Widget build(BuildContext context) {

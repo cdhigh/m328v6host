@@ -2,17 +2,18 @@
 /// 配置页面ui实现
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../common/globals.dart';
 import '../common/my_widget_chain.dart';
 import '../common/widget_utils.dart';
 import '../common/event_bus.dart';
 import '../models/connection_provider.dart';
-import '../i18n/settings.i18n.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/colored_indicator.dart';
 import '../widgets/modal_dialogs.dart';
 import '../widgets/widget_with_check.dart';
@@ -20,7 +21,7 @@ import '../version_update/version_check.dart';
 import 'setting_tile.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -34,7 +35,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Settings'.i18n)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.settings)),
       body: buildMainList(context),
     );
   }
@@ -43,42 +44,42 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget buildMainList(BuildContext context) {
     return Container(padding: const EdgeInsets.all(15), child: ListView(children: [
       //通用组
-      buildSettingGroupTile('General'.i18n),
-      SettingTile(title: 'Language', subTitle: displaySelectedLanguage())
+      buildSettingGroupTile(AppLocalizations.of(context)!.general),
+      SettingTile(title: AppLocalizations.of(context)!.language, subTitle: displaySelectedLanguage())
         .intoInkWell(onTap: onTapChangeLanguage),
-      SettingTile(title: 'Theme'.i18n, subTitle: displaySelectedTheme())
+      SettingTile(title: AppLocalizations.of(context)!.theme, subTitle: displaySelectedTheme())
         .intoInkWell(onTap: onTapChangeTheme),
-      SettingTile(title: 'Homepage background color'.i18n, subTitle: displayHomeBkColor())
+      SettingTile(title: AppLocalizations.of(context)!.homepageBackgroundColor, subTitle: displayHomeBkColor())
         .intoInkWell(onTap: onTapHomePageBackgroundColor),
-      SettingTile(title: 'Keep screen on'.i18n, subTitle: displaySelectedScreenOn())
+      SettingTile(title: AppLocalizations.of(context)!.keepScreenOn, subTitle: displaySelectedScreenOn())
         .intoInkWell(onTap: onTapKeepScreenOn),
       
       //数据组
-      buildSettingGroupTile('Data'.i18n),
-      SettingTile(title: 'Auto reconnect'.i18n, subTitle: 'Auto reconnect if connection interruption'.i18n,
+      buildSettingGroupTile(AppLocalizations.of(context)!.data),
+      SettingTile(title: AppLocalizations.of(context)!.autoReconnect, subTitle: AppLocalizations.of(context)!.autoReconnectIfConnectionInterruption,
           switchValue: Global.autoReconnect, switchCallback: onTapAutoReconnect)
         .intoGestureDetector(onTap: onTapAutoReconnect),
-      SettingTile(title: 'Auto synchronize time'.i18n, subTitle: 'Auto synchronize time to load'.i18n,
+      SettingTile(title: AppLocalizations.of(context)!.autoSynchronizeTime, subTitle: AppLocalizations.of(context)!.autoSynchronizeTimeToLoad,
           switchValue: Global.autoSynchronizeTime, switchCallback: onTapAutoSynchronizeTime)
         .intoGestureDetector(onTap: onTapAutoSynchronizeTime),
-      SettingTile(title: 'Number of points for smooth curve'.i18n, subTitle: Text(Global.curvaFilterDotNum.toString()))
+      SettingTile(title: AppLocalizations.of(context)!.numberOfPointsForSmoothCurve, subTitle: Text(Global.curvaFilterDotNum.toString()))
         .intoInkWell(onTap: onTapDotSmoothNum),
-      SettingTile(title: 'Threshold for smooth curve'.i18n, subTitle: Text(Global.curvaFilterThreshold.toStringAsFixed(3) + " V"))
+      SettingTile(title: AppLocalizations.of(context)!.thresholdForSmoothCurve, subTitle: Text("${Global.curvaFilterThreshold.toStringAsFixed(3)} V"))
         .intoInkWell(onTap: onTapSmoothThreshold),
-      SettingTile(title: 'Curve line start color'.i18n, subTitle: displayCurvaStartColor())
+      SettingTile(title: AppLocalizations.of(context)!.curveLineStartColor, subTitle: displayCurvaStartColor())
         .intoInkWell(onTap: onTapCurvaStartColor),
-      SettingTile(title: 'Curve line end color'.i18n, subTitle: displayCurvaEndColor())
+      SettingTile(title: AppLocalizations.of(context)!.curveLineEndColor, subTitle: displayCurvaEndColor())
         .intoInkWell(onTap: onTapCurvaEndColor),
 
       //版本号
-      buildSettingGroupTile('Version'.i18n),
-      SettingTile(title: 'Current version'.i18n, subTitle: (Global.version != "") ? ("V" + Global.version) : ""),
-      SettingTile(title: 'Check frequency'.i18n, subTitle: displayCheckFrequency())
+      buildSettingGroupTile(AppLocalizations.of(context)!.version),
+      SettingTile(title: AppLocalizations.of(context)!.currentVersion, subTitle: (Global.version != "") ? ("V${Global.version}") : ""),
+      SettingTile(title: AppLocalizations.of(context)!.checkFrequency, subTitle: displayCheckFrequency())
         .intoInkWell(onTap: onTapCheckFrequency),
-      SettingTile(title: 'Check for update now'.i18n, subTitle: "https//github.com/cdhigh/m328v6host")
+      SettingTile(title: AppLocalizations.of(context)!.checkForUpdateNow, subTitle: "https//github.com/cdhigh/m328v6host")
         .intoInkWell(onTap: checkUpdateNow, onLongPress: () {
           pasteText("https//github.com/cdhigh/m328v6host");
-          showToast("The link of the official site has been copied to the clipboard".i18n);
+          showToast(AppLocalizations.of(context)!.theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard);
         }),
 
       const SizedBox(height: 100),
@@ -100,9 +101,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       case 'en':
         return 'English';  //不翻译英语，保证任何时候都能识别
       case 'zh_CN':
-        return 'Chinese'.i18n;
+        return AppLocalizations.of(context)!.chinese;
       default:
-        return 'Auto'.i18n;
+        return AppLocalizations.of(context)!.auto;
     }
   }
 
@@ -117,14 +118,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     String? ret = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(title: Text('Language'.i18n),
+        return SimpleDialog(title: Text(AppLocalizations.of(context)!.language),
           children: <Widget>[
             const Divider(),
-            dialogOptionOnLanguage('Auto'.i18n, ''),
+            dialogOptionOnLanguage(AppLocalizations.of(context)!.auto, ''),
             const Divider(),
             dialogOptionOnLanguage('English', 'en'),
             const Divider(),
-            dialogOptionOnLanguage('Chinese'.i18n, 'zh_CN'),
+            dialogOptionOnLanguage(AppLocalizations.of(context)!.chinese, 'zh_CN'),
           ]);
         }
       );
@@ -132,37 +133,37 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     if (ret != null) {
       ref.watch(Global.infoProvider).setLanguage(ret);
     }
-  }
+    }
 
   ///根据选择的主题，显示翻译后的名字
   String displaySelectedTheme() {
     switch (Global.selectedTheme) {
       //case 'dark':
-      //  return 'Dark'.i18n;
+      //  return 'Dark';
       case 'green':
-        return 'Green'.i18n;
+        return AppLocalizations.of(context)!.green;
       case 'blueGrey':
-        return 'Blue Grey'.i18n;
+        return AppLocalizations.of(context)!.blueGrey;
       case 'brown':
-        return 'Brown'.i18n;
+        return AppLocalizations.of(context)!.brown;
       case 'cyan':
-        return 'Cyan'.i18n;
+        return AppLocalizations.of(context)!.cyan;
       case 'lightBlue':
-        return 'Light Blue'.i18n;
+        return AppLocalizations.of(context)!.lightBlue;
       case 'orange':
-        return 'Orange'.i18n;
+        return AppLocalizations.of(context)!.orange;
       case 'pink':
-        return 'Pink'.i18n;
+        return AppLocalizations.of(context)!.pink;
       case 'red':
-        return 'Red'.i18n;
+        return AppLocalizations.of(context)!.red;
       case 'teal':
-        return 'Teal'.i18n;
+        return AppLocalizations.of(context)!.teal;
       case 'lime':
-        return 'Lime'.i18n;
+        return AppLocalizations.of(context)!.lime;
       case 'blue':
-        return 'Blue'.i18n;
+        return AppLocalizations.of(context)!.blue;
       default:
-        return 'Auto'.i18n;
+        return AppLocalizations.of(context)!.auto;
     }
   }
 
@@ -177,36 +178,34 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     String? ret = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(title: Text('Theme'.i18n),
+        return SimpleDialog(title: Text(AppLocalizations.of(context)!.theme),
           children: <Widget>[
             const Divider(),
-            dialogOptionOnColor('Auto'.i18n, '', Colors.lime),
-            dialogOptionOnColor('Blue'.i18n, 'blue', Colors.blue),
-            //dialogOptionOnColor('Dark'.i18n, 'dark', Colors.black),
-            dialogOptionOnColor('Green'.i18n, 'green', Colors.green),
-            dialogOptionOnColor('Blue Grey'.i18n, 'blueGrey', Colors.blueGrey),
-            dialogOptionOnColor('Brown'.i18n, 'brown', Colors.brown),
-            dialogOptionOnColor('Cyan'.i18n, 'cyan', Colors.cyan),
-            dialogOptionOnColor('Light Blue'.i18n, 'lightBlue', Colors.lightBlue),
-            dialogOptionOnColor('Orange'.i18n, 'orange', Colors.orange),
-            dialogOptionOnColor('Pink'.i18n, 'pink', Colors.pink),
-            dialogOptionOnColor('Red'.i18n, 'red', Colors.red),
-            dialogOptionOnColor('Teal'.i18n, 'teal', Colors.teal),
-            dialogOptionOnColor('Lime'.i18n, 'lime', Colors.lime),
+            dialogOptionOnColor(AppLocalizations.of(context)!.auto, '', Colors.lime),
+            dialogOptionOnColor(AppLocalizations.of(context)!.blue, 'blue', Colors.blue),
+            //dialogOptionOnColor('Dark', 'dark', Colors.black),
+            dialogOptionOnColor(AppLocalizations.of(context)!.green, 'green', Colors.green),
+            dialogOptionOnColor(AppLocalizations.of(context)!.blueGrey, 'blueGrey', Colors.blueGrey),
+            dialogOptionOnColor(AppLocalizations.of(context)!.brown, 'brown', Colors.brown),
+            dialogOptionOnColor(AppLocalizations.of(context)!.cyan, 'cyan', Colors.cyan),
+            dialogOptionOnColor(AppLocalizations.of(context)!.lightBlue, 'lightBlue', Colors.lightBlue),
+            dialogOptionOnColor(AppLocalizations.of(context)!.orange, 'orange', Colors.orange),
+            dialogOptionOnColor(AppLocalizations.of(context)!.pink, 'pink', Colors.pink),
+            dialogOptionOnColor(AppLocalizations.of(context)!.red, 'red', Colors.red),
+            dialogOptionOnColor(AppLocalizations.of(context)!.teal, 'teal', Colors.teal),
+            dialogOptionOnColor(AppLocalizations.of(context)!.lime, 'lime', Colors.lime),
           ]);
         }
       );
 
-    if (ret != null) {
-      ref.watch(Global.infoProvider).setTheme(ret);
+    ref.watch(Global.infoProvider).setTheme(ret ?? '');
     }
-  }
 
   ///构建主页背景颜色显示块
   Widget displayHomeBkColor() {
     return ColoredIndicator(
       color: Global.homePageBackgroundColor,
-      size: (Global.currentTheme?.textTheme.bodyText2?.fontSize ?? 14.0) * 0.9,
+      size: (Global.currentTheme?.textTheme.bodyMedium?.fontSize ?? 14.0) * 0.9,
       text: "0x${Global.homePageBackgroundColor.value.toRadixString(16).padLeft(8, '0')}",
       fontBold: false,
       //textColor: Colors.white38,
@@ -217,7 +216,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget displayCurvaStartColor() {
     return ColoredIndicator(
       color: Global.curvaStartColor,
-      size: (Global.currentTheme?.textTheme.bodyText2?.fontSize ?? 14.0) * 0.9,
+      size: (Global.currentTheme?.textTheme.bodyMedium?.fontSize ?? 14.0) * 0.9,
       text: "0x${Global.curvaStartColor.value.toRadixString(16).padLeft(8, '0')}",
       fontBold: false,
       //textColor: Colors.white38,
@@ -228,7 +227,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget displayCurvaEndColor() {
     return ColoredIndicator(
       color: Global.curvaEndColor,
-      size: (Global.currentTheme?.textTheme.bodyText2?.fontSize ?? 14.0) * 0.9,
+      size: (Global.currentTheme?.textTheme.bodyMedium?.fontSize ?? 14.0) * 0.9,
       text: "0x${Global.curvaEndColor.value.toRadixString(16).padLeft(8, '0')}",
       fontBold: false,
       //textColor: Colors.white38,
@@ -266,11 +265,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   String displaySelectedScreenOn() {
     switch (Global.keepScreenOn) {
       case KeepScreenOption.never:
-        return 'Does not keep the screen always on'.i18n;
+        return AppLocalizations.of(context)!.doesNotKeepTheScreenAlwaysOn;
       case KeepScreenOption.onWhenDischarge:
-        return 'Keep screen on during discharge'.i18n;
+        return AppLocalizations.of(context)!.keepScreenOnDuringDischarge;
       default:
-        return 'Keep screen on while the app is running'.i18n;
+        return AppLocalizations.of(context)!.keepScreenOnWhileTheAppIsRunning;
     }
   }
 
@@ -285,28 +284,26 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     KeepScreenOption? ret = await showDialog<KeepScreenOption>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(title: Text('Keep screen on'.i18n),
+        return SimpleDialog(title: Text(AppLocalizations.of(context)!.keepScreenOn),
           children: <Widget>[
             const Divider(),
-            dialogOptionOnScrOn('Does not keep on'.i18n, KeepScreenOption.never),
+            dialogOptionOnScrOn(AppLocalizations.of(context)!.doesNotKeepOn, KeepScreenOption.never),
             const Divider(),
-            dialogOptionOnScrOn('During discharging'.i18n, KeepScreenOption.onWhenDischarge),
+            dialogOptionOnScrOn(AppLocalizations.of(context)!.duringDischarging, KeepScreenOption.onWhenDischarge),
             const Divider(),
-            dialogOptionOnScrOn('During app running'.i18n, KeepScreenOption.always),
+            dialogOptionOnScrOn(AppLocalizations.of(context)!.duringAppRunning, KeepScreenOption.always),
           ]);
         }
       );
 
-    if (ret != null) {
-      setState(() => Global.keepScreenOn = ret);
-      Global.saveProfile();
-      if (Global.keepScreenOn == KeepScreenOption.never) {
-        Wakelock.disable();
-      } else if (Global.keepScreenOn == KeepScreenOption.always) {
-        Wakelock.enable();
-      }
+    setState(() => Global.keepScreenOn = ret ?? KeepScreenOption.never);
+    Global.saveProfile();
+    if (Global.keepScreenOn == KeepScreenOption.never) {
+      WakelockPlus.disable();
+    } else if (Global.keepScreenOn == KeepScreenOption.always) {
+      WakelockPlus.enable();
     }
-  }
+    }
 
   ///点击了‘自动重连’功能
   void onTapAutoReconnect([_]) {
@@ -335,7 +332,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     int? ret = await showDialog<int>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(title: Text('Number of points'.i18n),
+        return SimpleDialog(title: Text(AppLocalizations.of(context)!.numberOfPoints),
           children: <Widget>[
             const Divider(),
             dialogOptionOnDotNum(1),
@@ -368,7 +365,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   ///点击了曲线平滑阀值
   void onTapSmoothThreshold() async {
     String? ret = await showInputDialog(context: context,
-      title: "Enter a value from 0.000 to 1.000 (V)".i18n,
+      title: AppLocalizations.of(context)!.enterAValueFrom0000To1000V,
       initialText: Global.curvaFilterThreshold.toStringAsFixed(3),
       //formatters: [DecimalTextInputFormatter(), CustomMaxValueInputFormatter(1.0)],
     );
@@ -376,7 +373,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     if (ret != null) {
       final value = double.tryParse(ret);
       if ((value == null) || (value < 0.0) || (value > 1.0)) {
-        showToast("The value must be greater than 0.000 and less than 1.000".i18n);
+        showToast(AppLocalizations.of(context)!.theValueMustBeGreaterThan0000AndLessThan1000);
       } else {
         setState(() {Global.curvaFilterThreshold = value;});
       }
@@ -387,15 +384,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   String displayCheckFrequency() {
     switch (Global.checkUpdateFrequency) {
       case 0:
-        return "Never".i18n;
+        return AppLocalizations.of(context)!.never;
       case 7:
-        return "One week".i18n;
+        return AppLocalizations.of(context)!.oneWeek;
       case 30:
-        return "One month".i18n;
+        return AppLocalizations.of(context)!.oneMonth;
       case 360:
-        return "One year".i18n;
+        return AppLocalizations.of(context)!.oneYear;
       default:
-        return "%s days".i18n.fill([Global.checkUpdateFrequency]);
+        return AppLocalizations.of(context)!.days(Global.checkUpdateFrequency.toString());
     }
   }
 
@@ -410,46 +407,44 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     int? ret = await showDialog<int>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(title: Text('Check frequency'.i18n),
+        return SimpleDialog(title: Text(AppLocalizations.of(context)!.checkFrequency),
           children: <Widget>[
             const Divider(),
-            dialogOptionOnDayNum("Never".i18n, 0),
+            dialogOptionOnDayNum(AppLocalizations.of(context)!.never, 0),
             const Divider(),
-            dialogOptionOnDayNum("One week".i18n, 7),
+            dialogOptionOnDayNum(AppLocalizations.of(context)!.oneWeek, 7),
             const Divider(),
-            dialogOptionOnDayNum("One month".i18n, 30),
+            dialogOptionOnDayNum(AppLocalizations.of(context)!.oneMonth, 30),
             const Divider(),
-            dialogOptionOnDayNum("One year".i18n, 360),
+            dialogOptionOnDayNum(AppLocalizations.of(context)!.oneYear, 360),
           ]);
         }
       );
 
-    if (ret != null) {
-      setState(() {Global.checkUpdateFrequency = ret;});
-      Global.saveProfile();
+    setState(() {Global.checkUpdateFrequency = ret ?? 0;});
+    Global.saveProfile();
     }
-  }
 
   ///点击了现在检查新版本
   void checkUpdateNow() async {
-    final newVer = await checkUpdate(silent: false);
+    final newVer = await checkUpdate(context, silent: false);
     if (newVer == null) {
       return;
     }
 
     final newVerNo = newVer.version;
     final whatsnew = newVer.whatsNew.replaceAll("<br/>", "\n");
-    final ret = await showOkCancelAlertDialog(context: context, title: "Found new version [%s]".i18n.fill([newVerNo]), 
-      okText: "Download".i18n,
+    final ret = await showOkCancelAlertDialog(context: context, title: AppLocalizations.of(context)!.foundNewVersion(newVerNo), 
+      okText: AppLocalizations.of(context)!.download,
       content:  Column(mainAxisSize: MainAxisSize.min, 
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Whatsnew:".i18n, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(AppLocalizations.of(context)!.whatsnew, style: const TextStyle(fontWeight: FontWeight.bold)),
           const Divider(),
           Text(whatsnew),
           const Divider(),
           Padding(padding: const EdgeInsets.only(top: 20), 
-            child: Text("[The download link has been copied to the clipboard]".i18n, textScaleFactor: 0.8)),
+            child: Text(AppLocalizations.of(context)!.theDownloadLinkHasBeenCopiedToTheClipboard, textScaleFactor: 0.8)),
         ],),
     );
     if (ret == true) {

@@ -3,6 +3,7 @@
 /// 还有可能在右边有一个Switch
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 import '../common/my_widget_chain.dart';
 import '../common/globals.dart';
@@ -19,8 +20,8 @@ class SettingTile extends StatelessWidget {
   final bool? switchValue; //null则不显示Switch
   final ValueChanged? switchCallback; //Switch改变回调
 
-  const SettingTile({Key? key, required this.title, required this.subTitle, this.switchValue, this.switchCallback, this.subMaxLines=1}) : 
-    assert((subTitle is String) || (subTitle is Widget)), super(key: key);
+  const SettingTile({super.key, required this.title, required this.subTitle, this.switchValue, this.switchCallback, this.subMaxLines=1}) : 
+    assert((subTitle is String) || (subTitle is Widget));
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class SettingsThemeTile extends StatelessWidget {
   final String title;
   final String mark;  //保存到本机的标识符，与特定语言无关
   final Color color;
-  const SettingsThemeTile({Key? key, required this.title, required this.mark, this.color = Colors.black87}) : super(key: key);
+  const SettingsThemeTile({super.key, required this.title, required this.mark, this.color = Colors.black87});
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +84,7 @@ class LinkTile extends StatelessWidget {
   static const tileHeight = 50.0;
   final String title;
   
-  const LinkTile({Key? key, required this.title}) : super(key: key);
+  const LinkTile({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 ///一个左上角有小字体提示的文本框
+library;
 
 import 'package:flutter/material.dart';
 import 'package:segment_display/segment_display.dart';
@@ -10,7 +11,7 @@ class SevenSegmentWithSuperText extends StatelessWidget {
   final double size;
   final String title;
   
-  const SevenSegmentWithSuperText({Key? key, required this.value, required this.size, this.color, required this.title}) : super(key: key);
+  const SevenSegmentWithSuperText({super.key, required this.value, required this.size, this.color, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +34,13 @@ class LeftSuperScriptText extends StatelessWidget {
   final TextStyle style;
   final TextStyle? scriptStyle;
 
-  const LeftSuperScriptText(this.mainText, this.scriptText, {Key? key, required this.style, this.scriptStyle}) : super(key: key);
+  const LeftSuperScriptText(this.mainText, this.scriptText, {super.key, required this.style, this.scriptStyle});
 
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(child: Text(scriptText, style: scriptStyle), padding: const EdgeInsets.only(left: 20)),
+        Padding(padding: const EdgeInsets.only(left: 20), child: Text(scriptText, style: scriptStyle)),
         Text(mainText, style: style,)
       ],);
   }

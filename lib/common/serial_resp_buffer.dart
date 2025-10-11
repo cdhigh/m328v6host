@@ -2,6 +2,7 @@
 /// 存放下位机发送给上位机的数据缓存，为一个环形缓冲区
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:typed_data';
 
 class SerialRespBuffer {

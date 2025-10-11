@@ -1,5 +1,6 @@
 /// 一些简单的常用的小工具函数
 /// Author: cdhigh <https://github.com/cdhigh>
+library;
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -41,7 +42,7 @@ String formatBytes(int bytes, {int decimals=2}) {
   }
   const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   var i = (log(bytes) / log(1024)).floor();
-  return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + ' ' + suffixes[i];
+  return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
 }
 
 ///判断一个字符串是否是合法的URL

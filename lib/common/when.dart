@@ -5,8 +5,10 @@
 /// EEEE: 英文星期(Monday...), EEE：三位英文星期缩写(Mon...)
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 使用方法：time.format('yyyy-mm-dd HH:MM:SS')
+library;
 import 'bisect.dart';
-import '../i18n/common.i18n.dart';
+import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 
 extension WhenDuration on Duration {
   ///将Duration转换为HH:MM:SS格式的字符串
@@ -127,16 +129,36 @@ extension When on DateTime {
   DateTime lastMoment() => DateTime(year, month, day, 23, 59, 59, 999);
 
   ///将一个DateTime实例翻译为相对当前时间的直接可读的字符串，比如 1 days ago
-  String humanize() {
+  String humanize([BuildContext? context]) {
     // breakPoints 必须是已经排好序的，不然无法进行二分查找
     const breakPoints = [-3600 * 24 * 365, -3600 * 24, -3600, -60, -1, 1, 60, 3600, 3600 * 24, 3600 * 24 * 365];
-    const tmpls = ['%s years later', '%s days later', '%s hours later', '%s minutes later', '%s seconds later', 'just now', 
-            '%s seconds ago', '%s minutes ago', '%s hours ago', '%s days ago', '%s years ago'];
     
     var seconds = DateTime.now().difference(this).inSeconds; //负数表示将来的时间，正数表示过去的时间
     var point = breakPoints.bisectLeft(seconds);
     var unit = seconds >= 0 ? breakPoints[point - 1] : breakPoints[point];
-    return tmpls[point].i18n.fill([(seconds ~/ unit).toString()]);
+    var count = (seconds ~/ unit).toString();
+    
+    if (context != null) {
+      switch (point) {
+        case 0: return AppLocalizations.of(context)!.yearsLater(count);
+        case 1: return AppLocalizations.of(context)!.daysLater(count);
+        case 2: return AppLocalizations.of(context)!.hoursLater(count);
+        case 3: return AppLocalizations.of(context)!.minutesLater(count);
+        case 4: return AppLocalizations.of(context)!.secondsLater(count);
+        case 5: return AppLocalizations.of(context)!.justNow;
+        case 6: return AppLocalizations.of(context)!.secondsAgo(count);
+        case 7: return AppLocalizations.of(context)!.minutesAgo(count);
+        case 8: return AppLocalizations.of(context)!.hoursAgo(count);
+        case 9: return AppLocalizations.of(context)!.daysAgo(count);
+        case 10: return AppLocalizations.of(context)!.yearsAgo(count);
+        default: return AppLocalizations.of(context)!.justNow;
+      }
+    } else {
+      // Fallback to English if no context provided
+      const tmpls = ['%s years later', '%s days later', '%s hours later', '%s minutes later', '%s seconds later', 'just now', 
+              '%s seconds ago', '%s minutes ago', '%s hours ago', '%s days ago', '%s years ago'];
+      return tmpls[point].replaceAll('%s', count);
+    }
   }
 
   //////////////////////////////////////////////////////////

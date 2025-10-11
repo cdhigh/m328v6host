@@ -2,6 +2,7 @@
 /// 单次放电的统计数据
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 
 class LoadStatsModel {
   final double initialV;     //初始电压

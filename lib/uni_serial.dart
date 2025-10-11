@@ -3,18 +3,19 @@
 /// 所以使用此文件对外提供一个统一的串口连接和处理接口，屏蔽不同平台的差异
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:io' show Platform;
 import 'dart:typed_data';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'l10n/app_localizations.dart';
 import 'package:usb_serial/usb_serial.dart' as serial_android;
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as sb_android;
 //import 'package:serial_port_win32/serial_port_win32.dart' as serial_win;
 
 //编译apk需要注释掉 flutter_libserialport，取消注释 flutter_libserialport_stub
-import 'package:flutter_libserialport/flutter_libserialport.dart' as lib_serial;
-//import 'flutter_libserialport_stub.dart' as lib_serial;
-import 'i18n/common.i18n.dart';
+//import 'package:flutter_libserialport/flutter_libserialport.dart' as lib_serial;
+import 'flutter_libserialport_stub.dart' as lib_serial;
 import 'common/globals.dart';
 import 'common/event_bus.dart';
 import 'common/widget_utils.dart';
@@ -35,8 +36,8 @@ class UniSerial {
   static final UniSerial _singleton = UniSerial._internal(); //保存单例
   factory UniSerial() => _singleton; //工厂构造函数
 
-  get name => _name;
-  get baudRate => _baudRate;
+  String get name => _name;
+  int get baudRate => _baudRate;
 
   //获取当前可用的串口名字列表
   Future<List<String>> getAvailablePortNames() async {
@@ -59,7 +60,7 @@ class UniSerial {
           final blueList = await _bluetooth.getBondedDevices();
           for (final d in blueList) {
             //将MAC地址添加到名字中，方便后续连接
-            final bName = (d.name ?? "") + " [${d.address}]";
+            final bName = "${d.name ?? ""} [${d.address}]";
             names.add(bName);
             _portType[bName] = "BLUETOOTH";
           }
@@ -102,9 +103,53 @@ class UniSerial {
     return _portType[name] ?? "UNKNOWN";
   }
 
+  ///带重试机制的蓝牙连接
+  Future<sb_android.BluetoothConnection> _connectWithRetry(String address, int maxRetries) async {
+    Exception? lastException;
+    
+    for (int attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // 设置连接超时
+        final connection = await sb_android.BluetoothConnection.toAddress(address)
+            .timeout(const Duration(seconds: 10));
+        return connection;
+      } catch (e) {
+        lastException = e is Exception ? e : Exception(e.toString());
+        
+        // 如果不是最后一次尝试，等待一段时间后重试
+        if (attempt < maxRetries) {
+          await Future.delayed(Duration(milliseconds: 500 * attempt));
+        }
+      }
+    }
+    
+    throw lastException ?? Exception("Connection failed after $maxRetries attempts");
+  }
+
+  ///格式化蓝牙连接错误信息
+  String _formatBluetoothError(dynamic error, [BuildContext? context]) {
+    final errorStr = error.toString().toLowerCase();
+    
+    if (errorStr.contains('timeout') || errorStr.contains('read failed')) {
+      return context != null ? AppLocalizations.of(context)!.bluetoothConnectionTimeout : "Bluetooth connection timeout";
+    } else if (errorStr.contains('socket might closed')) {
+      return context != null ? AppLocalizations.of(context)!.bluetoothConnectionClosed : "Bluetooth connection closed";
+    } else if (errorStr.contains('connection refused')) {
+      return context != null ? AppLocalizations.of(context)!.bluetoothConnectionRefused : "Bluetooth connection refused";
+    } else if (errorStr.contains('device not found')) {
+      return context != null ? AppLocalizations.of(context)!.bluetoothDeviceNotFound : "Bluetooth device not found";
+    } else if (errorStr.contains('permission denied')) {
+      return context != null ? AppLocalizations.of(context)!.bluetoothPermissionDenied : "Bluetooth permission denied";
+    } else {
+      return context != null 
+          ? AppLocalizations.of(context)!.bluetoothConnectionFailed(error.toString())
+          : "Bluetooth connection failed: ${error.toString()}";
+    }
+  }
+
   //创建一个串口，成功返回空字符串，否则返回错误描述字符串，如果没有特定错误，则字符串为"Error"
   //此函数内部可能会抛出异常
-  Future<String> open(String name, int baudRate) async {
+  Future<String> open(String name, int baudRate, [BuildContext? context]) async {
     assert(name.isNotEmpty && (baudRate >= 9600) && (baudRate <= 115200));
     _port = null;
     _name = "";
@@ -117,24 +162,25 @@ class UniSerial {
         final iStart = name.indexOf("[");
         final iEnd = name.indexOf("]");
         if ((iStart < 0) || (iEnd < 0)) {
-          return "Name of device invalid".i18n;
+          return context != null ? AppLocalizations.of(context)!.nameOfDeviceInvalid : "Name of device invalid";
         }
 
         final addr = name.substring(iStart + 1, iEnd);
         try {
-          final connection = await sb_android.BluetoothConnection.toAddress(addr);
+          // 添加连接超时和重试机制
+          final connection = await _connectWithRetry(addr, 3);
           _port = connection;
           _name = name;
           _baudRate = baudRate;
           return "";
         } catch (e) {
-          return e.toString();
+          return _formatBluetoothError(e, null);
         }
       } else {
         final ports = await serial_android.UsbSerial.listDevices();
         final idx = ports.indexWhere((elem) => elem.deviceName == name);
         if (idx < 0) {
-          return "Name of device invalid".i18n;
+          return "Name of device invalid";
         }
 
         serial_android.UsbPort? port;
@@ -150,7 +196,7 @@ class UniSerial {
           return "Error";
         } else {
           _port = port;
-          port.setPortParameters(baudRate, serial_android.UsbPort.DATABITS_8, serial_android.UsbPort.STOPBITS_1, serial_android.UsbPort.PARITY_NONE);
+          await port.setPortParameters(baudRate, serial_android.UsbPort.DATABITS_8, serial_android.UsbPort.STOPBITS_1, serial_android.UsbPort.PARITY_NONE);
           _name = name;
           _baudRate = baudRate;
           return "";
@@ -195,10 +241,10 @@ class UniSerial {
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       if (_port is sb_android.BluetoothConnection) {
         sb_android.BluetoothConnection p = _port;
-        _streamrSubscript = p.input?.listen(func, onError: ([_]) {sendDisconnectBroadcast("-1");});
+        _streamrSubscript = p.input?.listen(func, onError: (_) {sendDisconnectBroadcast("-1");});
       } else {
         serial_android.UsbPort p = _port;
-        _streamrSubscript = p.inputStream?.listen(func, onError: ([_]) {sendDisconnectBroadcast("-1");});
+        _streamrSubscript = p.inputStream?.listen(func, onError: (_) {sendDisconnectBroadcast("-1");});
       }
     } else {
       //Windows需要先注册监听函数，再打开端口
@@ -213,7 +259,7 @@ class UniSerial {
       }*/
 
       _reader = lib_serial.SerialPortReader(_port);
-      _streamrSubscript = _reader!.stream.listen(func, onDone: ([_]) {sendDisconnectBroadcast("-1");}, onError: ([_]) {sendDisconnectBroadcast("-1");});
+      _streamrSubscript = _reader!.stream.listen(func, onDone: () {sendDisconnectBroadcast("-1");}, onError: (_) {sendDisconnectBroadcast("-1");});
     }
     
     return true;

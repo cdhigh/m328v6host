@@ -6,12 +6,12 @@
 import os, sys, re, shutil, datetime
 import zipfile
 
-__VERSION__ = "v1.0 2022-02-22"
+__VERSION__ = "2025-10-11"
 
 #构建的命令，这些命令会逐个运行
 cmdList = ["flutter clean", "flutter pub get", "flutter build windows"]
 
-M328V6_DIR = os.path.dirname(__file__)
+M328V6_DIR = os.path.dirname(os.path.abspath(__file__))
 PUB_YAML_FILE = os.path.join(M328V6_DIR, "pubspec.yaml")
 UNI_SERIAL_FILE = os.path.join(M328V6_DIR, "lib", "uni_serial.dart")
 GLOBAL_FILE = os.path.join(M328V6_DIR, "lib", "common", "globals.dart")

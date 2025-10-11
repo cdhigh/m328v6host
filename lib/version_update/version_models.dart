@@ -1,5 +1,6 @@
 /// 服务器上的软件版本数据结构
 /// Author: cdhigh <https://github.com/cdhigh>
+library;
 
 ///某一个版本信息实体类
 class SingleVersion {

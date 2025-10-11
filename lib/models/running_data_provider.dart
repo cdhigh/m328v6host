@@ -2,6 +2,7 @@
 /// 封装电子负载运行数据为Provider使用
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 
 //用于Provider的容器类，这里面的单位全部调整为正常的单位：伏，安，安时，瓦时，欧姆等

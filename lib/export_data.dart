@@ -2,6 +2,7 @@
 /// 导出数据到EXCEL或其他格式
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:io';
 //import 'dart:ui' as ui;
 //import 'dart:typed_data';
@@ -13,7 +14,7 @@ import 'package:path/path.dart' as p;
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
 import 'package:syncfusion_officechart/officechart.dart' as officechart;
 import 'package:file_picker/file_picker.dart';
-import 'i18n/export_data.i18n.dart';
+import '../l10n/app_localizations.dart';
 import 'common/iconfont.dart';
 import 'common/globals.dart';
 import 'common/common_utils.dart';
@@ -22,7 +23,7 @@ import 'widgets/modal_dialogs.dart';
 import 'models/volt_history_provider.dart';
 
 class ExportPage extends ConsumerStatefulWidget {
-  const ExportPage({Key? key}) : super(key: key);
+  const ExportPage({super.key});
   @override
   _ExportPageState createState() => _ExportPageState();
 }
@@ -40,14 +41,14 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   @override
   void initState() {
     super.initState();
-    _nameCtrller.text = "m328v6_" + DateTime.now().format('yyyymmdd_HHMMSS') + ".xlsx";
+    _nameCtrller.text = "m328v6_${DateTime.now().format('yyyymmdd_HHMMSS')}.xlsx";
     Future.delayed(const Duration(milliseconds: 500), requestPermission); //延时确认权限并获取路径
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Export curva data'.i18n)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.exportCurvaData)),
       body: buildMainList(context),
     );
   }
@@ -61,26 +62,26 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     return Container(padding: const EdgeInsets.all(10), child:
       Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(padding: const EdgeInsets.only(top: 5), child: Text("Export type".i18n)),
+          Padding(padding: const EdgeInsets.only(top: 5), child: Text(AppLocalizations.of(context)!.exportType)),
           Padding(padding: const EdgeInsets.only(left: 5), child: Row(children: [
             const Padding(padding: EdgeInsets.only(right: 12), child: Icon(IconFont.fileType),),
             Expanded(child: DropdownButton(value: _exportType, 
               //isExpanded: true,
               items: [
-                DropdownMenuItem(value: "XLSX", child: Text("XLSX file".i18n)),
-                DropdownMenuItem(value: "TXT", child: Text("TXT file".i18n)),],
+                DropdownMenuItem(value: "XLSX", child: Text(AppLocalizations.of(context)!.xlsxFile)),
+                DropdownMenuItem(value: "TXT", child: Text(AppLocalizations.of(context)!.txtFile)),],
               onChanged: (newValue) {setState(() {
                 _exportType = newValue.toString();
                 _nameCtrller.text = p.setExtension(_nameCtrller.text, (newValue == "XLSX") ? ".xlsx" : ".txt");
                 });
               },),),
           ]),),
-          Padding(padding: const EdgeInsets.only(top: 5), child: Text("Export folder".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 5), child: Text(AppLocalizations.of(context)!.exportFolder),),
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child: TextField(controller: _folderCtrller,
               onChanged: (_) {setState((){});},
               decoration: InputDecoration(
-                labelText: _folderCtrller.text.isNotEmpty ? null : "Select a folder to save".i18n,
+                labelText: _folderCtrller.text.isNotEmpty ? null : AppLocalizations.of(context)!.selectAFolderToSave,
                 prefixIcon: const Icon(Icons.folder_open)),
             ),),
             IconButton(icon: const Icon(IconFont.dot3), onPressed: () async {
@@ -90,25 +91,25 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                 setState(() {_folderCtrller.text = ret;});
               }
             }),],),
-          Padding(padding: const EdgeInsets.only(top: 5), child: Text("File name".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 5), child: Text(AppLocalizations.of(context)!.fileName),),
           TextField(controller: _nameCtrller,
             onChanged: (_) {setState((){});},
             decoration: InputDecoration(
-              labelText: _nameCtrller.text.isNotEmpty ? null : "Enter a name to save".i18n,
+              labelText: _nameCtrller.text.isNotEmpty ? null : AppLocalizations.of(context)!.enterANameToSave,
               prefixIcon: const Icon(Icons.file_copy_outlined)),
           ),
-          Padding(padding: const EdgeInsets.only(top: 5), child: Text("Remark".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 5), child: Text(AppLocalizations.of(context)!.remark),),
           TextField(controller: _remarkCtrller,
             onChanged: (_) {setState((){});},
             decoration: InputDecoration(
-              labelText: _remarkCtrller.text.isNotEmpty ? null : "Enter a remark".i18n,
+              labelText: _remarkCtrller.text.isNotEmpty ? null : AppLocalizations.of(context)!.enterARemark,
               prefixIcon: const Icon(Icons.comment_bank_outlined)),
           ),
           Padding(padding: const EdgeInsets.all(20), child: 
             ConstrainedBox(constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               child: ElevatedButton(
                 onPressed: btnEnabled ? doExport : null, 
-                child: Text("Export".i18n)),
+                child: Text(AppLocalizations.of(context)!.export)),
             ),),
       ]),);
   }
@@ -128,7 +129,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       return;
     }
 
-    showOkAlertDialog(context: context, title: "Success".i18n, content: Text("Export %s file success".i18n.fill([_exportType])));
+    showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.exportFileSuccess(_exportType)));
   }
 
   ///导出为XLSX
@@ -140,8 +141,8 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
     //填充数据
     final remarkText = _remarkCtrller.text.trim();
-    sheet.getRangeByName('A1').setText('Time'.i18n);
-    sheet.getRangeByName('B1').setText(remarkText.isEmpty ? 'Voltage'.i18n : remarkText);
+    sheet.getRangeByName('A1').setText(AppLocalizations.of(context)!.time);
+    sheet.getRangeByName('B1').setText(remarkText.isEmpty ? AppLocalizations.of(context)!.voltage : remarkText);
     final list = _vhProvider.vHistory; //cloneList()
     for (var idx = 0; idx < list.length; idx++) {
       final xlsIdx = idx + 2;

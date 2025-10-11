@@ -1,0 +1,1554 @@
+{
+  "@@locale": "en",
+  "okay": "Okay",
+  "@okay": {
+    "description": "OK button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "Start button text"
+  },
+  "end": "End",
+  "@end": {
+    "description": "End button text"
+  },
+  "noItem": "No item",
+  "@noItem": {
+    "description": "No item text"
+  },
+  "noData": "No data",
+  "@noData": {
+    "description": "No data text"
+  },
+  "itemsCount": "Items: {count}",
+  "@itemsCount": {
+    "description": "Items count text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "choose": "Choose",
+  "@choose": {
+    "description": "Choose button text"
+  },
+  "empty": "[Empty]",
+  "@empty": {
+    "description": "Empty text"
+  },
+  "inputNewText": "Input new text",
+  "@inputNewText": {
+    "description": "Input new text placeholder"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search button text"
+  },
+  "connectionTimeout": "Connection timeout",
+  "@connectionTimeout": {
+    "description": "Connection timeout error"
+  },
+  "timeout": "Timeout",
+  "@timeout": {
+    "description": "Timeout error"
+  },
+  "pickAColor": "Pick a color",
+  "@pickAColor": {
+    "description": "Pick a color text"
+  },
+  "date": "Date",
+  "@date": {
+    "description": "Date text"
+  },
+  "checkForUpdateFailed": "Check for update failed",
+  "@checkForUpdateFailed": {
+    "description": "Check for update failed error"
+  },
+  "versionUpToDate": "Your version is up to date",
+  "@versionUpToDate": {
+    "description": "Version up to date message"
+  },
+  "newVersionAvailable": "There is a new version ({version}), the download link has been copied to the clipboard",
+  "@newVersionAvailable": {
+    "description": "New version available message",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceNameInvalid": "Name of device invalid",
+  "@deviceNameInvalid": {
+    "description": "Device name invalid error"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings page title"
+  },
+  "externalStorageDirectory": "External storage directory",
+  "@externalStorageDirectory": {
+    "description": "External storage directory text"
+  },
+  "appDocumentDirectory": "App document directory",
+  "@appDocumentDirectory": {
+    "description": "App document directory text"
+  },
+  "prompt": "Prompt",
+  "@prompt": {
+    "description": "Prompt text"
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button text"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button text"
+  },
+  "general": "General",
+  "@general": {
+    "description": "General section title"
+  },
+  "keepScreenOn": "Keep screen on",
+  "@keepScreenOn": {
+    "description": "Keep screen on setting"
+  },
+  "doesNotKeepScreenOn": "Does not keep the screen always on",
+  "@doesNotKeepScreenOn": {
+    "description": "Does not keep screen on option"
+  },
+  "keepScreenOnDuringDischarge": "Keep screen on during discharge",
+  "@keepScreenOnDuringDischarge": {
+    "description": "Keep screen on during discharge option"
+  },
+  "keepScreenOnWhileAppRunning": "Keep screen on while the app is running",
+  "@keepScreenOnWhileAppRunning": {
+    "description": "Keep screen on while app running option"
+  },
+  "doesNotKeepOn": "Does not keep on",
+  "@doesNotKeepOn": {
+    "description": "Does not keep on option"
+  },
+  "duringDischarging": "During discharging",
+  "@duringDischarging": {
+    "description": "During discharging option"
+  },
+  "duringAppRunning": "During app running",
+  "@duringAppRunning": {
+    "description": "During app running option"
+  },
+  "auto": "Auto",
+  "@auto": {
+    "description": "Auto option"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "chinese": "Chinese",
+  "@chinese": {
+    "description": "Chinese language option"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting"
+  },
+  "restartRequired": "Restart required",
+  "@restartRequired": {
+    "description": "Restart required message"
+  },
+  "restartRequiredMessage": "You need to restart the application to apply the language change",
+  "@restartRequiredMessage": {
+    "description": "Restart required message text"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme setting"
+  },
+  "light": "Light",
+  "@light": {
+    "description": "Light theme option"
+  },
+  "dark": "Dark",
+  "@dark": {
+    "description": "Dark theme option"
+  },
+  "homepageBackgroundColor": "Homepage background color",
+  "@homepageBackgroundColor": {
+    "description": "Homepage background color setting"
+  },
+  "blue": "Blue",
+  "@blue": {
+    "description": "Blue color option"
+  },
+  "green": "Green",
+  "@green": {
+    "description": "Green color option"
+  },
+  "blueGrey": "Blue Grey",
+  "@blueGrey": {
+    "description": "Blue Grey color option"
+  },
+  "brown": "Brown",
+  "@brown": {
+    "description": "Brown color option"
+  },
+  "cyan": "Cyan",
+  "@cyan": {
+    "description": "Cyan color option"
+  },
+  "lightBlue": "Light Blue",
+  "@lightBlue": {
+    "description": "Light Blue color option"
+  },
+  "orange": "Orange",
+  "@orange": {
+    "description": "Orange color option"
+  },
+  "pink": "Pink",
+  "@pink": {
+    "description": "Pink color option"
+  },
+  "red": "Red",
+  "@red": {
+    "description": "Red color option"
+  },
+  "teal": "Teal",
+  "@teal": {
+    "description": "Teal color option"
+  },
+  "lime": "Lime",
+  "@lime": {
+    "description": "Lime color option"
+  },
+  "unconnected": "Unconnected",
+  "@unconnected": {
+    "description": "Unconnected status text"
+  },
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status text"
+  },
+  "disconnect": "Disconnect",
+  "@disconnect": {
+    "description": "Disconnect button text"
+  },
+  "connect": "Connect",
+  "@connect": {
+    "description": "Connect button text"
+  },
+  "vSet": "V Set",
+  "@vSet": {
+    "description": "Voltage set text"
+  },
+  "iSet": "I Set",
+  "@iSet": {
+    "description": "Current set text"
+  },
+  "v": "V",
+  "@v": {
+    "description": "Voltage text"
+  },
+  "i": "I",
+  "@i": {
+    "description": "Current text"
+  },
+  "power": "Power",
+  "@power": {
+    "description": "Power text"
+  },
+  "cr": "CR",
+  "@cr": {
+    "description": "CR mode text"
+  },
+  "cp": "CP",
+  "@cp": {
+    "description": "CP mode text"
+  },
+  "capacity": "Capacity",
+  "@capacity": {
+    "description": "Capacity text"
+  },
+  "energy": "Energy",
+  "@energy": {
+    "description": "Energy text"
+  },
+  "rd": "Rd",
+  "@rd": {
+    "description": "DC resistance text"
+  },
+  "ra": "Ra",
+  "@ra": {
+    "description": "AC resistance text"
+  },
+  "heatSink": "Heat sink",
+  "@heatSink": {
+    "description": "Heat sink text"
+  },
+  "board": "Board",
+  "@board": {
+    "description": "Board text"
+  },
+  "voltageMustBeLessThan65Volts": "The voltage must be less than 65 volts",
+  "@voltageMustBeLessThan65Volts": {
+    "description": "Voltage limit error message"
+  },
+  "currentMustBeLessThan15A": "The current must be less than 15A",
+  "@currentMustBeLessThan15A": {
+    "description": "Current limit error message"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm dialog title"
+  },
+  "clearAh": "Clear Ah?",
+  "@clearAh": {
+    "description": "Clear Ah confirmation message"
+  },
+  "clearCurvaData": "Clear curva data",
+  "@clearCurvaData": {
+    "description": "Clear curva data menu item"
+  },
+  "showLoadStats": "Show load stats",
+  "@showLoadStats": {
+    "description": "Show load stats menu item"
+  },
+  "turnOnElectronicLoad": "Turn on the electronic load?\nRemember to clear Ah, if needed",
+  "@turnOnElectronicLoad": {
+    "description": "Turn on electronic load confirmation message"
+  },
+  "turnOffElectronicLoad": "Turn off the electronic load?",
+  "@turnOffElectronicLoad": {
+    "description": "Turn off electronic load confirmation message"
+  },
+  "dischargeHasEnded": "Discharge has ended",
+  "@dischargeHasEnded": {
+    "description": "Discharge ended notification message"
+  },
+  "connection": "Connection",
+  "@connection": {
+    "description": "Connection page title"
+  },
+  "availableDevices": "Available devices",
+  "@availableDevices": {
+    "description": "Available devices text"
+  },
+  "baudRate": "Baud rate",
+  "@baudRate": {
+    "description": "Baud rate label text"
+  },
+  "noDevice": "No device",
+  "@noDevice": {
+    "description": "No device available text"
+  },
+  "baudRateIsInvalid": "Baud rate is invalid",
+  "@baudRateIsInvalid": {
+    "description": "Baud rate validation error message"
+  },
+  "openDeviceFailed": "Open device failed",
+  "@openDeviceFailed": {
+    "description": "Device connection failed error message"
+  },
+  "data": "Data",
+  "@data": {
+    "description": "Data section title"
+  },
+  "autoReconnect": "Auto reconnect",
+  "@autoReconnect": {
+    "description": "Auto reconnect setting title"
+  },
+  "autoReconnectIfConnectionInterruption": "Auto reconnect if connection interruption",
+  "@autoReconnectIfConnectionInterruption": {
+    "description": "Auto reconnect setting description"
+  },
+  "autoSynchronizeTime": "Auto synchronize time",
+  "@autoSynchronizeTime": {
+    "description": "Auto synchronize time setting title"
+  },
+  "autoSynchronizeTimeToLoad": "Auto synchronize time to load",
+  "@autoSynchronizeTimeToLoad": {
+    "description": "Auto synchronize time setting description"
+  },
+  "numberOfPointsForSmoothCurve": "Number of points for smooth curve",
+  "@numberOfPointsForSmoothCurve": {
+    "description": "Number of points for smooth curve setting title"
+  },
+  "thresholdForSmoothCurve": "Threshold for smooth curve",
+  "@thresholdForSmoothCurve": {
+    "description": "Threshold for smooth curve setting title"
+  },
+  "curveLineStartColor": "Curve line start color",
+  "@curveLineStartColor": {
+    "description": "Curve line start color setting title"
+  },
+  "curveLineEndColor": "Curve line end color",
+  "@curveLineEndColor": {
+    "description": "Curve line end color setting title"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "Version section title"
+  },
+  "currentVersion": "Current version",
+  "@currentVersion": {
+    "description": "Current version setting title"
+  },
+  "checkFrequency": "Check frequency",
+  "@checkFrequency": {
+    "description": "Check frequency setting title"
+  },
+  "checkForUpdateNow": "Check for update now",
+  "@checkForUpdateNow": {
+    "description": "Check for update now setting title"
+  },
+  "theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard": "The link of the official site has been copied to the clipboard",
+  "@theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard": {
+    "description": "Official site link copied message"
+  },
+  "green": "Green",
+  "@green": {
+    "description": "Green color option"
+  },
+  "numberOfPoints": "Number of points",
+  "@numberOfPoints": {
+    "description": "Number of points dialog title"
+  },
+  "enterAValueFrom0000To1000V": "Enter a value from 0.000 to 1.000 (V)",
+  "@enterAValueFrom0000To1000V": {
+    "description": "Enter threshold value dialog title"
+  },
+  "theValueMustBeGreaterThan0000AndLessThan1000": "The value must be greater than 0.000 and less than 1.000",
+  "@theValueMustBeGreaterThan0000AndLessThan1000": {
+    "description": "Threshold value validation error message"
+  },
+  "never": "Never",
+  "@never": {
+    "description": "Never option"
+  },
+  "oneWeek": "One week",
+  "@oneWeek": {
+    "description": "One week option"
+  },
+  "oneMonth": "One month",
+  "@oneMonth": {
+    "description": "One month option"
+  },
+  "oneYear": "One year",
+  "@oneYear": {
+    "description": "One year option"
+  },
+  "days": "{days} days",
+  "@days": {
+    "description": "Days option with placeholder",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "foundNewVersion": "Found new version [{version}]",
+  "@foundNewVersion": {
+    "description": "Found new version dialog title",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download button text"
+  },
+  "whatsnew": "Whatsnew:",
+  "@whatsnew": {
+    "description": "Whatsnew label text"
+  },
+  "theDownloadLinkHasBeenCopiedToTheClipboard": "[The download link has been copied to the clipboard]",
+  "@theDownloadLinkHasBeenCopiedToTheClipboard": {
+    "description": "Download link copied message"
+  },
+  "help": "Help",
+  "@help": {
+    "description": "Help page title"
+  },
+  "swipeOnTheLeftSideOfTheScreenToPopupTheMenu": "Swipe on the left side of the screen to popup the menu",
+  "@swipeOnTheLeftSideOfTheScreenToPopupTheMenu": {
+    "description": "Help text for menu access"
+  },
+  "doubleClickVsetToSetANewValue": "Double-click 'Vset' to set a new value",
+  "@doubleClickVsetToSetANewValue": {
+    "description": "Help text for Vset double-click"
+  },
+  "doubleClickIsetToSetANewValue": "Double-click 'Iset' to set a new value",
+  "@doubleClickIsetToSetANewValue": {
+    "description": "Help text for Iset double-click"
+  },
+  "doubleClickCapacityToClearAhOfDevice": "Double-click 'Capacity' to clear Ah of device",
+  "@doubleClickCapacityToClearAhOfDevice": {
+    "description": "Help text for Capacity double-click"
+  },
+  "doubleClickCurvaAreaToClearCurvaData": "Double-click 'Curva area' to clear curva data",
+  "@doubleClickCurvaAreaToClearCurvaData": {
+    "description": "Help text for Curva area double-click"
+  },
+  "switchMode": "Switch Mode",
+  "@switchMode": {
+    "description": "Switch mode page title"
+  },
+  "ccMode": "CC Mode",
+  "@ccMode": {
+    "description": "CC mode option"
+  },
+  "crMode": "CR Mode",
+  "@crMode": {
+    "description": "CR mode option"
+  },
+  "cpMode": "CP Mode",
+  "@cpMode": {
+    "description": "CP mode option"
+  },
+  "setTheResistorValueOhm": "set the resistor value (Ohm)",
+  "@setTheResistorValueOhm": {
+    "description": "Resistor value input label"
+  },
+  "setThePowerValueW": "set the power value (W)",
+  "@setThePowerValueW": {
+    "description": "Power value input label"
+  },
+  "set": "Set",
+  "@set": {
+    "description": "Set button text"
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success dialog title"
+  },
+  "setCcModeSuccessfully": "set CC mode successfully",
+  "@setCcModeSuccessfully": {
+    "description": "CC mode set success message"
+  },
+  "setCrModeSuccessfully": "set CR mode successfully",
+  "@setCrModeSuccessfully": {
+    "description": "CR mode set success message"
+  },
+  "setCpModeSuccessfully": "set CP mode successfully",
+  "@setCpModeSuccessfully": {
+    "description": "CP mode set success message"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error dialog title"
+  },
+  "resistanceMustBeGreaterThanZeroOhmAndLessThan655Ohms": "Resistance must be greater than zero ohm and less than 655 ohms",
+  "@resistanceMustBeGreaterThanZeroOhmAndLessThan655Ohms": {
+    "description": "Resistance validation error message"
+  },
+  "powerMustBeGreaterThanZeroWattAndLessThan650Watts": "Power must be greater than zero watt and less than 650 watts",
+  "@powerMustBeGreaterThanZeroWattAndLessThan650Watts": {
+    "description": "Power validation error message"
+  },
+  "m328v6ElectronicLoad": "M328v6 Electronic Load",
+  "@m328v6ElectronicLoad": {
+    "description": "App name in drawer"
+  },
+  "device": "Device : {version} [{buildDate}]",
+  "@device": {
+    "description": "Device info text",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "buildDate": {
+        "type": "String"
+      }
+    }
+  },
+  "disconnectPort": "Disconnect [{port}]",
+  "@disconnectPort": {
+    "description": "Disconnect port text",
+    "placeholders": {
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+  "loadOn": "Load On",
+  "@loadOn": {
+    "description": "Load on text"
+  },
+  "loadOff": "Load Off",
+  "@loadOff": {
+    "description": "Load off text"
+  },
+  "deviceOperations": "Device Operations",
+  "@deviceOperations": {
+    "description": "Device operations section title"
+  },
+  "otherOperations": "Other Operations",
+  "@otherOperations": {
+    "description": "Other operations section title"
+  },
+  "clearAh": "Clear Ah",
+  "@clearAh": {
+    "description": "Clear Ah text"
+  },
+  "raOn": "Ra On",
+  "@raOn": {
+    "description": "Ra on text"
+  },
+  "raOff": "Ra Off",
+  "@raOff": {
+    "description": "Ra off text"
+  },
+  "zeroRa": "Zero Ra",
+  "@zeroRa": {
+    "description": "Zero Ra text"
+  },
+  "zeroI": "Zero I",
+  "@zeroI": {
+    "description": "Zero I text"
+  },
+  "clearTime": "Clear Time",
+  "@clearTime": {
+    "description": "Clear time text"
+  },
+  "synchronizeTime": "Synchronize Time",
+  "@synchronizeTime": {
+    "description": "Synchronize time text"
+  },
+  "turnOffBuzzer": "Turn off Buzzer",
+  "@turnOffBuzzer": {
+    "description": "Turn off buzzer text"
+  },
+  "mode": "Mode",
+  "@mode": {
+    "description": "Mode text"
+  },
+  "delayPeriodOnOff": "Delay/Period On/Off",
+  "@delayPeriodOnOff": {
+    "description": "Delay/Period On/Off text"
+  },
+  "testMaxCapcity": "Test max capcity",
+  "@testMaxCapcity": {
+    "description": "Test max capacity text"
+  },
+  "testShortCircuit": "Test short circuit",
+  "@testShortCircuit": {
+    "description": "Test short circuit text"
+  },
+  "export": "Export",
+  "@export": {
+    "description": "Export text"
+  },
+  "exportCurvaData": "Export curva data",
+  "@exportCurvaData": {
+    "description": "Export curva data page title"
+  },
+  "exportType": "Export type",
+  "@exportType": {
+    "description": "Export type label"
+  },
+  "xlsxFile": "XLSX file",
+  "@xlsxFile": {
+    "description": "XLSX file option"
+  },
+  "txtFile": "TXT file",
+  "@txtFile": {
+    "description": "TXT file option"
+  },
+  "exportFolder": "Export folder",
+  "@exportFolder": {
+    "description": "Export folder label"
+  },
+  "selectAFolderToSave": "Select a folder to save",
+  "@selectAFolderToSave": {
+    "description": "Select folder placeholder"
+  },
+  "fileName": "File name",
+  "@fileName": {
+    "description": "File name label"
+  },
+  "enterANameToSave": "Enter a name to save",
+  "@enterANameToSave": {
+    "description": "Enter name placeholder"
+  },
+  "remark": "Remark",
+  "@remark": {
+    "description": "Remark label"
+  },
+  "enterARemark": "Enter a remark",
+  "@enterARemark": {
+    "description": "Enter remark placeholder"
+  },
+  "exportFileSuccess": "Export {type} file success",
+  "@exportFileSuccess": {
+    "description": "Export success message",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "time": "Time",
+  "@time": {
+    "description": "Time column header"
+  },
+  "voltage": "Voltage",
+  "@voltage": {
+    "description": "Voltage column header"
+  },
+  "loadStats": "Load Stats",
+  "@loadStats": {
+    "description": "Load stats page title"
+  },
+  "clickToAddRemark": "Click to add remark",
+  "@clickToAddRemark": {
+    "description": "Click to add remark text"
+  },
+  "inputARemark": "Input a remark",
+  "@inputARemark": {
+    "description": "Input remark dialog title"
+  },
+  "initialV": "Initial V",
+  "@initialV": {
+    "description": "Initial voltage text"
+  },
+  "endV": "End V",
+  "@endV": {
+    "description": "End voltage text"
+  },
+  "averageV": "Average V",
+  "@averageV": {
+    "description": "Average voltage text"
+  },
+  "initialI": "Initial I",
+  "@initialI": {
+    "description": "Initial current text"
+  },
+  "endI": "End I",
+  "@endI": {
+    "description": "End current text"
+  },
+  "averageI": "Average I",
+  "@averageI": {
+    "description": "Average current text"
+  },
+  "initialAh": "Initial Ah",
+  "@initialAh": {
+    "description": "Initial Ah text"
+  },
+  "ah": "Ah",
+  "@ah": {
+    "description": "Ah text"
+  },
+  "totalAh": "Total Ah",
+  "@totalAh": {
+    "description": "Total Ah text"
+  },
+  "initialWh": "Initial Wh",
+  "@initialWh": {
+    "description": "Initial Wh text"
+  },
+  "wh": "Wh",
+  "@wh": {
+    "description": "Wh text"
+  },
+  "totalWh": "Total Wh",
+  "@totalWh": {
+    "description": "Total Wh text"
+  },
+  "crValue": "CR value",
+  "@crValue": {
+    "description": "CR value text"
+  },
+  "cpValue": "CP value",
+  "@cpValue": {
+    "description": "CP value text"
+  },
+  "headSink": "Head sink",
+  "@headSink": {
+    "description": "Head sink text"
+  },
+  "startTime": "Start time",
+  "@startTime": {
+    "description": "Start time text"
+  },
+  "endTime": "End time",
+  "@endTime": {
+    "description": "End time text"
+  },
+  "duration": "Duration",
+  "@duration": {
+    "description": "Duration text"
+  },
+  "exportLoadStatsData": "Export load stats data",
+  "@exportLoadStatsData": {
+    "description": "Export load stats data page title"
+  },
+  "item": "Item",
+  "@item": {
+    "description": "Item column header"
+  },
+  "value": "Value",
+  "@value": {
+    "description": "Value column header"
+  },
+  "delayPeriod": "Delay&Period",
+  "@delayPeriod": {
+    "description": "Delay&Period page title"
+  },
+  "currentStatus": "Current Status",
+  "@currentStatus": {
+    "description": "Current status section title"
+  },
+  "delayOn": "Delay on   : {time}",
+  "@delayOn": {
+    "description": "Delay on text",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "delayOff": "Delay off  : {time}",
+  "@delayOff": {
+    "description": "Delay off text",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "periodOn": "Period on  : {time}",
+  "@periodOn": {
+    "description": "Period on text",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "periodOff": "Period off : {time}",
+  "@periodOff": {
+    "description": "Period off text",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "setDelayOn": "set Delay on",
+  "@setDelayOn": {
+    "description": "Set delay on section title"
+  },
+  "setDelayOff": "set Delay off",
+  "@setDelayOff": {
+    "description": "Set delay off section title"
+  },
+  "setPeriodOnOff": "set Period On/Off",
+  "@setPeriodOnOff": {
+    "description": "Set period on/off section title"
+  },
+  "onTime": "On time",
+  "@onTime": {
+    "description": "On time label"
+  },
+  "offTime": "Off time",
+  "@offTime": {
+    "description": "Off time label"
+  },
+  "timeMustBeLessThan18Hours": "Time must be less than 18 hours",
+  "@timeMustBeLessThan18Hours": {
+    "description": "Time validation error message"
+  },
+  "setDelayOnSuccessfully": "set Delay On successfully",
+  "@setDelayOnSuccessfully": {
+    "description": "Set delay on success message"
+  },
+  "setDelayOffSuccessfully": "set Delay Off successfully",
+  "@setDelayOffSuccessfully": {
+    "description": "Set delay off success message"
+  },
+  "setPeriodOnOffSuccessfully": "set Period On/Off successfully",
+  "@setPeriodOnOffSuccessfully": {
+    "description": "Set period on/off success message"
+  },
+  "testPsuMaxCapacity": "Test PSU max capacity",
+  "@testPsuMaxCapacity": {
+    "description": "Test PSU max capacity page title"
+  },
+  "parameters": "Parameters",
+  "@parameters": {
+    "description": "Parameters section title"
+  },
+  "startTestCurrent": "Start test current (A)",
+  "@startTestCurrent": {
+    "description": "Start test current label"
+  },
+  "endTestCurrent": "End test current (A)",
+  "@endTestCurrent": {
+    "description": "End test current label"
+  },
+  "currentStep": "Current step (A)",
+  "@currentStep": {
+    "description": "Current step label"
+  },
+  "stepTime": "Step time",
+  "@stepTime": {
+    "description": "Step time label"
+  },
+  "endCondition": "End condition",
+  "@endCondition": {
+    "description": "End condition label"
+  },
+  "voltageDropPercent": "Voltage drop (%)",
+  "@voltageDropPercent": {
+    "description": "Voltage drop percentage option"
+  },
+  "voltageDropVolt": "Voltage drop (V)",
+  "@voltageDropVolt": {
+    "description": "Voltage drop voltage option"
+  },
+  "endVoltage": "End voltage (V)",
+  "@endVoltage": {
+    "description": "End voltage option"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "Start button text"
+  },
+  "processAndResults": "Process and results",
+  "@processAndResults": {
+    "description": "Process and results section title"
+  },
+  "maxPower": "Max power",
+  "@maxPower": {
+    "description": "Max power label"
+  },
+  "maxCurrent": "Max current",
+  "@maxCurrent": {
+    "description": "Max current label"
+  },
+  "status": "Status",
+  "@status": {
+    "description": "Status label"
+  },
+  "resume": "Resume",
+  "@resume": {
+    "description": "Resume button text"
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "Pause button text"
+  },
+  "stop": "Stop",
+  "@stop": {
+    "description": "Stop button text"
+  },
+  "startCurrentValueIsInvalid": "Start current value is invalid",
+  "@startCurrentValueIsInvalid": {
+    "description": "Start current validation error"
+  },
+  "endCurrentValueIsInvalid": "End current value is invalid",
+  "@endCurrentValueIsInvalid": {
+    "description": "End current validation error"
+  },
+  "currentStepValueIsInvalid": "Current step value is invalid",
+  "@currentStepValueIsInvalid": {
+    "description": "Current step validation error"
+  },
+  "voltageDropPercentageIsInvalid": "The voltage drop percentage is invalid",
+  "@voltageDropPercentageIsInvalid": {
+    "description": "Voltage drop percentage validation error"
+  },
+  "voltageDropValueIsInvalid": "The voltage drop value is invalid",
+  "@voltageDropValueIsInvalid": {
+    "description": "Voltage drop value validation error"
+  },
+  "endVoltageValueIsInvalid": "The end voltage value is invalid",
+  "@endVoltageValueIsInvalid": {
+    "description": "End voltage value validation error"
+  },
+  "testing": "Testing",
+  "@testing": {
+    "description": "Testing status"
+  },
+  "paused": "Paused",
+  "@paused": {
+    "description": "Paused status"
+  },
+  "stopped": "Stopped",
+  "@stopped": {
+    "description": "Stopped status"
+  },
+  "completed": "Completed",
+  "@completed": {
+    "description": "Completed status"
+  },
+  "waiting": "Waiting",
+  "@waiting": {
+    "description": "Waiting status"
+  },
+  "shortCircuitTester": "Short circuit tester!!!",
+  "@shortCircuitTester": {
+    "description": "Short circuit tester page title"
+  },
+  "warningThisTestIsVeryDangerous": "Warning: This test is very dangerous!",
+  "@warningThisTestIsVeryDangerous": {
+    "description": "Warning message about dangerous test"
+  },
+  "pleaseDoNotTestTheBattery": "Please do not test the battery.",
+  "@pleaseDoNotTestTheBattery": {
+    "description": "Warning about not testing battery"
+  },
+  "beforeTheTestMakeSureThatThePowerSupplyHasShortCircuitProtection": "Before the test, make sure that the power supply has short circuit protection.",
+  "@beforeTheTestMakeSureThatThePowerSupplyHasShortCircuitProtection": {
+    "description": "Warning about power supply protection"
+  },
+  "onlyForPowerSupplyUnder10V": "Only for power supply under 10V.",
+  "@onlyForPowerSupplyUnder10V": {
+    "description": "Warning about voltage limit"
+  },
+  "shorted": "Shorted",
+  "@shorted": {
+    "description": "Shorted status"
+  },
+  "inTheGap": "In the gap",
+  "@inTheGap": {
+    "description": "In the gap status"
+  },
+  "powerSupplyNotConnected": "Power supply not connected",
+  "@powerSupplyNotConnected": {
+    "description": "Power supply not connected status"
+  },
+  "voltageIsTooHigh": "Voltage is too high",
+  "@voltageIsTooHigh": {
+    "description": "Voltage too high status"
+  },
+  "numberOfTests": "Number of tests",
+  "@numberOfTests": {
+    "description": "Number of tests label"
+  },
+  "enterTheNumberOfTests": "Enter the number of tests",
+  "@enterTheNumberOfTests": {
+    "description": "Enter number of tests placeholder"
+  },
+  "shortCircuitTime": "short circuit time",
+  "@shortCircuitTime": {
+    "description": "Short circuit time label"
+  },
+  "gapTime": "Gap time",
+  "@gapTime": {
+    "description": "Gap time label"
+  },
+  "voltage": "Voltage",
+  "@voltage": {
+    "description": "Voltage label"
+  },
+  "current": "Current",
+  "@current": {
+    "description": "Current label"
+  },
+  "testProgress": "Test progress",
+  "@testProgress": {
+    "description": "Test progress label"
+  },
+  "numberOfTestsIsInvalid": "Number of tests is invalid",
+  "@numberOfTestsIsInvalid": {
+    "description": "Number of tests validation error"
+  },
+  "nameOfDeviceInvalid": "Name of device invalid",
+  "@nameOfDeviceInvalid": {
+    "description": "Device name validation error"
+  },
+  "yearsLater": "{count} years later",
+  "@yearsLater": {
+    "description": "Years later time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "daysLater": "{count} days later",
+  "@daysLater": {
+    "description": "Days later time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursLater": "{count} hours later",
+  "@hoursLater": {
+    "description": "Hours later time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesLater": "{count} minutes later",
+  "@minutesLater": {
+    "description": "Minutes later time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "secondsLater": "{count} seconds later",
+  "@secondsLater": {
+    "description": "Seconds later time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "justNow": "just now",
+  "@justNow": {
+    "description": "Just now time format"
+  },
+  "secondsAgo": "{count} seconds ago",
+  "@secondsAgo": {
+    "description": "Seconds ago time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesAgo": "{count} minutes ago",
+  "@minutesAgo": {
+    "description": "Minutes ago time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursAgo": "{count} hours ago",
+  "@hoursAgo": {
+    "description": "Hours ago time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "description": "Days ago time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "yearsAgo": "{count} years ago",
+  "@yearsAgo": {
+    "description": "Years ago time format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "endI": "End I",
+  "@endI": {
+    "description": "End I label"
+  },
+  "averageI": "Average I",
+  "@averageI": {
+    "description": "Average I label"
+  },
+  "initialAh": "Initial Ah",
+  "@initialAh": {
+    "description": "Initial Ah label"
+  },
+  "ah": "Ah",
+  "@ah": {
+    "description": "Ah label"
+  },
+  "totalAh": "Total Ah",
+  "@totalAh": {
+    "description": "Total Ah label"
+  },
+  "initialWh": "Initial Wh",
+  "@initialWh": {
+    "description": "Initial Wh label"
+  },
+  "wh": "Wh",
+  "@wh": {
+    "description": "Wh label"
+  },
+  "totalWh": "Total Wh",
+  "@totalWh": {
+    "description": "Total Wh label"
+  },
+  "mode": "Mode",
+  "@mode": {
+    "description": "Mode label"
+  },
+  "crValue": "CR value",
+  "@crValue": {
+    "description": "CR value label"
+  },
+  "cpValue": "CP value",
+  "@cpValue": {
+    "description": "CP value label"
+  },
+  "rd": "Rd",
+  "@rd": {
+    "description": "Rd label"
+  },
+  "ra": "Ra",
+  "@ra": {
+    "description": "Ra label"
+  },
+  "headSink": "Head sink",
+  "@headSink": {
+    "description": "Head sink label"
+  },
+  "board": "Board",
+  "@board": {
+    "description": "Board label"
+  },
+  "startTime": "Start time",
+  "@startTime": {
+    "description": "Start time label"
+  },
+  "endTime": "End time",
+  "@endTime": {
+    "description": "End time label"
+  },
+  "duration": "Duration",
+  "@duration": {
+    "description": "Duration label"
+  },
+  "exportLoadStatsData": "Export load stats data",
+  "@exportLoadStatsData": {
+    "description": "Export load stats data title"
+  },
+  "exportFolder": "Export folder",
+  "@exportFolder": {
+    "description": "Export folder label"
+  },
+  "selectAFolderToSave": "Select a folder to save",
+  "@selectAFolderToSave": {
+    "description": "Select folder placeholder"
+  },
+  "fileName": "File name",
+  "@fileName": {
+    "description": "File name label"
+  },
+  "enterANameToSave": "Enter a name to save",
+  "@enterANameToSave": {
+    "description": "Enter name placeholder"
+  },
+  "export": "Export",
+  "@export": {
+    "description": "Export button text"
+  },
+  "item": "Item",
+  "@item": {
+    "description": "Item column header"
+  },
+  "value": "Value",
+  "@value": {
+    "description": "Value column header"
+  },
+  "unit": "Unit",
+  "@unit": {
+    "description": "Unit column header"
+  },
+  "remark": "Remark",
+  "@remark": {
+    "description": "Remark label"
+  },
+  "exportLoadStatsFileSuccess": "Export load stats file success",
+  "@exportLoadStatsFileSuccess": {
+    "description": "Export success message"
+  },
+  "loadOff": "Load Off",
+  "@loadOff": {
+    "description": "Load Off menu item"
+  },
+  "clearAh": "Clear Ah",
+  "@clearAh": {
+    "description": "Clear Ah menu item"
+  },
+  "raOn": "Ra On",
+  "@raOn": {
+    "description": "Ra On menu item"
+  },
+  "raOff": "Ra Off",
+  "@raOff": {
+    "description": "Ra Off menu item"
+  },
+  "zeroRa": "Zero Ra",
+  "@zeroRa": {
+    "description": "Zero Ra menu item"
+  },
+  "zeroI": "Zero I",
+  "@zeroI": {
+    "description": "Zero I menu item"
+  },
+  "clearTime": "Clear Time",
+  "@clearTime": {
+    "description": "Clear Time menu item"
+  },
+  "synchronizeTime": "Synchronize Time",
+  "@synchronizeTime": {
+    "description": "Synchronize Time menu item"
+  },
+  "turnOffBuzzer": "Turn off Buzzer",
+  "@turnOffBuzzer": {
+    "description": "Turn off Buzzer menu item"
+  },
+  "mode": "Mode",
+  "@mode": {
+    "description": "Mode menu item"
+  },
+  "delayPeriodOnOff": "Delay/Period On/Off",
+  "@delayPeriodOnOff": {
+    "description": "Delay/Period On/Off menu item"
+  },
+  "testMaxCapacity": "Test max capcity",
+  "@testMaxCapacity": {
+    "description": "Test max capacity menu item"
+  },
+  "testShortCircuit": "Test short circuit",
+  "@testShortCircuit": {
+    "description": "Test short circuit menu item"
+  },
+  "export": "Export",
+  "@export": {
+    "description": "Export menu item"
+  },
+  "autoSynchronizeTime": "Auto synchronize time",
+  "@autoSynchronizeTime": {
+    "description": "Auto synchronize time setting"
+  },
+  "autoSynchronizeTimeToLoad": "Auto synchronize time to load",
+  "@autoSynchronizeTimeToLoad": {
+    "description": "Auto synchronize time to load description"
+  },
+  "numberOfPointsForSmoothCurve": "Number of points for smooth curve",
+  "@numberOfPointsForSmoothCurve": {
+    "description": "Number of points for smooth curve setting"
+  },
+  "thresholdForSmoothCurve": "Threshold for smooth curve",
+  "@thresholdForSmoothCurve": {
+    "description": "Threshold for smooth curve setting"
+  },
+  "curveLineStartColor": "Curve line start color",
+  "@curveLineStartColor": {
+    "description": "Curve line start color setting"
+  },
+  "curveLineEndColor": "Curve line end color",
+  "@curveLineEndColor": {
+    "description": "Curve line end color setting"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "Version section title"
+  },
+  "currentVersion": "Current version",
+  "@currentVersion": {
+    "description": "Current version setting"
+  },
+  "checkFrequency": "Check frequency",
+  "@checkFrequency": {
+    "description": "Check frequency setting"
+  },
+  "checkForUpdateNow": "Check for update now",
+  "@checkForUpdateNow": {
+    "description": "Check for update now setting"
+  },
+  "theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard": "The link of the official site has been copied to the clipboard",
+  "@theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard": {
+    "description": "Official site link copied message"
+  },
+  "green": "Green",
+  "@green": {
+    "description": "Green theme option"
+  },
+  "blueGrey": "Blue Grey",
+  "@blueGrey": {
+    "description": "Blue Grey theme option"
+  },
+  "brown": "Brown",
+  "@brown": {
+    "description": "Brown theme option"
+  },
+  "cyan": "Cyan",
+  "@cyan": {
+    "description": "Cyan theme option"
+  },
+  "lightBlue": "Light Blue",
+  "@lightBlue": {
+    "description": "Light Blue theme option"
+  },
+  "orange": "Orange",
+  "@orange": {
+    "description": "Orange theme option"
+  },
+  "pink": "Pink",
+  "@pink": {
+    "description": "Pink theme option"
+  },
+  "red": "Red",
+  "@red": {
+    "description": "Red theme option"
+  },
+  "teal": "Teal",
+  "@teal": {
+    "description": "Teal theme option"
+  },
+  "lime": "Lime",
+  "@lime": {
+    "description": "Lime theme option"
+  },
+  "blue": "Blue",
+  "@blue": {
+    "description": "Blue theme option"
+  },
+  "auto": "Auto",
+  "@auto": {
+    "description": "Auto theme option"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme dialog title"
+  },
+  "doesNotKeepTheScreenAlwaysOn": "Does not keep the screen always on",
+  "@doesNotKeepTheScreenAlwaysOn": {
+    "description": "Does not keep screen on option"
+  },
+  "keepScreenOnDuringDischarge": "Keep screen on during discharge",
+  "@keepScreenOnDuringDischarge": {
+    "description": "Keep screen on during discharge option"
+  },
+  "keepScreenOnWhileTheAppIsRunning": "Keep screen on while the app is running",
+  "@keepScreenOnWhileTheAppIsRunning": {
+    "description": "Keep screen on while app running option"
+  },
+  "keepScreenOn": "Keep screen on",
+  "@keepScreenOn": {
+    "description": "Keep screen on dialog title"
+  },
+  "doesNotKeepOn": "Does not keep on",
+  "@doesNotKeepOn": {
+    "description": "Does not keep on option"
+  },
+  "duringDischarging": "During discharging",
+  "@duringDischarging": {
+    "description": "During discharging option"
+  },
+  "duringAppRunning": "During app running",
+  "@duringAppRunning": {
+    "description": "During app running option"
+  },
+  "numberOfPoints": "Number of points",
+  "@numberOfPoints": {
+    "description": "Number of points dialog title"
+  },
+  "enterAValueFrom0000To1000V": "Enter a value from 0.000 to 1.000 (V)",
+  "@enterAValueFrom0000To1000V": {
+    "description": "Enter threshold value dialog"
+  },
+  "theValueMustBeGreaterThan0000AndLessThan1000": "The value must be greater than 0.000 and less than 1.000",
+  "@theValueMustBeGreaterThan0000AndLessThan1000": {
+    "description": "Threshold value validation error"
+  },
+  "never": "Never",
+  "@never": {
+    "description": "Never check frequency option"
+  },
+  "oneWeek": "One week",
+  "@oneWeek": {
+    "description": "One week check frequency option"
+  },
+  "oneMonth": "One month",
+  "@oneMonth": {
+    "description": "One month check frequency option"
+  },
+  "oneYear": "One year",
+  "@oneYear": {
+    "description": "One year check frequency option"
+  },
+  "days": "{count} days",
+  "@days": {
+    "description": "Days check frequency option",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFrequency": "Check frequency",
+  "@checkFrequency": {
+    "description": "Check frequency dialog title"
+  },
+  "foundNewVersion": "Found new version [{version}]",
+  "@foundNewVersion": {
+    "description": "Found new version dialog title",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download button text"
+  },
+  "whatsnew": "Whatsnew:",
+  "@whatsnew": {
+    "description": "Whatsnew label"
+  },
+  "theDownloadLinkHasBeenCopiedToTheClipboard": "The download link has been copied to the clipboard",
+  "@theDownloadLinkHasBeenCopiedToTheClipboard": {
+    "description": "Download link copied message"
+  },
+  "bluetoothPermissionRequired": "Bluetooth permission required to connect device, please re-authorize",
+  "@bluetoothPermissionRequired": {
+    "description": "Bluetooth permission required message"
+  },
+  "bluetoothConnectionTimeout": "Bluetooth connection timeout, please check if device is accessible and retry",
+  "@bluetoothConnectionTimeout": {
+    "description": "Bluetooth connection timeout error message"
+  },
+  "bluetoothConnectionClosed": "Bluetooth connection closed, please reconnect device",
+  "@bluetoothConnectionClosed": {
+    "description": "Bluetooth connection closed error message"
+  },
+  "bluetoothConnectionRefused": "Bluetooth connection refused, please check device status",
+  "@bluetoothConnectionRefused": {
+    "description": "Bluetooth connection refused error message"
+  },
+  "bluetoothDeviceNotFound": "Bluetooth device not found, please check if device is paired",
+  "@bluetoothDeviceNotFound": {
+    "description": "Bluetooth device not found error message"
+  },
+  "bluetoothPermissionDenied": "Bluetooth permission denied, please allow Bluetooth permission in settings",
+  "@bluetoothPermissionDenied": {
+    "description": "Bluetooth permission denied error message"
+  },
+  "bluetoothConnectionFailed": "Bluetooth connection failed: {error}",
+  "@bluetoothConnectionFailed": {
+    "description": "Bluetooth connection failed error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

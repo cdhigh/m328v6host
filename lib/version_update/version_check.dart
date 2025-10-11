@@ -1,6 +1,7 @@
 /// m328v6数控电子负载上位机
 /// 查询github服务器上的版本信息，如果有更新的版本，提示用户更新
 /// Author: cdhigh <https://github.com/cdhigh>
+library;
 import 'dart:io' show Platform;
 import 'dart:io';
 import 'dart:convert';
@@ -8,7 +9,7 @@ import 'package:flutter/services.dart'; //for paste
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:http/http.dart' as http;
-import '../i18n/common.i18n.dart';
+import '../l10n/app_localizations.dart';
 import '../common/widget_utils.dart';
 import '../common/globals.dart';
 import '../common/common_utils.dart';
@@ -20,7 +21,7 @@ const kVersionJsonUri = 'https://raw.githubusercontent.com/cdhigh/m328v6host/mai
 /// version: 目前的版本
 /// silent: 是否静默检查
 /// 如果有心版本，返回新版本详细信息，否则返回null
-Future<SingleVersion?> checkUpdate({bool silent=true}) async {
+Future<SingleVersion?> checkUpdate(BuildContext context, {bool silent=true}) async {
   if (Global.version.isEmpty) {
     return null;
   }
@@ -36,7 +37,7 @@ Future<SingleVersion?> checkUpdate({bool silent=true}) async {
   }
   if (ret == null) {
     if (!silent) {
-      showToast("Check for update failed".i18n);
+      showToast(AppLocalizations.of(context)!.checkForUpdateFailed);
     }
     return null;
   }
@@ -44,7 +45,7 @@ Future<SingleVersion?> checkUpdate({bool silent=true}) async {
   final lastest = ret.lastest;
   if (lastest.isEmpty || !isVersionGreaterThan(lastest, Global.version)) {
     if (!silent) {
-      showToast("Your version is up to date".i18n);
+      showToast(AppLocalizations.of(context)!.versionUpToDate);
     }
     return null;
   }
@@ -53,7 +54,7 @@ Future<SingleVersion?> checkUpdate({bool silent=true}) async {
   final lastestVersion = getVersionDetails(ret, lastest);
   if (lastestVersion != null) {
     if (silent) { //如果是静默检查，则检查到新版本后显示一个Toast，否则调用方会显示一个对话框
-      BotToast.showText(text: "There is a new version (%s), the download link has been copied to the clipboard".i18n.fill([lastest]),
+      BotToast.showText(text: AppLocalizations.of(context)!.newVersionAvailable(lastest),
         duration: const Duration(seconds: 30), clickClose: true);
     }
     

@@ -2,12 +2,13 @@
 /// 测试电源的最大可提供电流/功率
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pausable_timer/pausable_timer.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
-import '../i18n/max_i_tester.i18n.dart';
+import '../l10n/app_localizations.dart';
 import '../common/globals.dart';
 import '../common/widget_utils.dart';
 import '../common/common_utils.dart';
@@ -32,7 +33,7 @@ enum _TestStatus {
 }
 
 class MaxITesterPage extends ConsumerStatefulWidget {
-  const MaxITesterPage({Key? key}) : super(key: key);
+  const MaxITesterPage({super.key});
   @override
   _MaxITesterPageState createState() => _MaxITesterPageState();
 }
@@ -69,9 +70,25 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     return Scaffold(
-      appBar: AppBar(title: Text('Test PSU max capacity'.i18n)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.testPsuMaxCapacity)),
       body: (orientation == Orientation.portrait) ? buildMainList(context) : buildMainListLandscape(context),
     );
+  }
+
+  ///获取状态文本的本地化版本
+  String _getStatusText(BuildContext context, _TestStatus status) {
+    switch (status) {
+      case _TestStatus.waiting:
+        return AppLocalizations.of(context)!.waiting;
+      case _TestStatus.testing:
+        return AppLocalizations.of(context)!.testing;
+      case _TestStatus.finish:
+        return AppLocalizations.of(context)!.completed;
+      case _TestStatus.paused:
+        return AppLocalizations.of(context)!.paused;
+      case _TestStatus.stopped:
+        return AppLocalizations.of(context)!.stopped;
+    }
   }
 
   ///构建竖屏页面主体的ListView
@@ -87,16 +104,16 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
 
     String testInfo = "";
     if ((_testStatus == _TestStatus.testing) || (_testStatus == _TestStatus.paused)) {
-      testInfo = _testStatus.name.capitalize().i18n + " [${_iToSet.toStringAsFixed(3)}A]...";
+      testInfo = _getStatusText(context, _testStatus) + " [${_iToSet.toStringAsFixed(3)}A]...";
     } else {
-      testInfo = _testStatus.name.capitalize().i18n;
+      testInfo = _getStatusText(context, _testStatus);
     }
 
     final powerStr = "${_maxPower.toStringAsFixed(1)} W (${_vWhenMaxPower.toStringAsFixed(3)}V x ${_iWhenMaxPower.toStringAsFixed(3)}A)";
     
     return Container(padding: const EdgeInsets.all(10.0), child: ListView(children: [
       //参数配置区段
-      ExpansionTile(title: Text("Parameters".i18n), 
+      ExpansionTile(title: Text(AppLocalizations.of(context)!.parameters), 
         leading: const Icon(Icons.settings),
         expandedAlignment: Alignment.topLeft,
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -106,21 +123,21 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
             keyboardType: TextInputType.number,
             inputFormatters: [CustomMaxValueInputFormatter(15.0)],
             onTap: () {},
-            decoration: InputDecoration(labelText: "Start test current (A)".i18n,),
+            decoration: InputDecoration(labelText: AppLocalizations.of(context)!.startTestCurrent,),
           ),),
           Padding(padding: const EdgeInsets.only(right: 40), child: TextField(controller: _endCurrentCtrller,
             keyboardType: TextInputType.number,
             inputFormatters: [CustomMaxValueInputFormatter(15.0)],
             onTap: () {},
-            decoration: InputDecoration(labelText: "End test current (A)".i18n,),
+            decoration: InputDecoration(labelText: AppLocalizations.of(context)!.endTestCurrent,),
           ),),
           Padding(padding: const EdgeInsets.only(right: 40), child: TextField(controller: _currentStepCtrller,
             keyboardType: TextInputType.number,
             inputFormatters: [CustomMaxValueInputFormatter(15.0)],
             onTap: () {},
-            decoration: InputDecoration(labelText: "Current step (A)".i18n,),
+            decoration: InputDecoration(labelText: AppLocalizations.of(context)!.currentStep,),
           ),),
-          Padding(padding: const EdgeInsets.only(top: 10), child: Text("Step time".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 10), child: Text(AppLocalizations.of(context)!.stepTime),),
           Row(children: [
             SizedBox(width: 200, child: DropdownButton(value: _stepTime, isExpanded: true,
               items: const [
@@ -133,13 +150,13 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
               onChanged: (newValue) {setState(() {_stepTime = int.tryParse(newValue.toString()) ?? 1;});},),),
             const Expanded(child: Text("")),
           ],),
-          Padding(padding: const EdgeInsets.only(top: 10), child: Text("End condition".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 10), child: Text(AppLocalizations.of(context)!.endCondition),),
           Row(children: [
-            SizedBox(width: 180, child: DropdownButtonFormField(value: _endConditionStr, isExpanded: true,
+            SizedBox(width: 180, child: DropdownButtonFormField(initialValue: _endConditionStr, isExpanded: true,
               items: [
-                DropdownMenuItem(value: _EndCondition.dropPercent.name, child: Text("Voltage drop (%)".i18n)),
-                DropdownMenuItem(value: _EndCondition.dropVolt.name, child: Text("Voltage drop (V)".i18n)),
-                DropdownMenuItem(value: _EndCondition.endVolt.name, child: Text("End voltage (V)".i18n)),],
+                DropdownMenuItem(value: _EndCondition.dropPercent.name, child: Text(AppLocalizations.of(context)!.voltageDropPercent)),
+                DropdownMenuItem(value: _EndCondition.dropVolt.name, child: Text(AppLocalizations.of(context)!.voltageDropVolt)),
+                DropdownMenuItem(value: _EndCondition.endVolt.name, child: Text(AppLocalizations.of(context)!.endVoltage)),],
               onChanged: (newValue) {setState(() {
                 if (newValue != null) {
                   _endConditionStr = newValue.toString();
@@ -164,10 +181,10 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
           Padding(padding: const EdgeInsets.all(20), child: 
             SizedBox(width: 230, child: ElevatedButton(
               onPressed: startBtnEnabled ? startTest : null, 
-              child: Text("Start".i18n),),
+              child: Text(AppLocalizations.of(context)!.start),),
           ),),
       ]),
-      ExpansionTile(title: Text("Process and results".i18n), 
+      ExpansionTile(title: Text(AppLocalizations.of(context)!.processAndResults), 
         leading: const Icon(Icons.wb_auto),
         expandedAlignment: Alignment.topLeft,
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +201,7 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
                       knobRadius: 8, sizeUnit: GaugeSizeUnit.logicalPixel),),
                   MarkerPointer(value: _endV, color: Colors.red),],
                 annotations: <GaugeAnnotation>[GaugeAnnotation(widget: 
-                 Text(rdProvider.vNow.toStringAsFixed(3) + "V", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                 Text("${rdProvider.vNow.toStringAsFixed(3)}V", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                  angle: 90, positionFactor: 0.75,)],),
               ],
             ),),
@@ -194,40 +211,40 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
                   needleColor: Colors.blue, knobStyle: const KnobStyle(color: Colors.blue,
                     knobRadius: 8, sizeUnit: GaugeSizeUnit.logicalPixel),)],
                 annotations: <GaugeAnnotation>[GaugeAnnotation(widget: 
-                 Text(rdProvider.iNow.toStringAsFixed(3) + "A", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                 Text("${rdProvider.iNow.toStringAsFixed(3)}A", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                  angle: 90, positionFactor: 0.75,)],),
               ],
             ),),
           ],),
           Row(children: [
             Expanded(child: Padding(padding: const EdgeInsets.only(right: 20), child: 
-              Text('Max power'.i18n, textAlign: TextAlign.right,),),),
+              Text(AppLocalizations.of(context)!.maxPower, textAlign: TextAlign.right,),),),
             Expanded(child: Text(powerStr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red,),),),
           ]),
           const SizedBox(height: 5),
           Row(children: [
             Expanded(child: Padding(padding: const EdgeInsets.only(right: 20), child: 
-              Text('Max current'.i18n, textAlign: TextAlign.right,),),),
+              Text(AppLocalizations.of(context)!.maxCurrent, textAlign: TextAlign.right,),),),
             Expanded(child: Text("${_maxCurrent.toStringAsFixed(3)} A", 
               style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue,),),),
           ]),
           const SizedBox(height: 5),
           Row(children: [
             Expanded(child: Padding(padding: const EdgeInsets.only(right: 20), child: 
-              Text('Status'.i18n, textAlign: TextAlign.right,),),),
+              Text(AppLocalizations.of(context)!.status, textAlign: TextAlign.right,),),),
             Expanded(child: Text(testInfo, style: const TextStyle(fontWeight: FontWeight.bold,)),),
           ]),
           Padding(padding: const EdgeInsets.all(20), child: Row(children: [
             ConstrainedBox(constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               child: ElevatedButton(
                 onPressed: stopPauseBtnEnabled ? pauseTest : null, 
-                child: Text((_testStatus == _TestStatus.paused) ? "Resume".i18n : "Pause".i18n),),
+                child: Text((_testStatus == _TestStatus.paused) ? AppLocalizations.of(context)!.resume : AppLocalizations.of(context)!.pause),),
             ),
             const SizedBox(width: 30,),
             ConstrainedBox(constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               child: ElevatedButton(
                 onPressed: stopPauseBtnEnabled ? stopTest : null, 
-                child: Text("Stop".i18n),),
+                child: Text(AppLocalizations.of(context)!.stop),),
             ),
             Expanded(child: Container(),),
           ],),),
@@ -251,9 +268,9 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
 
     String testInfo = "";
     if ((_testStatus == _TestStatus.testing) || (_testStatus == _TestStatus.paused)) {
-      testInfo = _testStatus.name.capitalize().i18n + " [${_iToSet.toStringAsFixed(3)}A]...";
+      testInfo = _getStatusText(context, _testStatus) + " [${_iToSet.toStringAsFixed(3)}A]...";
     } else {
-      testInfo = _testStatus.name.capitalize().i18n;
+      testInfo = _getStatusText(context, _testStatus);
     }
 
     final powerStr = "${_maxPower.toStringAsFixed(1)} W (${_vWhenMaxPower.toStringAsFixed(3)}V x ${_iWhenMaxPower.toStringAsFixed(3)}A)";
@@ -267,21 +284,21 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
             keyboardType: TextInputType.number,
             inputFormatters: [CustomMaxValueInputFormatter(15.0)],
             onTap: () {},
-            decoration: InputDecoration(labelText: "Start test current (A)".i18n,),
+            decoration: InputDecoration(labelText: AppLocalizations.of(context)!.startTestCurrent,),
           ),),
           Padding(padding: const EdgeInsets.only(right: 60), child: TextField(controller: _endCurrentCtrller,
             keyboardType: TextInputType.number,
             inputFormatters: [CustomMaxValueInputFormatter(15.0)],
             onTap: () {},
-            decoration: InputDecoration(labelText: "End test current (A)".i18n,),
+            decoration: InputDecoration(labelText: AppLocalizations.of(context)!.endTestCurrent,),
           ),),
           Padding(padding: const EdgeInsets.only(right: 60), child: TextField(controller: _currentStepCtrller,
             keyboardType: TextInputType.number,
             inputFormatters: [CustomMaxValueInputFormatter(15.0)],
             onTap: () {},
-            decoration: InputDecoration(labelText: "Current step (A)".i18n,),
+            decoration: InputDecoration(labelText: AppLocalizations.of(context)!.currentStep,),
           ),),
-          Padding(padding: const EdgeInsets.only(top: 10), child: Text("Step time".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 10), child: Text(AppLocalizations.of(context)!.stepTime),),
           Row(children: [
             SizedBox(width: 200, child: DropdownButton(value: _stepTime, isExpanded: true,
               items: const [
@@ -294,13 +311,13 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
               onChanged: (newValue) {setState(() {_stepTime = int.tryParse(newValue.toString()) ?? 0;});},),),
             const Expanded(child: Text("")),
           ],),
-          Padding(padding: const EdgeInsets.only(top: 10), child: Text("End condition".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 10), child: Text(AppLocalizations.of(context)!.endCondition),),
           Row(children: [
-            SizedBox(width: 180, child: DropdownButtonFormField(value: _endConditionStr, isExpanded: true,
+            SizedBox(width: 180, child: DropdownButtonFormField(initialValue: _endConditionStr, isExpanded: true,
               items: [
-                DropdownMenuItem(value: _EndCondition.dropPercent.name, child: Text("Voltage drop (%)".i18n)),
-                DropdownMenuItem(value: _EndCondition.dropVolt.name, child: Text("Voltage drop (V)".i18n)),
-                DropdownMenuItem(value: _EndCondition.endVolt.name, child: Text("End voltage (V)".i18n)),],
+                DropdownMenuItem(value: _EndCondition.dropPercent.name, child: Text(AppLocalizations.of(context)!.voltageDropPercent)),
+                DropdownMenuItem(value: _EndCondition.dropVolt.name, child: Text(AppLocalizations.of(context)!.voltageDropVolt)),
+                DropdownMenuItem(value: _EndCondition.endVolt.name, child: Text(AppLocalizations.of(context)!.endVoltage)),],
               onChanged: (newValue) {setState(() {
                 if (newValue != null) {
                   _endConditionStr = newValue.toString();
@@ -326,13 +343,13 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
               ElevatedButton(
                 onPressed: startBtnEnabled ? startTest : null, 
-                child: Text("Start".i18n),),
+                child: Text(AppLocalizations.of(context)!.start),),
               ElevatedButton(
                 onPressed: stopPauseBtnEnabled ? pauseTest : null, 
-                child: Text((_testStatus == _TestStatus.paused) ? "Resume".i18n : "Pause".i18n),),
+                child: Text((_testStatus == _TestStatus.paused) ? AppLocalizations.of(context)!.resume : AppLocalizations.of(context)!.pause),),
               ElevatedButton(
                 onPressed: stopPauseBtnEnabled ? stopTest : null, 
-                child: Text("Stop".i18n),),
+                child: Text(AppLocalizations.of(context)!.stop),),
             ],),),
       ],),),
       const SizedBox(width: 10),
@@ -350,7 +367,7 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
                       knobRadius: 8, sizeUnit: GaugeSizeUnit.logicalPixel),),
                   MarkerPointer(value: _endV, color: Colors.red),],
                 annotations: <GaugeAnnotation>[GaugeAnnotation(widget: 
-                 Text(rdProvider.vNow.toStringAsFixed(3) + "V", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                 Text("${rdProvider.vNow.toStringAsFixed(3)}V", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                  angle: 90, positionFactor: 0.75,)],),
               ],
             ),),
@@ -360,7 +377,7 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
                   needleColor: Colors.blue, knobStyle: const KnobStyle(color: Colors.blue,
                     knobRadius: 8, sizeUnit: GaugeSizeUnit.logicalPixel),)],
                 annotations: <GaugeAnnotation>[GaugeAnnotation(widget: 
-                 Text(rdProvider.iNow.toStringAsFixed(3) + "A", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                 Text("${rdProvider.iNow.toStringAsFixed(3)}A", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                  angle: 90, positionFactor: 0.75,)],),
               ],
             ),),
@@ -368,20 +385,20 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
           const SizedBox(height: 10),
           Row(children: [
             Expanded(child: Padding(padding: const EdgeInsets.only(right: 20), child: 
-              Text('Max power'.i18n, textAlign: TextAlign.right,),),),
+              Text(AppLocalizations.of(context)!.maxPower, textAlign: TextAlign.right,),),),
             Expanded(child: Text(powerStr, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red,),),),
           ]),
           const SizedBox(height: 5),
           Row(children: [
             Expanded(child: Padding(padding: const EdgeInsets.only(right: 20), child: 
-              Text('Max current'.i18n, textAlign: TextAlign.right,),),),
+              Text(AppLocalizations.of(context)!.maxCurrent, textAlign: TextAlign.right,),),),
             Expanded(child: Text("${_maxCurrent.toStringAsFixed(3)} A", 
               style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue,),),),
           ]),
           const SizedBox(height: 5),
           Row(children: [
             Expanded(child: Padding(padding: const EdgeInsets.only(right: 20), child: 
-              Text('Status'.i18n, textAlign: TextAlign.right,),),),
+              Text(AppLocalizations.of(context)!.status, textAlign: TextAlign.right,),),),
             Expanded(child: Text(testInfo, style: const TextStyle(fontWeight: FontWeight.bold,)),),
           ]),
         ],),),
@@ -405,15 +422,15 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
     final endI = double.tryParse(_endCurrentCtrller.text);
     final stepI = double.tryParse(_currentStepCtrller.text);
     if ((startI == null) || (startI < 0.0) || (startI > 15.0)) {
-      showToast("Start current value is invalid".i18n);
+      showToast(AppLocalizations.of(context)!.startCurrentValueIsInvalid);
       return;
     }
     if ((endI == null) || (endI < 0.0) || (endI > 15.0) || (endI <= startI)) {
-      showToast("End current value is invalid".i18n);
+      showToast(AppLocalizations.of(context)!.endCurrentValueIsInvalid);
       return;
     }
     if ((stepI == null) || (stepI <= 0.0) || (stepI > 15.0)) {
-      showToast("Current step value is invalid".i18n);
+      showToast(AppLocalizations.of(context)!.currentStepValueIsInvalid);
       return;
     }
 
@@ -522,19 +539,19 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
     if (_endConditionStr == _EndCondition.dropPercent.name) { //电压跌落百分比
       final value = double.tryParse(_endConditionCtrller.text);
       if ((value == null) || (value < 0.01) || (value > 100.0)) {
-        return "The voltage drop percentage is invalid".i18n;
+        return AppLocalizations.of(context)!.voltageDropPercentageIsInvalid;
       }
       _endV = _vStart - (_vStart * (value / 100));
     } else if (_endConditionStr == _EndCondition.dropVolt.name) { //电压跌落值
       final value = double.tryParse(_endConditionCtrller.text);
       if ((value == null) || (value < 0.01) || (value > 65.0) || (value > _vStart)) {
-        return "The voltage drop value is invalid".i18n;
+        return AppLocalizations.of(context)!.voltageDropValueIsInvalid;
       }
       _endV = _vStart - value;
     } else { //截止电压
       final value = double.tryParse(_endConditionCtrller.text);
       if ((value == null) || (value < 0.0) || (value > 65.0) || (value >= _vStart)) {
-        return "The end voltage value is invalid".i18n;
+        return AppLocalizations.of(context)!.endVoltageValueIsInvalid;
       }
       _endV = value;
     }

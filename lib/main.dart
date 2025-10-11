@@ -2,26 +2,26 @@
 /// 应用程序入口
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:i18n_extension/i18n_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'common/globals.dart';
 import 'models/app_info_provider.dart';
 import 'routes.dart';
+import 'l10n/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Global.init().then((e) => runApp(
     ProviderScope(
-      child: I18n(child: const M328v6App(), initialLocale: selectedLanguage())
+      child: const M328v6App()
     ),
   ));
 }
 
 class M328v6App extends ConsumerWidget {
-  const M328v6App({Key? key}) : super(key: key);
+  const M328v6App({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,15 +35,8 @@ class M328v6App extends ConsumerWidget {
       navigatorKey: Global.navigatorKey,
       initialRoute: '/',
       onGenerateRoute: routesPath,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', "US"),
-        Locale('zh', 'CN'),
-      ],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       locale: selectedLanguage(appInfo),
       debugShowCheckedModeBanner: false,
     );

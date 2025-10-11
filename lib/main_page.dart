@@ -2,6 +2,7 @@
 /// 主页面ui实现，同时也监控前后台切换事件
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'dart:typed_data';
@@ -10,11 +11,11 @@ import 'package:flutter/material.dart';
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 //import 'package:package_info_plus/package_info_plus.dart';
 import 'package:segment_display/segment_display.dart';
 import 'package:pausable_timer/pausable_timer.dart';
-import 'i18n/main_page.i18n.dart';
+import 'l10n/app_localizations.dart';
 import 'common/my_widget_chain.dart';
 import 'common/globals.dart';
 import 'common/event_bus.dart';
@@ -36,7 +37,7 @@ import 'uni_serial.dart';
 import 'load_stats_page.dart';
 
 class MainPage extends ConsumerStatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -67,8 +68,12 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this); //启动前后台切换监听
-    Wakelock.toggle(enable: Global.keepScreenOn == KeepScreenOption.always); //设置是否允许保持屏幕常亮
+    WidgetsBinding.instance.addObserver(this); //启动前后台切换监听
+    if (Global.keepScreenOn == KeepScreenOption.always) {
+      WakelockPlus.enable();
+    } else {
+      WakelockPlus.disable();
+    } //设置是否允许保持屏幕常亮
     Global.bus.addListener(EventBus.connectionChanged, connectionChanged);
     Global.bus.addListener(EventBus.curvaFilterDotNumChanged, curvaFilterDotNumChanged);
     Global.bus.addListener(EventBus.setLoadOnOff, setLoadOnOffReceived);
@@ -106,7 +111,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
 
     String ret = "";
     try {
-      ret = await _uniSerial.open(name, baudRate);
+      ret = await _uniSerial.open(name, baudRate, context);
     } catch (e) {
       ret = e.toString();
     }
@@ -128,7 +133,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     final now = DateTime.now();
     final days = now.difference(Global.lastCheckUpdateTime).inDays;
     if (days >= Global.checkUpdateFrequency) {
-      checkUpdate(silent: true);
+      checkUpdate(context, silent: true);
     }
   }
 
@@ -139,8 +144,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     Global.bus.removeListener(EventBus.connectionChanged, connectionChanged);
     Global.bus.removeListener(EventBus.curvaFilterDotNumChanged, curvaFilterDotNumChanged);
     Global.bus.removeListener(EventBus.setLoadOnOff, setLoadOnOffReceived);
-    Wakelock.disable();
-    WidgetsBinding.instance?.removeObserver(this);
+    WakelockPlus.disable();
+    WidgetsBinding.instance.removeObserver(this);
     ref.read<ConnectionProvider>(Global.connectionProvider).closePort();
     super.dispose();
   }
@@ -189,7 +194,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           _lostConnectionTime = DateTime.now();
           _timerForReconnect..reset()..start();
         } else if (Global.keepScreenOn != KeepScreenOption.always) { //关闭屏幕常亮
-          Wakelock.disable();
+          WakelockPlus.disable();
         }
       }
       _srlBuff.reset();  //答复缓冲区清空
@@ -251,7 +256,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         leading: Builder(builder: (context) {
           return InkWell(child: const Icon(Icons.menu), onTap: ()=>_scaffoldKey.currentState?.openDrawer());
           }),
-        title: Text(((portName == "") ? "Unconnected".i18n : "Connected".i18n)),
+        title: Text(((portName == "") ? AppLocalizations.of(context)!.unconnected : AppLocalizations.of(context)!.connected)),
         titleSpacing: 1.0,
         actions: buildAppBarActions((portName != ""), rdProvider.running),
       ) : null,
@@ -264,7 +269,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     return <Widget>[
       Padding(padding: const EdgeInsets.only(right: 20), child:
         IconButton(icon: Icon(isConnected ? IconFont.disconnect : IconFont.connect, color: Colors.white), 
-        tooltip: isConnected ? "Disconnect".i18n : "Connect".i18n,
+        tooltip: isConnected ? AppLocalizations.of(context)!.disconnect : AppLocalizations.of(context)!.connect,
         constraints: const BoxConstraints(),
         padding: EdgeInsets.zero,
         iconSize: 40,
@@ -303,9 +308,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     return Container(padding: const EdgeInsets.all(10.0), 
       color: Global.isDarkMode ? Colors.transparent : appInfo.homePageBackgroundColor,
       child: ListView(children: [
-        GestureDetector(child: const CurvaChart(), 
-          onDoubleTap: onDoubleTapCurvaChart,
-          onDoubleTapDown: (TapDownDetails details) {_tapPosForCurvaDblTap = details.globalPosition;},),
+        GestureDetector(onDoubleTap: onDoubleTapCurvaChart,
+          onDoubleTapDown: (TapDownDetails details) {_tapPosForCurvaDblTap = details.globalPosition;},child: const CurvaChart(),),
         buildVISetDisplay(context),
         buildVIDisplay(context),
         buildOtherDisplayData(context),
@@ -320,14 +324,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Row(children: [
       GestureDetector(onDoubleTap: onDoubleTapVset, child: SevenSegmentWithSuperText(
-        title: "V Set".i18n + " (V)",
+        title: AppLocalizations.of(context)!.vSet + " (V)",
         value: rdProvider.vSet.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.red,
       ),),
       Expanded(child: Container()),
       GestureDetector(onDoubleTap: onDoubleTapIset, child: SevenSegmentWithSuperText(
-        title: "I Set".i18n + " (A)",
+        title: AppLocalizations.of(context)!.iSet + " (A)",
         value: rdProvider.iSet.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.blue,
@@ -341,14 +345,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Row(children: [
       SevenSegmentWithSuperText(
-        title: "V".i18n + " (V)",
+        title: AppLocalizations.of(context)!.v + " (V)",
         value: rdProvider.vNow.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.red,
       ),
       Expanded(child: Container()),
       SevenSegmentWithSuperText(
-        title: "I".i18n + " (A)",
+        title: AppLocalizations.of(context)!.i + " (A)",
         value: rdProvider.iNow.toStringAsFixed(3).padLeft(6),
         size: _segDisplaySize,
         color: Colors.blue,
@@ -366,7 +370,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         //功率和模式（包括参数）
         Row(children: [
           SevenSegmentWithSuperText(
-            title: "Power".i18n + " (W)",
+            title: AppLocalizations.of(context)!.power + " (W)",
             value: rdProvider.powerIn.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
@@ -374,14 +378,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           Expanded(child: Container()),
           if (mode == "CR")
           SevenSegmentWithSuperText(
-            title: "CR".i18n + " (R)",
+            title: AppLocalizations.of(context)!.cr + " (R)",
             value: rdProvider.rSet.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
           ),
           if (mode == "CP")
           SevenSegmentWithSuperText(
-            title: "CP".i18n + " (W)",
+            title: AppLocalizations.of(context)!.cp + " (W)",
             value: rdProvider.pSet.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.amber,
@@ -391,14 +395,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         Row(children: [
           GestureDetector(onDoubleTap: onDoubleTapAh,
             child: SevenSegmentWithSuperText(
-              title: "Capacity".i18n + " (Ah)",
+              title: AppLocalizations.of(context)!.capacity + " (Ah)",
               value: rdProvider.ah.toStringAsFixed(3).padLeft(6),
               size: _segDisplaySize,
               color: Colors.cyan,
           )),
           Expanded(child: Container()),
           SevenSegmentWithSuperText(
-            title: "Energy".i18n + " (Wh)",
+            title: AppLocalizations.of(context)!.energy + " (Wh)",
             value: rdProvider.wh.toStringAsFixed(2).padLeft(6),
             size: _segDisplaySize,
             color: Colors.cyan,
@@ -407,14 +411,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         //直流内阻和交流内阻
         Row(children: [
           SevenSegmentWithSuperText(
-            title: "Rd".i18n + " (R)",
+            title: AppLocalizations.of(context)!.rd + " (R)",
             value: rdProvider.rd.toStringAsFixed(3).padLeft(6),
             size: _segDisplaySize,
             color: Colors.cyan,
           ),
           Expanded(child: Container()),
           SevenSegmentWithSuperText(
-            title: "Ra".i18n + " (R)",
+            title: AppLocalizations.of(context)!.ra + " (R)",
             value: rdProvider.ra.toStringAsFixed(3).padLeft(6),
             size: _segDisplaySize,
             color: Colors.cyan,
@@ -424,14 +428,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         //散热器温度和主板温度
         Row(children: [
           SevenSegmentWithSuperText(
-            title: "Heat sink".i18n + " (C)",
+            title: AppLocalizations.of(context)!.heatSink + " (C)",
             value: rdProvider.temperature1.toString().padLeft(2),
             size: _segDisplaySize,
             color: Colors.green,
           ),
           const SizedBox(width: 30),
           SevenSegmentWithSuperText(
-            title: "Board".i18n + " (C)",
+            title: AppLocalizations.of(context)!.board + " (C)",
             value: rdProvider.temperature2.toString().padLeft(2),
             size: _segDisplaySize,
             color: Colors.green,
@@ -448,9 +452,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(child: CurvaChartLandscape(scrWidth: _scrWidth), 
-            onDoubleTap: onDoubleTapCurvaChart,
-            onDoubleTapDown: (TapDownDetails details) {_tapPosForCurvaDblTap = details.globalPosition;},),
+          GestureDetector(onDoubleTap: onDoubleTapCurvaChart,
+            onDoubleTapDown: (TapDownDetails details) {_tapPosForCurvaDblTap = details.globalPosition;},child: CurvaChartLandscape(scrWidth: _scrWidth),),
           SingleChildScrollView(child: Column(mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end, 
             children: buildRawDataDisplayLandscape(context),
@@ -467,25 +470,23 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     return <Widget>[
       //设置电压
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("V Set".i18n, style: const TextStyle(color: Colors.white))),
-        GestureDetector(child: SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.vSet, style: const TextStyle(color: Colors.white))),
+        GestureDetector(onDoubleTap: onDoubleTapVset,child: SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.vSet.toStringAsFixed(3).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.red,
-            disabledColor: Colors.red.withOpacity(0.15),),),
-          onDoubleTap: onDoubleTapVset,),
+            disabledColor: Colors.red.withOpacity(0.15),),),),
       ])),
       //设置电流
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("I Set".i18n, style: const TextStyle(color: Colors.white))),
-        GestureDetector(child: SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.iSet, style: const TextStyle(color: Colors.white))),
+        GestureDetector(onDoubleTap: onDoubleTapIset,child: SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.iSet.toStringAsFixed(3).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.blue,
-            disabledColor: Colors.blue.withOpacity(0.15),),),
-          onDoubleTap: onDoubleTapIset,),
+            disabledColor: Colors.blue.withOpacity(0.15),),),),
       ])),
       //实时电压
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("V".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.v, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.vNow.toStringAsFixed(3).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.red,
@@ -493,7 +494,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       )])),
       //实时电流
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("I".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.i, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.iNow.toStringAsFixed(3).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.blue,
@@ -501,7 +502,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       )])),
       //功率
       Padding(padding: const EdgeInsets.only(top: 5, bottom: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("Power".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.power, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.powerIn.toStringAsFixed(2).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.amber,
@@ -509,7 +510,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       )])),
       //容量
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("Capacity".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.capacity, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.ah.toStringAsFixed(3).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.cyan,
@@ -518,7 +519,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       ])),
       //能量
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("Energy".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.energy, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.wh.toStringAsFixed(2).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.cyan,
@@ -526,7 +527,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       )])),
       //直流内阻
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("Rd".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.rd, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.rd.toStringAsFixed(3).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.cyan,
@@ -534,7 +535,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       )])),
       //交流内阻
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text("Ra".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(AppLocalizations.of(context)!.ra, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.ra.toStringAsFixed(3).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.cyan,
@@ -543,7 +544,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       //模式
       if (mode != "CC")
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 20), child: Text(mode.i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 20), child: Text(mode == "CR" ? AppLocalizations.of(context)!.cr : AppLocalizations.of(context)!.cp, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: (mode == "CR") ? rdProvider.rSet.toStringAsFixed(2).padLeft(6) : rdProvider.pSet.toStringAsFixed(2).padLeft(6),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.amber,
@@ -552,7 +553,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       
       //散热器温度
       Padding(padding: const EdgeInsets.only(top: 5, bottom: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 25), child: Text("Heat sink".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 25), child: Text(AppLocalizations.of(context)!.heatSink, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.temperature1.toString().padLeft(5),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.green,
@@ -560,7 +561,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       )])),
       //主板温度
       Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
-        Padding(padding: const EdgeInsets.only(right: 25), child: Text("Board".i18n, style: const TextStyle(color: Colors.white))),
+        Padding(padding: const EdgeInsets.only(right: 25), child: Text(AppLocalizations.of(context)!.board, style: const TextStyle(color: Colors.white))),
         SevenSegmentDisplay(size: 3, backgroundColor: Colors.transparent,
           value: rdProvider.temperature2.toString().padLeft(5),
           segmentStyle: DefaultSegmentStyle(enabledColor: Colors.green,
@@ -577,7 +578,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       final newvSet = await showNumKeyboardDialog(context: context, doubleNumber: rdProvider.vSet);
       if (newvSet != null) {
         if (newvSet.toDouble() > 65.0) { //最高65V
-          showToast("The voltage must be less than 65 volts".i18n);
+          showToast(AppLocalizations.of(context)!.voltageMustBeLessThan65Volts);
         } else if (newvSet.toDouble() != rdProvider.vSet) {
           final load = connProvider.load;
           setState(() {load.setV(newvSet.toDouble()); rdProvider.vSet = newvSet.toDouble();});
@@ -594,7 +595,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       final newiSet = await showNumKeyboardDialog(context: context, doubleNumber: rdProvider.iSet);
       if (newiSet != null) {
         if (newiSet.toDouble() > 15.0) { //最高15A
-          showToast("The current must be less than 15A".i18n);
+          showToast(AppLocalizations.of(context)!.currentMustBeLessThan15A);
         } else if (newiSet.toDouble() != rdProvider.iSet) {
           final load = connProvider.load;
           setState(() {load.setI(newiSet.toDouble()); rdProvider.iSet = newiSet.toDouble();});
@@ -607,7 +608,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   void onDoubleTapAh() async {
     final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
     if (connProvider.name != "") {
-      final bool? ok = await showOkCancelAlertDialog(context: context, title: "Confirm".i18n, content: Text("Clear Ah?".i18n));
+      final bool? ok = await showOkCancelAlertDialog(context: context, title: AppLocalizations.of(context)!.confirm, content: Text(AppLocalizations.of(context)!.clearAh));
       if (ok == true) {
         connProvider.load.clearAh();
       }
@@ -616,8 +617,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
 
   ///双击曲线区域弹出菜单
   void onDoubleTapCurvaChart() async {
-    final overlay = Overlay.of(context)?.context.findRenderObject();
-    final size = Overlay.of(context)?.context.size;
+    final overlay = Overlay.of(context).context.findRenderObject();
+    final size = Overlay.of(context).context.size;
     if ((overlay == null) || (size == null)) {
       return;
     }
@@ -629,16 +630,15 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           Offset.zero & size // Bigger rect, the entire screen
           ),
       items: [
-        PopupMenuItem(child: Text("Clear curva data".i18n),
+        PopupMenuItem(child: Text(AppLocalizations.of(context)!.clearCurvaData),
           onTap: () {ref.watch<VoltHistoryProvider>(Global.vHistoryProvider).clear();}),
-        PopupMenuItem(child: Text("Show load stats".i18n),
-          enabled: _loadStats.isNotEmpty,
+        PopupMenuItem(enabled: _loadStats.isNotEmpty,
           onTap: () { //菜单本身就是一个页面，所以需要等此页面关闭后才能打开另一个页面，使用 addPostFrameCallback
-            SchedulerBinding.instance?.addPostFrameCallback((_) {
+            SchedulerBinding.instance.addPostFrameCallback((_) {
               Navigator.pushNamed(context, "/load_stats", 
                 arguments: Map<String, List<LoadStatsModel>>.from({"stats": _loadStats}),);
             });
-          }),
+          }, child: Text(AppLocalizations.of(context)!.showLoadStats)),
       ],
     );
   }
@@ -646,8 +646,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
   ///点击标题栏上的Switch按钮，询问是否需要打开关闭放电
   void onTapAppBarSwitch(bool isOff) async {
     final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
-    final txt = isOff ? "Turn on the electronic load?\nRemember to clear Ah, if needed".i18n : "Turn off the electronic load?".i18n;
-    final bool? ret = await showOkCancelAlertDialog(context: context, title: "Confirm".i18n, 
+    final txt = isOff ? AppLocalizations.of(context)!.turnOnElectronicLoad : AppLocalizations.of(context)!.turnOffElectronicLoad;
+    final bool? ret = await showOkCancelAlertDialog(context: context, title: AppLocalizations.of(context)!.confirm, 
       content: Text(txt));
     if (ret == true) {
         connProvider.load.setLoadOn(isOff);
@@ -743,7 +743,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         vhProvider.clear();
         loadStatus = 1; //标识放电开始，下面的代码会创建一个放电状态容器
         if (Global.keepScreenOn == KeepScreenOption.onWhenDischarge) {
-          Wakelock.enable();
+          WakelockPlus.enable();
         }
       }
       _prevReceivedOff = isOff;
@@ -752,7 +752,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       if (rdProvider.running && isOff) {
         loadStatus = 2; //标识放电结束，下面的代码会保存更新本次放电信息
         if (Global.keepScreenOn != KeepScreenOption.always) {
-          Wakelock.disable();
+          WakelockPlus.disable();
         }
 
         //如果是正常放电停止，而不是上位机主动停止，则弹出提示条
@@ -760,7 +760,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
           if (DateTime.now().difference(_lastSetLoadOffTime).inSeconds > 2) {
             if (MediaQuery.of(context).orientation == Orientation.landscape) {
-              showNotification("Discharge has ended".i18n);
+              showNotification(AppLocalizations.of(context)!.dischargeHasEnded);
             }
           }
         }

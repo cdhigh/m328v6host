@@ -1,6 +1,7 @@
 /// 一些Widget需要的公共便捷函数或工具
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'my_widget_chain.dart';

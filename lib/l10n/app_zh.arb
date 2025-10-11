@@ -1,0 +1,946 @@
+{
+  "@@locale": "zh",
+  "okay": "好的",
+  "cancel": "取消",
+  "start": "开始",
+  "end": "结束",
+  "noItem": "没有项目",
+  "noData": "没有数据",
+  "itemsCount": "条目: {count}",
+  "choose": "选择",
+  "empty": "[空白]",
+  "inputNewText": "输入新文本",
+  "search": "搜索",
+  "connectionTimeout": "连接超时",
+  "timeout": "超时错误",
+  "pickAColor": "选取一个颜色",
+  "date": "日期",
+  "checkForUpdateFailed": "检查更新失败",
+  "versionUpToDate": "您的版本为最新的",
+  "newVersionAvailable": "发现新版本({version}), 下载链接已经拷贝到系统剪贴板",
+  "deviceNameInvalid": "设备名字错误",
+  "settings": "设置",
+  "externalStorageDirectory": "外部存储目录",
+  "appDocumentDirectory": "应用文档目录",
+  "prompt": "提示",
+  "clear": "清除",
+  "yes": "确定",
+  "general": "通用",
+  "keepScreenOn": "保持屏幕常亮",
+  "doesNotKeepScreenOn": "不保持屏幕常亮",
+  "keepScreenOnDuringDischarge": "在放电过程中保持屏幕常亮",
+  "keepScreenOnWhileAppRunning": "在应用运行时保持屏幕常亮",
+  "doesNotKeepOn": "不保持屏幕常亮",
+  "duringDischarging": "在放电过程中",
+  "duringAppRunning": "在应用运行时",
+  "auto": "自动",
+  "english": "英语",
+  "chinese": "简体汉语",
+  "language": "语种",
+  "restartRequired": "需要重启",
+  "restartRequiredMessage": "您需要重新启动应用程序以应用语言更改",
+  "theme": "主题",
+  "light": "浅色",
+  "dark": "深色",
+  "homepageBackgroundColor": "主页背景颜色",
+  "blue": "蓝色",
+  "green": "绿色",
+  "blueGrey": "蓝灰色",
+  "brown": "棕色",
+  "cyan": "青色",
+  "lightBlue": "浅蓝色",
+  "orange": "橙色",
+  "pink": "粉红色",
+  "red": "红色",
+  "teal": "蓝绿色",
+  "lime": "青橙绿色",
+  "unconnected": "未连接",
+  "connected": "已连接",
+  "disconnect": "断开连接",
+  "connect": "连接",
+  "vSet": "电压设置",
+  "iSet": "电流设置",
+  "v": "电压",
+  "i": "电流",
+  "power": "功率",
+  "cr": "恒阻",
+  "cp": "恒功率",
+  "capacity": "容量",
+  "energy": "能量",
+  "rd": "直流内阻",
+  "ra": "交流内阻",
+  "heatSink": "散热器",
+  "board": "主板",
+  "voltageMustBeLessThan65Volts": "电压必须小于65伏",
+  "currentMustBeLessThan15A": "电流必须小于15安",
+  "confirm": "确认",
+  "clearAh": "清除安时？",
+  "clearCurvaData": "清除曲线数据",
+  "showLoadStats": "显示负载统计",
+  "turnOnElectronicLoad": "开启电子负载？\n如果需要，请记住清除安时",
+  "turnOffElectronicLoad": "关闭电子负载？",
+  "dischargeHasEnded": "放电已结束",
+  "connection": "连接",
+  "availableDevices": "可用设备",
+  "baudRate": "波特率",
+  "noDevice": "没有设备",
+  "baudRateIsInvalid": "波特率无效",
+  "openDeviceFailed": "打开设备失败",
+  "data": "数据",
+  "autoReconnect": "自动重连",
+  "autoReconnectIfConnectionInterruption": "连接中断时自动重连",
+  "autoSynchronizeTime": "自动同步时间",
+  "autoSynchronizeTimeToLoad": "自动同步时间到负载",
+  "numberOfPointsForSmoothCurve": "平滑曲线点数",
+  "thresholdForSmoothCurve": "平滑曲线阈值",
+  "curveLineStartColor": "曲线起始颜色",
+  "curveLineEndColor": "曲线结束颜色",
+  "version": "版本",
+  "currentVersion": "当前版本",
+  "checkFrequency": "检查频率",
+  "checkForUpdateNow": "立即检查更新",
+  "theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard": "官方网站链接已复制到剪贴板",
+  "green": "绿色",
+  "numberOfPoints": "点数",
+  "enterAValueFrom0000To1000V": "输入0.000到1.000之间的值(V)",
+  "theValueMustBeGreaterThan0000AndLessThan1000": "值必须大于0.000且小于1.000",
+  "never": "从不",
+  "oneWeek": "一周",
+  "oneMonth": "一个月",
+  "oneYear": "一年",
+  "days": "{days}天",
+  "foundNewVersion": "发现新版本[{version}]",
+  "download": "下载",
+  "whatsnew": "更新内容:",
+  "theDownloadLinkHasBeenCopiedToTheClipboard": "[下载链接已复制到剪贴板]",
+  "help": "帮助",
+  "swipeOnTheLeftSideOfTheScreenToPopupTheMenu": "在屏幕左侧滑动以弹出菜单",
+  "doubleClickVsetToSetANewValue": "双击'电压设置'以设置新值",
+  "doubleClickIsetToSetANewValue": "双击'电流设置'以设置新值",
+  "doubleClickCapacityToClearAhOfDevice": "双击'容量'以清除设备安时",
+  "doubleClickCurvaAreaToClearCurvaData": "双击'曲线区域'以清除曲线数据",
+  "switchMode": "切换模式",
+  "ccMode": "恒流模式",
+  "crMode": "恒阻模式",
+  "cpMode": "恒功率模式",
+  "setTheResistorValueOhm": "设置电阻值(欧姆)",
+  "setThePowerValueW": "设置功率值(瓦)",
+  "set": "设置",
+  "success": "成功",
+  "setCcModeSuccessfully": "设置恒流模式成功",
+  "setCrModeSuccessfully": "设置恒阻模式成功",
+  "setCpModeSuccessfully": "设置恒功率模式成功",
+  "error": "错误",
+  "resistanceMustBeGreaterThanZeroOhmAndLessThan655Ohms": "电阻必须大于0欧姆且小于655欧姆",
+  "powerMustBeGreaterThanZeroWattAndLessThan650Watts": "功率必须大于0瓦且小于650瓦",
+  "m328v6ElectronicLoad": "M328v6电子负载",
+  "device": "设备 : {version} [{buildDate}]",
+  "disconnectPort": "断开连接 [{port}]",
+  "loadOn": "开启负载",
+  "loadOff": "关闭负载",
+  "deviceOperations": "设备操作",
+  "otherOperations": "其他操作",
+  "clearAh": "清除安时",
+  "raOn": "开启交流内阻",
+  "raOff": "关闭交流内阻",
+  "zeroRa": "清零交流内阻",
+  "zeroI": "清零电流",
+  "clearTime": "清除时间",
+  "synchronizeTime": "同步时间",
+  "turnOffBuzzer": "关闭蜂鸣器",
+  "mode": "模式",
+  "delayPeriodOnOff": "延时/周期开关",
+  "testMaxCapcity": "测试最大容量",
+  "testShortCircuit": "测试短路",
+  "export": "导出",
+  "exportCurvaData": "导出曲线数据",
+  "exportType": "导出类型",
+  "xlsxFile": "XLSX文件",
+  "txtFile": "TXT文件",
+  "exportFolder": "导出文件夹",
+  "selectAFolderToSave": "选择保存文件夹",
+  "fileName": "文件名",
+  "enterANameToSave": "输入保存名称",
+  "remark": "备注",
+  "enterARemark": "输入备注",
+  "exportFileSuccess": "导出{type}文件成功",
+  "time": "时间",
+  "voltage": "电压",
+  "loadStats": "负载统计",
+  "clickToAddRemark": "点击添加备注",
+  "inputARemark": "输入备注",
+  "initialV": "初始电压",
+  "endV": "结束电压",
+  "averageV": "平均电压",
+  "initialI": "初始电流",
+  "endI": "结束电流",
+  "averageI": "平均电流",
+  "initialAh": "初始安时",
+  "ah": "安时",
+  "totalAh": "总安时",
+  "initialWh": "初始瓦时",
+  "wh": "瓦时",
+  "totalWh": "总瓦时",
+  "crValue": "恒阻值",
+  "cpValue": "恒功率值",
+  "headSink": "散热器",
+  "startTime": "开始时间",
+  "endTime": "结束时间",
+  "duration": "持续时间",
+  "exportLoadStatsData": "导出负载统计数据",
+  "item": "项目",
+  "value": "值",
+  "delayPeriod": "延时&周期",
+  "@delayPeriod": {
+    "description": "延时&周期页面标题"
+  },
+  "currentStatus": "当前状态",
+  "@currentStatus": {
+    "description": "当前状态区段标题"
+  },
+  "delayOn": "延时开机   : {time}",
+  "@delayOn": {
+    "description": "延时开机文本",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "delayOff": "延时关机  : {time}",
+  "@delayOff": {
+    "description": "延时关机文本",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "periodOn": "周期开机  : {time}",
+  "@periodOn": {
+    "description": "周期开机文本",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "periodOff": "周期关机 : {time}",
+  "@periodOff": {
+    "description": "周期关机文本",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "setDelayOn": "设置预约开机",
+  "@setDelayOn": {
+    "description": "设置预约开机区段标题"
+  },
+  "setDelayOff": "设置预约关机",
+  "@setDelayOff": {
+    "description": "设置预约关机区段标题"
+  },
+  "setPeriodOnOff": "设置周期开关机",
+  "@setPeriodOnOff": {
+    "description": "设置周期开关机区段标题"
+  },
+  "onTime": "开机时间",
+  "@onTime": {
+    "description": "开机时间标签"
+  },
+  "offTime": "关机时间",
+  "@offTime": {
+    "description": "关机时间标签"
+  },
+  "timeMustBeLessThan18Hours": "时间必须小于18小时",
+  "@timeMustBeLessThan18Hours": {
+    "description": "时间验证错误消息"
+  },
+  "setDelayOnSuccessfully": "设置预约开机成功",
+  "@setDelayOnSuccessfully": {
+    "description": "设置预约开机成功消息"
+  },
+  "setDelayOffSuccessfully": "设置预约关机成功",
+  "@setDelayOffSuccessfully": {
+    "description": "设置预约关机成功消息"
+  },
+  "setPeriodOnOffSuccessfully": "设置周期开关机成功",
+  "@setPeriodOnOffSuccessfully": {
+    "description": "设置周期开关机成功消息"
+  },
+  "testPsuMaxCapacity": "测试电源最大容量",
+  "@testPsuMaxCapacity": {
+    "description": "测试电源最大容量页面标题"
+  },
+  "parameters": "参数",
+  "@parameters": {
+    "description": "参数区段标题"
+  },
+  "startTestCurrent": "起始测试电流 (A)",
+  "@startTestCurrent": {
+    "description": "起始测试电流标签"
+  },
+  "endTestCurrent": "结束测试电流 (A)",
+  "@endTestCurrent": {
+    "description": "结束测试电流标签"
+  },
+  "currentStep": "电流步长 (A)",
+  "@currentStep": {
+    "description": "电流步长标签"
+  },
+  "stepTime": "步长时间",
+  "@stepTime": {
+    "description": "步长时间标签"
+  },
+  "endCondition": "结束条件",
+  "@endCondition": {
+    "description": "结束条件标签"
+  },
+  "voltageDropPercent": "电压下降 (%)",
+  "@voltageDropPercent": {
+    "description": "电压下降百分比选项"
+  },
+  "voltageDropVolt": "电压下降 (V)",
+  "@voltageDropVolt": {
+    "description": "电压下降电压选项"
+  },
+  "endVoltage": "结束电压 (V)",
+  "@endVoltage": {
+    "description": "结束电压选项"
+  },
+  "start": "开始",
+  "@start": {
+    "description": "开始按钮文本"
+  },
+  "processAndResults": "过程和结果",
+  "@processAndResults": {
+    "description": "过程和结果区段标题"
+  },
+  "maxPower": "最大功率",
+  "@maxPower": {
+    "description": "最大功率标签"
+  },
+  "maxCurrent": "最大电流",
+  "@maxCurrent": {
+    "description": "最大电流标签"
+  },
+  "status": "状态",
+  "@status": {
+    "description": "状态标签"
+  },
+  "resume": "恢复",
+  "@resume": {
+    "description": "恢复按钮文本"
+  },
+  "pause": "暂停",
+  "@pause": {
+    "description": "暂停按钮文本"
+  },
+  "stop": "停止",
+  "@stop": {
+    "description": "停止按钮文本"
+  },
+  "startCurrentValueIsInvalid": "起始电流值无效",
+  "@startCurrentValueIsInvalid": {
+    "description": "起始电流验证错误"
+  },
+  "endCurrentValueIsInvalid": "结束电流值无效",
+  "@endCurrentValueIsInvalid": {
+    "description": "结束电流验证错误"
+  },
+  "currentStepValueIsInvalid": "电流步长值无效",
+  "@currentStepValueIsInvalid": {
+    "description": "电流步长验证错误"
+  },
+  "voltageDropPercentageIsInvalid": "电压下降百分比无效",
+  "@voltageDropPercentageIsInvalid": {
+    "description": "电压下降百分比验证错误"
+  },
+  "voltageDropValueIsInvalid": "电压下降值无效",
+  "@voltageDropValueIsInvalid": {
+    "description": "电压下降值验证错误"
+  },
+  "endVoltageValueIsInvalid": "结束电压值无效",
+  "@endVoltageValueIsInvalid": {
+    "description": "结束电压值验证错误"
+  },
+  "testing": "测试中",
+  "@testing": {
+    "description": "测试中状态"
+  },
+  "paused": "已暂停",
+  "@paused": {
+    "description": "已暂停状态"
+  },
+  "stopped": "已停止",
+  "@stopped": {
+    "description": "已停止状态"
+  },
+  "completed": "已完成",
+  "@completed": {
+    "description": "已完成状态"
+  },
+  "waiting": "等待中",
+  "@waiting": {
+    "description": "等待中状态"
+  },
+  "shortCircuitTester": "短路测试器!!!",
+  "@shortCircuitTester": {
+    "description": "短路测试器页面标题"
+  },
+  "warningThisTestIsVeryDangerous": "警告：此测试非常危险！",
+  "@warningThisTestIsVeryDangerous": {
+    "description": "关于危险测试的警告消息"
+  },
+  "pleaseDoNotTestTheBattery": "请不要测试电池。",
+  "@pleaseDoNotTestTheBattery": {
+    "description": "关于不测试电池的警告"
+  },
+  "beforeTheTestMakeSureThatThePowerSupplyHasShortCircuitProtection": "测试前，请确保电源具有短路保护。",
+  "@beforeTheTestMakeSureThatThePowerSupplyHasShortCircuitProtection": {
+    "description": "关于电源保护的警告"
+  },
+  "onlyForPowerSupplyUnder10V": "仅适用于10V以下的电源。",
+  "@onlyForPowerSupplyUnder10V": {
+    "description": "关于电压限制的警告"
+  },
+  "shorted": "短路",
+  "@shorted": {
+    "description": "短路状态"
+  },
+  "inTheGap": "间隙中",
+  "@inTheGap": {
+    "description": "间隙中状态"
+  },
+  "powerSupplyNotConnected": "电源未连接",
+  "@powerSupplyNotConnected": {
+    "description": "电源未连接状态"
+  },
+  "voltageIsTooHigh": "电压过高",
+  "@voltageIsTooHigh": {
+    "description": "电压过高状态"
+  },
+  "numberOfTests": "测试次数",
+  "@numberOfTests": {
+    "description": "测试次数标签"
+  },
+  "enterTheNumberOfTests": "输入测试次数",
+  "@enterTheNumberOfTests": {
+    "description": "输入测试次数占位符"
+  },
+  "shortCircuitTime": "短路时间",
+  "@shortCircuitTime": {
+    "description": "短路时间标签"
+  },
+  "gapTime": "间隙时间",
+  "@gapTime": {
+    "description": "间隙时间标签"
+  },
+  "voltage": "电压",
+  "@voltage": {
+    "description": "电压标签"
+  },
+  "current": "电流",
+  "@current": {
+    "description": "电流标签"
+  },
+  "testProgress": "测试进度",
+  "@testProgress": {
+    "description": "测试进度标签"
+  },
+  "numberOfTestsIsInvalid": "测试次数无效",
+  "@numberOfTestsIsInvalid": {
+    "description": "测试次数验证错误"
+  },
+  "nameOfDeviceInvalid": "设备名称无效",
+  "@nameOfDeviceInvalid": {
+    "description": "设备名称验证错误"
+  },
+  "yearsLater": "{count}年后",
+  "@yearsLater": {
+    "description": "年后时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "daysLater": "{count}天后",
+  "@daysLater": {
+    "description": "天后时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursLater": "{count}小时后",
+  "@hoursLater": {
+    "description": "小时后时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesLater": "{count}分钟后",
+  "@minutesLater": {
+    "description": "分钟后时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "secondsLater": "{count}秒后",
+  "@secondsLater": {
+    "description": "秒后时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "justNow": "刚刚",
+  "@justNow": {
+    "description": "刚刚时间格式"
+  },
+  "secondsAgo": "{count}秒前",
+  "@secondsAgo": {
+    "description": "秒前时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minutesAgo": "{count}分钟前",
+  "@minutesAgo": {
+    "description": "分钟前时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursAgo": "{count}小时前",
+  "@hoursAgo": {
+    "description": "小时前时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "daysAgo": "{count}天前",
+  "@daysAgo": {
+    "description": "天前时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "yearsAgo": "{count}年前",
+  "@yearsAgo": {
+    "description": "年前时间格式",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "endI": "结束电流",
+  "@endI": {
+    "description": "结束电流标签"
+  },
+  "averageI": "平均电流",
+  "@averageI": {
+    "description": "平均电流标签"
+  },
+  "initialAh": "初始安时",
+  "@initialAh": {
+    "description": "初始安时标签"
+  },
+  "ah": "安时",
+  "@ah": {
+    "description": "安时标签"
+  },
+  "totalAh": "总安时",
+  "@totalAh": {
+    "description": "总安时标签"
+  },
+  "initialWh": "初始瓦时",
+  "@initialWh": {
+    "description": "初始瓦时标签"
+  },
+  "wh": "瓦时",
+  "@wh": {
+    "description": "瓦时标签"
+  },
+  "totalWh": "总瓦时",
+  "@totalWh": {
+    "description": "总瓦时标签"
+  },
+  "mode": "模式",
+  "@mode": {
+    "description": "模式标签"
+  },
+  "crValue": "恒阻值",
+  "@crValue": {
+    "description": "恒阻值标签"
+  },
+  "cpValue": "恒功率值",
+  "@cpValue": {
+    "description": "恒功率值标签"
+  },
+  "rd": "内阻",
+  "@rd": {
+    "description": "内阻标签"
+  },
+  "ra": "内阻A",
+  "@ra": {
+    "description": "内阻A标签"
+  },
+  "headSink": "散热器",
+  "@headSink": {
+    "description": "散热器标签"
+  },
+  "board": "主板",
+  "@board": {
+    "description": "主板标签"
+  },
+  "startTime": "开始时间",
+  "@startTime": {
+    "description": "开始时间标签"
+  },
+  "endTime": "结束时间",
+  "@endTime": {
+    "description": "结束时间标签"
+  },
+  "duration": "持续时间",
+  "@duration": {
+    "description": "持续时间标签"
+  },
+  "exportLoadStatsData": "导出负载统计数据",
+  "@exportLoadStatsData": {
+    "description": "导出负载统计数据标题"
+  },
+  "exportFolder": "导出文件夹",
+  "@exportFolder": {
+    "description": "导出文件夹标签"
+  },
+  "selectAFolderToSave": "选择保存文件夹",
+  "@selectAFolderToSave": {
+    "description": "选择文件夹占位符"
+  },
+  "fileName": "文件名",
+  "@fileName": {
+    "description": "文件名标签"
+  },
+  "enterANameToSave": "输入保存名称",
+  "@enterANameToSave": {
+    "description": "输入名称占位符"
+  },
+  "export": "导出",
+  "@export": {
+    "description": "导出按钮文本"
+  },
+  "item": "项目",
+  "@item": {
+    "description": "项目列标题"
+  },
+  "value": "数值",
+  "@value": {
+    "description": "数值列标题"
+  },
+  "unit": "单位",
+  "@unit": {
+    "description": "单位列标题"
+  },
+  "remark": "备注",
+  "@remark": {
+    "description": "备注标签"
+  },
+  "exportLoadStatsFileSuccess": "导出负载统计文件成功",
+  "@exportLoadStatsFileSuccess": {
+    "description": "导出成功消息"
+  },
+  "loadOff": "负载关闭",
+  "@loadOff": {
+    "description": "负载关闭菜单项"
+  },
+  "clearAh": "清除安时",
+  "@clearAh": {
+    "description": "清除安时菜单项"
+  },
+  "raOn": "内阻A开启",
+  "@raOn": {
+    "description": "内阻A开启菜单项"
+  },
+  "raOff": "内阻A关闭",
+  "@raOff": {
+    "description": "内阻A关闭菜单项"
+  },
+  "zeroRa": "内阻A归零",
+  "@zeroRa": {
+    "description": "内阻A归零菜单项"
+  },
+  "zeroI": "电流归零",
+  "@zeroI": {
+    "description": "电流归零菜单项"
+  },
+  "clearTime": "清除时间",
+  "@clearTime": {
+    "description": "清除时间菜单项"
+  },
+  "synchronizeTime": "同步时间",
+  "@synchronizeTime": {
+    "description": "同步时间菜单项"
+  },
+  "turnOffBuzzer": "关闭蜂鸣器",
+  "@turnOffBuzzer": {
+    "description": "关闭蜂鸣器菜单项"
+  },
+  "mode": "模式",
+  "@mode": {
+    "description": "模式菜单项"
+  },
+  "delayPeriodOnOff": "延时/周期开关机",
+  "@delayPeriodOnOff": {
+    "description": "延时/周期开关机菜单项"
+  },
+  "testMaxCapacity": "测试最大容量",
+  "@testMaxCapacity": {
+    "description": "测试最大容量菜单项"
+  },
+  "testShortCircuit": "测试短路",
+  "@testShortCircuit": {
+    "description": "测试短路菜单项"
+  },
+  "export": "导出",
+  "@export": {
+    "description": "导出菜单项"
+  },
+  "autoSynchronizeTime": "自动同步时间",
+  "@autoSynchronizeTime": {
+    "description": "自动同步时间设置"
+  },
+  "autoSynchronizeTimeToLoad": "自动同步时间到负载",
+  "@autoSynchronizeTimeToLoad": {
+    "description": "自动同步时间到负载描述"
+  },
+  "numberOfPointsForSmoothCurve": "平滑曲线点数",
+  "@numberOfPointsForSmoothCurve": {
+    "description": "平滑曲线点数设置"
+  },
+  "thresholdForSmoothCurve": "平滑曲线阈值",
+  "@thresholdForSmoothCurve": {
+    "description": "平滑曲线阈值设置"
+  },
+  "curveLineStartColor": "曲线起始颜色",
+  "@curveLineStartColor": {
+    "description": "曲线起始颜色设置"
+  },
+  "curveLineEndColor": "曲线结束颜色",
+  "@curveLineEndColor": {
+    "description": "曲线结束颜色设置"
+  },
+  "version": "版本",
+  "@version": {
+    "description": "版本区段标题"
+  },
+  "currentVersion": "当前版本",
+  "@currentVersion": {
+    "description": "当前版本设置"
+  },
+  "checkFrequency": "检查频率",
+  "@checkFrequency": {
+    "description": "检查频率设置"
+  },
+  "checkForUpdateNow": "立即检查更新",
+  "@checkForUpdateNow": {
+    "description": "立即检查更新设置"
+  },
+  "theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard": "官方网站链接已复制到剪贴板",
+  "@theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard": {
+    "description": "官方网站链接已复制消息"
+  },
+  "green": "绿色",
+  "@green": {
+    "description": "绿色主题选项"
+  },
+  "blueGrey": "蓝灰色",
+  "@blueGrey": {
+    "description": "蓝灰色主题选项"
+  },
+  "brown": "棕色",
+  "@brown": {
+    "description": "棕色主题选项"
+  },
+  "cyan": "青色",
+  "@cyan": {
+    "description": "青色主题选项"
+  },
+  "lightBlue": "浅蓝色",
+  "@lightBlue": {
+    "description": "浅蓝色主题选项"
+  },
+  "orange": "橙色",
+  "@orange": {
+    "description": "橙色主题选项"
+  },
+  "pink": "粉色",
+  "@pink": {
+    "description": "粉色主题选项"
+  },
+  "red": "红色",
+  "@red": {
+    "description": "红色主题选项"
+  },
+  "teal": "青绿色",
+  "@teal": {
+    "description": "青绿色主题选项"
+  },
+  "lime": "酸橙绿",
+  "@lime": {
+    "description": "酸橙绿主题选项"
+  },
+  "blue": "蓝色",
+  "@blue": {
+    "description": "蓝色主题选项"
+  },
+  "auto": "自动",
+  "@auto": {
+    "description": "自动主题选项"
+  },
+  "theme": "主题",
+  "@theme": {
+    "description": "主题对话框标题"
+  },
+  "doesNotKeepTheScreenAlwaysOn": "不保持屏幕常亮",
+  "@doesNotKeepTheScreenAlwaysOn": {
+    "description": "不保持屏幕常亮选项"
+  },
+  "keepScreenOnDuringDischarge": "放电时保持屏幕常亮",
+  "@keepScreenOnDuringDischarge": {
+    "description": "放电时保持屏幕常亮选项"
+  },
+  "keepScreenOnWhileTheAppIsRunning": "应用运行时保持屏幕常亮",
+  "@keepScreenOnWhileTheAppIsRunning": {
+    "description": "应用运行时保持屏幕常亮选项"
+  },
+  "keepScreenOn": "保持屏幕常亮",
+  "@keepScreenOn": {
+    "description": "保持屏幕常亮对话框标题"
+  },
+  "doesNotKeepOn": "不保持常亮",
+  "@doesNotKeepOn": {
+    "description": "不保持常亮选项"
+  },
+  "duringDischarging": "放电时",
+  "@duringDischarging": {
+    "description": "放电时选项"
+  },
+  "duringAppRunning": "应用运行时",
+  "@duringAppRunning": {
+    "description": "应用运行时选项"
+  },
+  "numberOfPoints": "点数",
+  "@numberOfPoints": {
+    "description": "点数对话框标题"
+  },
+  "enterAValueFrom0000To1000V": "输入 0.000 到 1.000 之间的值 (V)",
+  "@enterAValueFrom0000To1000V": {
+    "description": "输入阈值对话框"
+  },
+  "theValueMustBeGreaterThan0000AndLessThan1000": "值必须大于 0.000 且小于 1.000",
+  "@theValueMustBeGreaterThan0000AndLessThan1000": {
+    "description": "阈值验证错误"
+  },
+  "never": "从不",
+  "@never": {
+    "description": "从不检查频率选项"
+  },
+  "oneWeek": "一周",
+  "@oneWeek": {
+    "description": "一周检查频率选项"
+  },
+  "oneMonth": "一个月",
+  "@oneMonth": {
+    "description": "一个月检查频率选项"
+  },
+  "oneYear": "一年",
+  "@oneYear": {
+    "description": "一年检查频率选项"
+  },
+  "days": "{count}天",
+  "@days": {
+    "description": "天数检查频率选项",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFrequency": "检查频率",
+  "@checkFrequency": {
+    "description": "检查频率对话框标题"
+  },
+  "foundNewVersion": "发现新版本 [{version}]",
+  "@foundNewVersion": {
+    "description": "发现新版本对话框标题",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "download": "下载",
+  "@download": {
+    "description": "下载按钮文本"
+  },
+  "whatsnew": "更新内容：",
+  "@whatsnew": {
+    "description": "更新内容标签"
+  },
+  "theDownloadLinkHasBeenCopiedToTheClipboard": "下载链接已复制到剪贴板",
+  "@theDownloadLinkHasBeenCopiedToTheClipboard": {
+    "description": "下载链接已复制消息"
+  },
+  "bluetoothPermissionRequired": "需要蓝牙权限才能连接设备，请重新授权",
+  "@bluetoothPermissionRequired": {
+    "description": "蓝牙权限需要消息"
+  },
+  "bluetoothConnectionTimeout": "蓝牙连接超时，请检查设备是否可访问并重试",
+  "@bluetoothConnectionTimeout": {
+    "description": "蓝牙连接超时错误消息"
+  },
+  "bluetoothConnectionClosed": "蓝牙连接已关闭，请重新连接设备",
+  "@bluetoothConnectionClosed": {
+    "description": "蓝牙连接已关闭错误消息"
+  },
+  "bluetoothConnectionRefused": "蓝牙连接被拒绝，请检查设备状态",
+  "@bluetoothConnectionRefused": {
+    "description": "蓝牙连接被拒绝错误消息"
+  },
+  "bluetoothDeviceNotFound": "蓝牙设备未找到，请检查设备是否已配对",
+  "@bluetoothDeviceNotFound": {
+    "description": "蓝牙设备未找到错误消息"
+  },
+  "bluetoothPermissionDenied": "蓝牙权限被拒绝，请在设置中允许蓝牙权限",
+  "@bluetoothPermissionDenied": {
+    "description": "蓝牙权限被拒绝错误消息"
+  },
+  "bluetoothConnectionFailed": "蓝牙连接失败: {error}",
+  "@bluetoothConnectionFailed": {
+    "description": "蓝牙连接失败错误消息",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

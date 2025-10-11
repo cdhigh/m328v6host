@@ -2,6 +2,7 @@
 /// 上位机下放给下位机的命令处理，M328v6Load为对真实下位机的抽象
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 //import 'dart:io' show Platform;
 import 'dart:typed_data';
 import 'uni_serial.dart';

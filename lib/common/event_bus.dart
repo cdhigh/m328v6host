@@ -8,6 +8,7 @@
 ///    bus.removeListener(EventBus.connectionChanged, func);
 /// 4. 其他页面发送广播
 ///    bus.sendBroadcast(EventBus.connectionChanged, arg: "额外信息");
+library;
 import 'package:flutter/material.dart';
 
 ///订阅者回调函数签名

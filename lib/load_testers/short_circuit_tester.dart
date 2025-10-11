@@ -2,10 +2,11 @@
 /// 电源短路测试，属于比较极端的测试手段，如果电源的热保护和器件质量不过关，在多次的短路测试后可能会烧毁
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../i18n/short_circuit_tester.i18n.dart';
+import '../l10n/app_localizations.dart';
 import '../common/globals.dart';
 import '../common/widget_utils.dart';
 import '../models/running_data_provider.dart';
@@ -20,7 +21,7 @@ enum _TestStatus {
 }
 
 class ScTesterPage extends ConsumerStatefulWidget {
-  const ScTesterPage({Key? key}) : super(key: key);
+  const ScTesterPage({super.key});
   @override
   _ScTesterPageState createState() => _ScTesterPageState();
 }
@@ -50,17 +51,17 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
   Widget build(BuildContext context) {
     _load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     return Scaffold(
-      appBar: AppBar(title: Text('Short circuit tester!!!'.i18n)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.shortCircuitTester)),
       body: buildMainList(context),
     );
   }
 
   ///构建页面主体的ListView
   Widget buildMainList(BuildContext context) {
-    final warningText = ["Warning: This test is very dangerous!".i18n,
-      "Please do not test the battery.".i18n,
-      "Before the test, make sure that the power supply has short circuit protection.".i18n,
-      "Only for power supply under 10V.".i18n,
+    final warningText = [AppLocalizations.of(context)!.warningThisTestIsVeryDangerous,
+      AppLocalizations.of(context)!.pleaseDoNotTestTheBattery,
+      AppLocalizations.of(context)!.beforeTheTestMakeSureThatThePowerSupplyHasShortCircuitProtection,
+      AppLocalizations.of(context)!.onlyForPowerSupplyUnder10V,
     ];
 
     final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
@@ -71,17 +72,17 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
     //状态文本
     String testInfo;
     if (_testStatus == _TestStatus.shorted) {
-      testInfo = "Shorted".i18n;
+      testInfo = AppLocalizations.of(context)!.shorted;
     } else if (_testStatus == _TestStatus.gapping) {
-      testInfo = "In the gap".i18n;
+      testInfo = AppLocalizations.of(context)!.inTheGap;
     } else if (rdProvider.vNow < 1) {
-      testInfo = "Power supply not connected".i18n;
+      testInfo = AppLocalizations.of(context)!.powerSupplyNotConnected;
       btnEnabled = false;
     } else if (rdProvider.vNow > 10) {
-      testInfo = "Voltage is too high".i18n;
+      testInfo = AppLocalizations.of(context)!.voltageIsTooHigh;
       btnEnabled = false;
     } else { // if (_testStatus == _TestStatus.waiting) {
-      testInfo = "Waiting".i18n;
+      testInfo = AppLocalizations.of(context)!.waiting;
     }
 
     //进度条数值
@@ -103,16 +104,16 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
           Padding(padding: const EdgeInsets.all(10), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
             children: warningWidget,),),
           const Divider(height: 3,),
-          Padding(padding: const EdgeInsets.only(top: 5), child: Text("Number of tests".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 5), child: Text(AppLocalizations.of(context)!.numberOfTests),),
           Row(children: [
             SizedBox(width: 280, child: TextField(controller: _cntCtrller,
               keyboardType: TextInputType.number,
               onChanged: (_) {setState((){});},
               decoration: InputDecoration(
-                labelText: _cntCtrller.text.isNotEmpty ? null : "Enter the number of tests".i18n,),),),
+                labelText: _cntCtrller.text.isNotEmpty ? null : AppLocalizations.of(context)!.enterTheNumberOfTests,),),),
             const Expanded(child: Text("")),
           ]),
-          Padding(padding: const EdgeInsets.only(top: 5), child: Text("short circuit time".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 5), child: Text(AppLocalizations.of(context)!.shortCircuitTime),),
           Row(children: [
             SizedBox(width: 280, child: DropdownButton(value: _scTime, isExpanded: true,
               items: const [
@@ -130,7 +131,7 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
               onChanged: (newValue) {setState(() {_scTime = int.tryParse(newValue.toString()) ?? 1;});},),),
             const Expanded(child: Text("")),
           ],),
-          Padding(padding: const EdgeInsets.only(top: 5), child: Text("Gap time".i18n),),
+          Padding(padding: const EdgeInsets.only(top: 5), child: Text(AppLocalizations.of(context)!.gapTime),),
           Row(children: [
             SizedBox(width: 280, child: DropdownButton(value: _gapTime, isExpanded: true,
               items: const [
@@ -152,33 +153,33 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
             SizedBox(width: 280, child: Padding(padding: const EdgeInsets.all(20), child: 
               ElevatedButton(
                 onPressed: btnEnabled ? startTest : null, 
-                child: Text((_testStatus == _TestStatus.waiting) ? "Start".i18n : "Stop".i18n)),
+                child: Text((_testStatus == _TestStatus.waiting) ? AppLocalizations.of(context)!.start : AppLocalizations.of(context)!.stop)),
             ),),
             const Expanded(child: Text("")),
           ],),
           const Divider(height: 5,),
           Padding(padding: const EdgeInsets.only(top: 10), child: Row(children: [
-            SizedBox(width: 150, child: Text('Status'.i18n, textAlign: TextAlign.right,),),
+            SizedBox(width: 150, child: Text(AppLocalizations.of(context)!.status, textAlign: TextAlign.right,),),
             Expanded(child: Padding(padding: const EdgeInsets.only(left: 20), child: 
               Text(testInfo, style: const TextStyle(fontWeight: FontWeight.bold,)),),),
           ]),),
           const SizedBox(height: 5),
           Row(children: [
-            SizedBox(width: 150, child: Text('Voltage'.i18n, textAlign: TextAlign.right,),),
+            SizedBox(width: 150, child: Text(AppLocalizations.of(context)!.voltage, textAlign: TextAlign.right,),),
             Expanded(child: Padding(padding: const EdgeInsets.only(left: 20), child: 
-              Text(rdProvider.vNow.toStringAsFixed(3) + "V", style: 
+              Text("${rdProvider.vNow.toStringAsFixed(3)}V", style: 
                 const TextStyle(fontWeight: FontWeight.bold, color: Colors.red,),),),),
           ]),
           const SizedBox(height: 5),
           Row(children: [
-            SizedBox(width: 150, child: Text('Current'.i18n, textAlign: TextAlign.right,),),
+            SizedBox(width: 150, child: Text(AppLocalizations.of(context)!.current, textAlign: TextAlign.right,),),
             Expanded(child: Padding(padding: const EdgeInsets.only(left: 20), child: 
-              Text(rdProvider.iNow.toStringAsFixed(3) + "A", style: 
+              Text("${rdProvider.iNow.toStringAsFixed(3)}A", style: 
                 const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue,),),),),
           ]),
           const SizedBox(height: 5),
           Row(children: [
-            SizedBox(width: 150, child: Text('Test progress'.i18n, textAlign: TextAlign.right,),),
+            SizedBox(width: 150, child: Text(AppLocalizations.of(context)!.testProgress, textAlign: TextAlign.right,),),
             Padding(padding: const EdgeInsets.only(left: 20), child: 
               ConstrainedBox(constraints: const BoxConstraints(minWidth: 100, maxWidth: 150), child: 
                 LinearProgressIndicator(value: progressValue, minHeight: 10, semanticsValue: _testCnt.toString(),),),),
@@ -193,7 +194,7 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
     if (_testStatus == _TestStatus.waiting) {  //启动测试
       final maxTestCnt = int.tryParse(_cntCtrller.text);
       if ((maxTestCnt == null) || (maxTestCnt <= 0)) {
-        showToast("Number of tests is invalid".i18n);
+        showToast(AppLocalizations.of(context)!.numberOfTestsIsInvalid);
         return;
       }
 

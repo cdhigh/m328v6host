@@ -2,26 +2,29 @@
 /// 帮助页面ui实现
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../common/my_widget_chain.dart';
-import 'i18n/help.i18n.dart';
+import '../l10n/app_localizations.dart';
 
 class HelpPage extends StatefulWidget {
-  const HelpPage({Key? key}) : super(key: key);
+  const HelpPage({super.key});
   @override
   _HelpPageState createState() => _HelpPageState();
 }
 
 class _HelpPageState extends State<HelpPage> {
   //所有的简单的帮助信息都写在这里
-  final _helpText = <String>[
-    "Swipe on the left side of the screen to popup the menu".i18n,
-    "Double-click 'Vset' to set a new value".i18n,
-    "Double-click 'Iset' to set a new value".i18n,
-    "Double-click 'Capacity' to clear Ah of device".i18n,
-    "Double-click 'Curva area' to clear curva data".i18n,
-  ];
+  List<String> _getHelpText(BuildContext context) {
+    return [
+      AppLocalizations.of(context)!.swipeOnTheLeftSideOfTheScreenToPopupTheMenu,
+      AppLocalizations.of(context)!.doubleClickVsetToSetANewValue,
+      AppLocalizations.of(context)!.doubleClickIsetToSetANewValue,
+      AppLocalizations.of(context)!.doubleClickCapacityToClearAhOfDevice,
+      AppLocalizations.of(context)!.doubleClickCurvaAreaToClearCurvaData,
+    ];
+  }
   
   //所有需要带链接的帮助信息都放在这里
   final List<Map<String, String>> _linkText = [
@@ -41,22 +44,23 @@ class _HelpPageState extends State<HelpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Help'.i18n)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.help)),
       body: buildMainView(context),
     );
   }
 
   ///页面主体
   Widget buildMainView(BuildContext context) {
+    final helpText = _getHelpText(context);
     return Container(padding: const EdgeInsets.all(5), child: ListView.separated(
       separatorBuilder: (BuildContext context, int index) {return const Divider(height: 1,);},
       shrinkWrap: true,
-      itemCount: _helpText.length + _linkText.length,
+      itemCount: helpText.length + _linkText.length,
       itemBuilder: (context, index) => Container(
         padding: const EdgeInsets.all(12.0),
-        child: (index < _helpText.length) ? ListTile(title: Text(_helpText[index]), leading: const Icon(Icons.star_border_rounded),)
-        : ListTile(title: Text(_linkText[index - _helpText.length]["title"] ?? ""), leading: const Icon(Icons.link),)
-          .intoInkWell(onTap: () async {await launch(_linkText[index - _helpText.length]["link"] ?? "");}),
+        child: (index < helpText.length) ? ListTile(title: Text(helpText[index]), leading: const Icon(Icons.star_border_rounded),)
+        : ListTile(title: Text(_linkText[index - helpText.length]["title"] ?? ""), leading: const Icon(Icons.link),)
+          .intoInkWell(onTap: () async {await launch(_linkText[index - helpText.length]["link"] ?? "");}),
       ),
   ),);
   }

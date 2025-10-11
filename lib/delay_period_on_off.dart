@@ -2,10 +2,11 @@
 /// 处理预约开关机和周期开关机
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'i18n/delay_period_on_off.i18n.dart';
+import 'l10n/app_localizations.dart';
 import 'widgets/modal_dialogs.dart';
 import 'common/globals.dart';
 import 'common/common_utils.dart';
@@ -15,7 +16,7 @@ import 'models/connection_provider.dart';
 import 'models/running_data_provider.dart';
 
 class DelayPeriodOnOffPage extends ConsumerStatefulWidget {
-  const DelayPeriodOnOffPage({Key? key}) : super(key: key);
+  const DelayPeriodOnOffPage({super.key});
   @override
   _DelayPeriodOnOffPageState createState() => _DelayPeriodOnOffPageState();
 }
@@ -58,7 +59,7 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Delay&Period'.i18n)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.delayPeriod)),
       body: buildMainList(context),
     );
   }
@@ -68,24 +69,24 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
     final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
     return Container(padding: const EdgeInsets.all(10.0), child: ListView(children: [
       //当前状态区段
-      ExpansionTile(title: Text("Current Status".i18n), 
+      ExpansionTile(title: Text(AppLocalizations.of(context)!.currentStatus), 
         leading: const Icon(Icons.autorenew),
         expandedAlignment: Alignment.topLeft,
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         initiallyExpanded: true,
         children: [
           Padding(padding: const EdgeInsets.all(10), child: 
-            Text("Delay on   : %s".i18n.fill([readableSeconds(rdProvider.delayOn)])),),
+            Text(AppLocalizations.of(context)!.delayOn(readableSeconds(rdProvider.delayOn))),),
           Padding(padding: const EdgeInsets.all(10), child: 
-            Text("Delay off  : %s".i18n.fill([readableSeconds(rdProvider.delayOff)])),),
+            Text(AppLocalizations.of(context)!.delayOff(readableSeconds(rdProvider.delayOff))),),
           const Divider(),
           Padding(padding: const EdgeInsets.all(10), child: 
-            Text("Period on  : %s".i18n.fill([readableSeconds(rdProvider.periodOn)])),),
+            Text(AppLocalizations.of(context)!.periodOn(readableSeconds(rdProvider.periodOn))),),
           Padding(padding: const EdgeInsets.all(10), child: 
-            Text("Period off : %s".i18n.fill([readableSeconds(rdProvider.periodOff)])),),
+            Text(AppLocalizations.of(context)!.periodOff(readableSeconds(rdProvider.periodOff))),),
       ],),
       //设置预约开机
-      ExpansionTile(title: Text("set Delay on".i18n), 
+      ExpansionTile(title: Text(AppLocalizations.of(context)!.setDelayOn), 
         leading: const Icon(Icons.timer),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children: [ //时分秒各一个TextField
@@ -104,11 +105,11 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
           Padding(padding: const EdgeInsets.all(20),
             child: ElevatedButton(
               onPressed: setDelayOn, 
-              child: Text("Set".i18n)),
+              child: Text(AppLocalizations.of(context)!.set)),
           ),
       ],),
       //设置预约关机
-      ExpansionTile(title: Text("set Delay off".i18n), 
+      ExpansionTile(title: Text(AppLocalizations.of(context)!.setDelayOff), 
         leading: const Icon(Icons.timer_off),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -127,18 +128,18 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
           Padding(padding: const EdgeInsets.all(20),
             child: ElevatedButton(
               onPressed: setDelayOff, 
-              child: Text("Set".i18n)),
+              child: Text(AppLocalizations.of(context)!.set)),
           ),
       ],),
       //设置周期开关机
-      ExpansionTile(title: Text("set Period On/Off".i18n), 
+      ExpansionTile(title: Text(AppLocalizations.of(context)!.setPeriodOnOff), 
         leading: const Icon(Icons.av_timer),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(padding: const EdgeInsets.all(10), child: 
             Row(children:[
               ConstrainedBox(constraints: const BoxConstraints(minWidth: 100), child:
-                Text("On time".i18n)),
+                Text(AppLocalizations.of(context)!.onTime)),
               SizedBox(width: 30, child: TextField(controller: _periodOnHourCtrl, textAlign: TextAlign.center)),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: Text(":")),
               SizedBox(width: 30, child: TextField(controller: _periodOnMinuteCtrl, textAlign: TextAlign.center)),
@@ -152,7 +153,7 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
           Padding(padding: const EdgeInsets.all(10), child: 
             Row(children:[
               ConstrainedBox(constraints: const BoxConstraints(minWidth: 100), child:
-                Text("Off time".i18n)),
+                Text(AppLocalizations.of(context)!.offTime)),
               SizedBox(width: 30, child: TextField(controller: _periodOffHourCtrl, textAlign: TextAlign.center)),
               const Padding(padding: EdgeInsets.symmetric(horizontal: 5), child: Text(":")),
               SizedBox(width: 30, child: TextField(controller: _periodOffMinuteCtrl, textAlign: TextAlign.center)),
@@ -166,7 +167,7 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
           Padding(padding: const EdgeInsets.all(20),
             child: ElevatedButton(
               onPressed: setPeriodOnOff, 
-              child: Text("Set".i18n)),
+              child: Text(AppLocalizations.of(context)!.set)),
           ),
       ],),
     ]));
@@ -177,12 +178,12 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
     final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
     final seconds = totalSeconds(getDelayOnTime());
     if (seconds > 0xffff) {
-      showSimpleSnackBar(context, "Time must be less than 18 hours".i18n);
+      showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
       return;
     }
 
     load.setDelayOn(seconds);
-    await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set Delay On successfully".i18n));
+    await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.setDelayOnSuccessfully));
   }
 
   ///设置预约关时间
@@ -190,12 +191,12 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
     final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
     final seconds = totalSeconds(getDelayOffTime());
     if (seconds > 0xffff) {
-      showSimpleSnackBar(context, "Time must be less than 18 hours".i18n);
+      showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
       return;
     }
 
     load.setDelayOff(seconds);
-    await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set Delay Off successfully".i18n));
+    await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.setDelayOffSuccessfully));
   }
 
   ///设置周期开关时间
@@ -204,12 +205,12 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
     final onSeconds = totalSeconds(getPeriodOnTime());
     final offSeconds = totalSeconds(getPeriodOffTime());
     if ((onSeconds > 0xffff) || (offSeconds > 0xffff)) {
-      showSimpleSnackBar(context, "Time must be less than 18 hours".i18n);
+      showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
       return;
     }
 
     load.setPeriodOnOff(onSeconds, offSeconds);
-    await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set Period On/Off successfully".i18n));
+    await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.setPeriodOnOffSuccessfully));
   }
 
   ///获取当前选择的延时开通时间
@@ -293,7 +294,7 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
     
     if ((picked != null) && (picked != initial)){
       if ((picked.hour * 3600 + picked.minute * 60) > 0xffff) { //要16位整数能保存
-        showSimpleSnackBar(context, "Time must be less than 18 hours".i18n);
+        showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
         return null;
       } else {
         return picked;

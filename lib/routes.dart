@@ -2,8 +2,8 @@
 /// 定义所有的路由
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
-import 'package:i18n_extension/i18n_widget.dart';
 import 'main_page.dart';
 import 'settings/settings.dart';
 import 'connection.dart';
@@ -23,19 +23,20 @@ import 'load_testers/short_circuit_tester.dart';
 //实现：class xxxPage extends StatefulWidget {xxxPage({Key? key, required this.myParam});}
 MaterialPageRoute routesPath(RouteSettings settings) {
   var routes = <String, WidgetBuilder>{
-    '/': (context) => I18n(child: const MainPage()),
-    '/settings': (context) => I18n(child: const SettingsPage()),
-    '/connection': (context) => I18n(child: const ConnectionPage()),
-    '/delay_period_on_off': (context) => I18n(child: const DelayPeriodOnOffPage(),),
-    '/mode': (context) => I18n(child: const SwitchModePage(),),
-    '/help': (context) => I18n(child: const HelpPage(),),
-    '/export': (context) => I18n(child: const ExportPage(),),
-    '/load_stats': (context) => I18n(child: LoadStatsPage(loadStats: settings.arguments as Map<String, List<LoadStatsModel>>,),),
-    '/export_stats': (context) => I18n(child: ExportLoadStatsPage(loadStats: settings.arguments as Map<String, List<LoadStatsModel>>,),),
-    '/max_i_tester': (context) => I18n(child: const MaxITesterPage(),),
-    '/sc_tester': (context) => I18n(child: const ScTesterPage(),),
+    '/': (context) => const MainPage(),
+    '/settings': (context) => const SettingsPage(),
+    '/connection': (context) => const ConnectionPage(),
+    '/delay_period_on_off': (context) => const DelayPeriodOnOffPage(),
+    '/mode': (context) => const SwitchModePage(),
+    '/help': (context) => const HelpPage(),
+    '/export': (context) => const ExportPage(),
+    '/load_stats': (context) => LoadStatsPage(loadStats: settings.arguments as Map<String, List<LoadStatsModel>>),
+    '/export_stats': (context) => ExportLoadStatsPage(loadStats: settings.arguments as Map<String, List<LoadStatsModel>>),
+    '/max_i_tester': (context) => const MaxITesterPage(),
+    '/sc_tester': (context) => const ScTesterPage(),
   };
-  WidgetBuilder builder = routes[settings.name] ?? routes['/']!;
-  return MaterialPageRoute(builder: (ctx) => builder(ctx));
+  WidgetBuilder? builder = routes[settings.name];
+  builder ??= routes['/']!;
+  return MaterialPageRoute(builder: (ctx) => builder!(ctx));
 }
 

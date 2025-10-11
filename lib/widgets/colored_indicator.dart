@@ -1,6 +1,7 @@
 /// 饼图或其他图像的 区段指示器，左边为一个颜色块，右边为文本
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 
 ///带颜色块的指示器
@@ -17,14 +18,14 @@ class ColoredIndicator extends StatelessWidget {
   final bool fontBold;
 
   const ColoredIndicator({
-    Key? key,
+    super.key,
     required this.color,
     required this.text,
     this.isSquare = true,
     this.size = 16.0,
     this.textColor = const Color(0xff505050),
     this.fontBold = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

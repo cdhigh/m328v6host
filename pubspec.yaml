@@ -15,10 +15,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.4
+version: 1.3.0
 
 environment:
-  sdk: ">=2.16.1 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,33 +35,37 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  shared_preferences: ^2.0.13
-  flutter_riverpod: ^1.0.3
-  wakelock: ^0.6.1+1
+  cupertino_icons: ^1.0.6
+  shared_preferences: ^2.2.2
+  flutter_riverpod: ^2.6.1
+  wakelock_plus: ^1.2.8
   flutter_colorpicker: ^1.0.3
-  i18n_extension: ^4.2.0
+  intl: ^0.20.2
   bot_toast: ^4.0.1
-  #package_info_plus: ^1.3.0
-  fl_chart: ^0.45.0
-  collection: ^1.15.0
-  url_launcher: ^6.0.20
+  #package_info_plus: ^4.2.0
+  fl_chart: ^1.1.1
+  collection: ^1.17.2
+  url_launcher: ^6.2.1
   segment_display: ^0.5.0
-  flutter_libserialport: ^0.2.3 #for desktop
-  usb_serial: ^0.4.0  #for android
-  flutter_bluetooth_serial: ^0.4.0  #for android
+  #flutter_libserialport: ^0.6.0 #for desktop
+  usb_serial: ^0.5.2  #for android
+  #flutter_bluetooth_serial: ^0.4.0  #for android
+  flutter_bluetooth_serial:
+    git:
+      url: https://github.com/brendabullorini/flutter_bluetooth_serial.git
+      ref: master
   #serial_port_win32: ^0.4.9 #for windows
-  permission_handler: ^9.1.0
-  http: ^0.13.4 #auto check update
-  pausable_timer: ^1.0.0+4 #query version of device
+  permission_handler: ^11.3.1
+  http: ^1.1.0 #auto check update
+  pausable_timer: ^3.1.0+3 #query version of device
   flutter_switch: ^0.3.2 #on/off in AppBar
-  syncfusion_flutter_xlsio: ^19.4.53-beta
-  syncfusion_officechart: ^19.4.54-beta
-  syncfusion_flutter_gauges: ^19.4.55 
+  syncfusion_flutter_xlsio: ^28.1.38
+  syncfusion_officechart: ^28.1.38
+  syncfusion_flutter_gauges: ^28.1.38 
   #filesystem_picker: ^2.0.0 #browse the file system and pick a folder
-  path_provider: ^2.0.9
-  path: ^1.8.0
-  file_picker: ^4.5.0
+  path_provider: ^2.1.1
+  path: ^1.8.3
+  file_picker: ^10.3.3
 
 dev_dependencies:
   #flutter_test:
@@ -72,13 +76,14 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

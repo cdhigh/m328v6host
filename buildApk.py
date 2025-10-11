@@ -5,18 +5,18 @@
 """
 import os, sys, re, shutil, datetime
 
-__VERSION__ = "v1.0 2022-02-22"
+__VERSION__ = "2025-10-11"
 
 #构建的命令，这些命令会逐个运行
-cmdList = ["flutter clean", "flutter pub get", "flutter build apk"]
-#cmdList = ["flutter pub get", "flutter build apk"]
+#cmdList = ["flutter clean", "flutter pub get", "flutter build apk"]
+cmdList = ["flutter pub get", "flutter build apk"]
 
 #经过多次测试，发现将此文件恢复到默认状态即可每次编译成功
-FLUTTER_DIR = r"D:/flutter"
+FLUTTER_DIR = r"F:/flutter"
 GEN_SNAPSHOT_FILE = os.path.join(FLUTTER_DIR, "bin/cache/artifacts/engine/android-arm-release/windows-x64/gen_snapshot.EXE")
 GEN_SNAPSHOT_ORIGNAL_FILE = os.path.join(FLUTTER_DIR, "bin/cache/artifacts/engine/android-arm-release/windows-x64/gen_snapshot_orignal.EXE")
 
-M328V6_DIR = os.path.dirname(__file__)
+M328V6_DIR = os.path.dirname(os.path.abspath(__file__))
 PUB_YAML_FILE = os.path.join(M328V6_DIR, "pubspec.yaml")
 UNI_SERIAL_FILE = os.path.join(M328V6_DIR, "lib", "uni_serial.dart")
 GLOBAL_FILE = os.path.join(M328V6_DIR, "lib", "common", "globals.dart")

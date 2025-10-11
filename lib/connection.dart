@@ -3,6 +3,7 @@
 /// 所以使用此文件对外提供一个统一的串口连接和处理接口
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -15,12 +16,12 @@ import 'common/globals.dart';
 import 'common/event_bus.dart';
 import 'common/iconfont.dart';
 import 'models/connection_provider.dart';
-import '../i18n/connection.i18n.dart';
+import '../l10n/app_localizations.dart';
 import 'uni_serial.dart';
 
 
 class ConnectionPage extends ConsumerStatefulWidget {
-  const ConnectionPage({Key? key}) : super(key: key);
+  const ConnectionPage({super.key});
   @override
   _ConnectionPageState createState() => _ConnectionPageState();
 }
@@ -46,7 +47,7 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
   }
 
   ///初始化端口列表
-  void initPorts([_]) async {
+  void initPorts([dynamic _]) async {
     _availablePorts = await _uniSerial.getAvailablePortNames();
     setState(() {
       for (final d in _availablePorts) {
@@ -77,13 +78,13 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Connection'.i18n), actions: actions),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.connection), actions: actions),
       body: buildMainList(context),
     );
   }
 
   ///更新蓝牙状态
-  void updateBluetoothState([_]) async {
+  void updateBluetoothState([dynamic _]) async {
     final btState = await _bluetooth.state;
     if (_prevBluetoothIson != btState) {
       _prevBluetoothIson = btState;
@@ -111,7 +112,7 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
 
   ///构建页面主体的ListView
   Widget buildMainList(BuildContext context) {
-    List<Widget> list = [Row(children: [Expanded(child: Text("Available devices".i18n)), IconButton(icon: const Icon(Icons.refresh), onPressed: initPorts,)])];
+    List<Widget> list = [Row(children: [Expanded(child: Text(AppLocalizations.of(context)!.availableDevices)), IconButton(icon: const Icon(Icons.refresh), onPressed: initPorts,)])];
     
     for (final name in _availablePorts) {
       final desc = _uniSerial.getDesc(name);
@@ -125,12 +126,12 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
             controller: _baudCtrllers[name],
             //onChanged: (_) {},
             decoration: InputDecoration(
-              labelText: "Baud rate".i18n,
+              labelText: AppLocalizations.of(context)!.baudRate,
               prefixIcon: const Icon(Icons.bolt)
             )),
           Padding(padding: const EdgeInsets.all(20),
             child: ConstrainedBox(constraints: const BoxConstraints(minWidth: 200), child: 
-              ElevatedButton(child: Text("Connect".i18n),
+              ElevatedButton(child: Text(AppLocalizations.of(context)!.connect),
                 onPressed: () => _doConnection(name, int.tryParse(_baudCtrllers[name]?.text ?? "")),
               ),
             ),
@@ -140,7 +141,7 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
     }
 
     if (_availablePorts.isEmpty) {
-      list.add(Padding(padding: const EdgeInsets.all(20), child: Text("No device".i18n)));
+      list.add(Padding(padding: const EdgeInsets.all(20), child: Text(AppLocalizations.of(context)!.noDevice)));
     }
     
     return list.intoListView().intoContainer(padding: const EdgeInsets.all(10.0));
@@ -163,34 +164,70 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
   ///连接串口
   void _doConnection(String name, int? baudRate) async {
     if ((baudRate == null) || (baudRate < 9600) || (baudRate > 115200)) {
-      showToast("Baud rate is invalid".i18n);
+      showToast(AppLocalizations.of(context)!.baudRateIsInvalid);
       return;
+    }
+
+    // 检查蓝牙权限
+    if (Platform.isAndroid) {
+      final pType = _uniSerial.getPortType(name);
+      if (pType == "BLUETOOTH") {
+        final hasConnectPermission = await Permission.bluetoothConnect.isGranted;
+        final hasScanPermission = await Permission.bluetoothScan.isGranted;
+        
+        if (!hasConnectPermission || !hasScanPermission) {
+          if (mounted) {
+            showToast(AppLocalizations.of(context)!.bluetoothPermissionRequired);
+          }
+          requestPermission();
+          return;
+        }
+      }
     }
 
     final connProvider = ref.watch<ConnectionProvider>(Global.connectionProvider);
     String ret = "";
     try {
-      ret = await _uniSerial.open(name, baudRate);
+      ret = await _uniSerial.open(name, baudRate, mounted ? context : null);
     } catch (e) {
       ret = e.toString();
     }
 
     if (ret.isNotEmpty) {
-      if (ret == "Error") { //没有具体错误信息
-        showToast("Open device failed".i18n);
-      } else {
-        showToast("Open device failed".i18n + "\n$ret");
+      if (mounted) {
+        if (ret == "Error") { //没有具体错误信息
+          showToast(AppLocalizations.of(context)!.openDeviceFailed);
+        } else {
+          // 检查是否是蓝牙连接错误，如果是则使用本地化消息
+          String errorMessage = ret;
+          if (ret.contains("蓝牙连接超时") || ret.contains("Bluetooth connection timeout")) {
+            errorMessage = AppLocalizations.of(context)!.bluetoothConnectionTimeout;
+          } else if (ret.contains("蓝牙连接已关闭") || ret.contains("Bluetooth connection closed")) {
+            errorMessage = AppLocalizations.of(context)!.bluetoothConnectionClosed;
+          } else if (ret.contains("蓝牙连接被拒绝") || ret.contains("Bluetooth connection refused")) {
+            errorMessage = AppLocalizations.of(context)!.bluetoothConnectionRefused;
+          } else if (ret.contains("蓝牙设备未找到") || ret.contains("Bluetooth device not found")) {
+            errorMessage = AppLocalizations.of(context)!.bluetoothDeviceNotFound;
+          } else if (ret.contains("蓝牙权限被拒绝") || ret.contains("Bluetooth permission denied")) {
+            errorMessage = AppLocalizations.of(context)!.bluetoothPermissionDenied;
+          } else {
+            errorMessage = "${AppLocalizations.of(context)!.openDeviceFailed}\n$ret";
+          }
+          showToast(errorMessage);
+        }
       }
       return;
     }
 
     connProvider.setPort(name, baudRate);
     Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "1", sendAsync: false);
-    Navigator.of(context).pop();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   ///确认权限，如果没有权限，提示需要申请
-  void requestPermission([_]) async {
+  void requestPermission([dynamic _]) async {
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       //蓝牙功能需要定位权限
       var status = await Permission.location.status;
@@ -198,9 +235,15 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
         await Permission.location.request();
       }
 
+      // Android 12+ 需要新的蓝牙权限
       status = await Permission.bluetoothConnect.status;
       if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
         await Permission.bluetoothConnect.request();
+      }
+
+      status = await Permission.bluetoothScan.status;
+      if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
+        await Permission.bluetoothScan.request();
       }
     }
 

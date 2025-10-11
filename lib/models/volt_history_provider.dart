@@ -2,6 +2,7 @@
 /// 封装放电历史电压数据为Provider使用
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 import '../common/globals.dart';
 

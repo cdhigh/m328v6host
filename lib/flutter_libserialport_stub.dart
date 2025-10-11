@@ -1,4 +1,4 @@
-library flutter_libserialport;
+library;
 ///因为有了lib_serial，编译APK偶尔能编译通过，大部分时间都失败，每次纯属运气，所以在这里做一个桩
 /// 当然，有了这个桩也不是每次都编译通过，只是通过概率高一些而已
 /// Author: cdhigh <https://github.com/cdhigh>

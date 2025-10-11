@@ -3,6 +3,7 @@
 /// Global为单例模式，也可以使用静态变量方法
 /// 使用方法：
 /// void main() => Global().init().then((e) => runApp(MyApp()));
+library;
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +28,7 @@ enum KeepScreenOption {
 ///小部分为程序共用的变量
 class Global {
   //版本号注意需要使用单引号，让buildXXX.py能找的到
-  static const version = '1.2.1';
+  static const version = '1.2.4';
   static const buildNumber = "";
 
   static late final SharedPreferences prefs;
@@ -115,8 +116,8 @@ class Global {
   ///使用这些函数的前提是将 Global.navigatorKey 注册到MaterialApp的navigatorKey属性
   static NavigatorState? get navigatorState => Global.navigatorKey.currentState;
   static BuildContext? get currentContext => navigatorState?.context;
-  static ThemeData? get currentTheme => Theme.of(navigatorState!.context);
-  static bool get isDarkMode => currentTheme!.brightness == Brightness.dark;
+  static ThemeData? get currentTheme => navigatorState?.context != null ? Theme.of(navigatorState!.context) : null;
+  static bool get isDarkMode => currentTheme?.brightness == Brightness.dark;
   
   //全局provider实例
   static ChangeNotifierProvider<AppInfoProvider> infoProvider = ChangeNotifierProvider((_) => AppInfoProvider());

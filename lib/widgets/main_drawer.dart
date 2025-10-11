@@ -2,10 +2,11 @@
 /// 主界面侧滑弹出菜单
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../i18n/main_drawer.i18n.dart';
+import '../l10n/app_localizations.dart';
 import '../common/globals.dart';
 import '../common/event_bus.dart';
 import '../models/connection_provider.dart';
@@ -14,12 +15,12 @@ import '../common/iconfont.dart';
 
 ///侧滑菜单Widget
 class MainDrawer extends ConsumerWidget {
-  const MainDrawer({Key? key}) : super(key: key);
+  const MainDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orientation = MediaQuery.of(context).orientation;
-    final _controller = ScrollController();
+    final controller = ScrollController();
     final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
     final connProvider = ref.watch<ConnectionProvider>(Global.connectionProvider);
     final serial = connProvider.serial;
@@ -40,12 +41,12 @@ class MainDrawer extends ConsumerWidget {
 
     final portConnected = (portName != "");
 
-    return SingleChildScrollView(controller: _controller,
+    return SingleChildScrollView(controller: controller,
         child: Column(children: <Widget>[
-          UserAccountsDrawerHeader(accountName: Text("M328v6 Electronic Load".i18n + 
-            (Global.version != "" ? " V" + Global.version : "")),
-            accountEmail: Text((!portConnected) ? "Unconnected".i18n :
-              rdProvider.ver != "" ? "Device : %s [%s]".i18n.fill([rdProvider.ver, rdProvider.buildDate]) : "Connected".i18n),
+          UserAccountsDrawerHeader(accountName: Text(AppLocalizations.of(context)!.m328v6ElectronicLoad + 
+            (Global.version != "" ? " V${Global.version}" : "")),
+            accountEmail: Text((!portConnected) ? AppLocalizations.of(context)!.unconnected :
+              rdProvider.ver != "" ? AppLocalizations.of(context)!.device(rdProvider.ver, rdProvider.buildDate) : AppLocalizations.of(context)!.connected),
             currentAccountPicture: const CircleAvatar(
                 backgroundImage: AssetImage("assets/drawer_header.jpg"),
             ),
@@ -56,7 +57,7 @@ class MainDrawer extends ConsumerWidget {
           ),
           Column(children: [
             if (!portConnected) ListTile(leading: const Icon(IconFont.connect),
-              title: Text("Connect".i18n),
+              title: Text(AppLocalizations.of(context)!.connect),
               trailing: const Icon(Icons.arrow_forward),
               onTap: () {
                 Navigator.of(context).pop(); //关闭drawer
@@ -64,14 +65,14 @@ class MainDrawer extends ConsumerWidget {
               },
             ),
             if (portConnected) ListTile(leading: const Icon(IconFont.disconnect),
-              title: Text("Disconnect [%s]".i18n.fill([portName])),
+              title: Text(AppLocalizations.of(context)!.disconnectPort(portName)),
               onTap: () {
                 Global.bus.sendBroadcast(EventBus.connectionChanged, arg: "0", sendAsync: false);
                 Navigator.of(context).pop(); //关闭drawer
               },
             ),
             if (topLoadMenu) const Divider(),
-            if (topLoadMenu) ListTile(title: Text("Load On".i18n),
+            if (topLoadMenu) ListTile(title: Text(AppLocalizations.of(context)!.loadOn),
               leading: const Icon(Icons.power),
               enabled: portConnected,
               onTap: () {
@@ -79,7 +80,7 @@ class MainDrawer extends ConsumerWidget {
                 connProvider.load.setLoadOn(true);
               },
             ),
-            if (topLoadMenu) ListTile(title: Text("Load Off".i18n),
+            if (topLoadMenu) ListTile(title: Text(AppLocalizations.of(context)!.loadOff),
               leading: const Icon(Icons.power_off),
               enabled: portConnected,
               onTap: () {
@@ -87,21 +88,21 @@ class MainDrawer extends ConsumerWidget {
                 connProvider.load.setLoadOn(false);
               },
             ),
-            ExpansionTile(title: Text("Device Operations".i18n), 
+            ExpansionTile(title: Text(AppLocalizations.of(context)!.deviceOperations), 
               leading: const Icon(IconFont.device3),
               children: <Widget>[MainDrawerDeviceOperations(topLoadMenu: topLoadMenu)]),
-            ExpansionTile(title: Text("Other Operations".i18n), 
+            ExpansionTile(title: Text(AppLocalizations.of(context)!.otherOperations), 
               leading: const Icon(Icons.account_tree),
               children: const <Widget>[MainDrawerOtherOperations()]),
             const Divider(),
-            ListTile(title: Text("Settings".i18n),
+            ListTile(title: Text(AppLocalizations.of(context)!.settings),
               leading: const Icon(Icons.settings),
               onTap: () {
                 Navigator.of(context).pop(); //关闭drawer
                 Navigator.of(context).pushNamed('/settings');
               },
             ),
-            ListTile(title: Text("Help".i18n),
+            ListTile(title: Text(AppLocalizations.of(context)!.help),
               leading: const Icon(Icons.help),
               onTap: () {
                 Navigator.of(context).pop(); //关闭drawer
@@ -117,7 +118,7 @@ class MainDrawer extends ConsumerWidget {
 ///侧滑菜单-针对下位机的操作列表
 class MainDrawerDeviceOperations extends ConsumerWidget {
   final bool topLoadMenu; //Load On/Load Off菜单是否置于顶层
-  const MainDrawerDeviceOperations({Key? key, required this.topLoadMenu}) : super(key: key);
+  const MainDrawerDeviceOperations({super.key, required this.topLoadMenu});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -128,7 +129,7 @@ class MainDrawerDeviceOperations extends ConsumerWidget {
 
     return Column(
       children: <Widget>[
-        if (!topLoadMenu) ListTile(title: Text("Load On".i18n),
+        if (!topLoadMenu) ListTile(title: Text(AppLocalizations.of(context)!.loadOn),
           //leading: const Icon(Icons.power),
           enabled: loadMenuEnabled,
           onTap: () {
@@ -136,7 +137,7 @@ class MainDrawerDeviceOperations extends ConsumerWidget {
             load.setLoadOn(true);
           },
         ),
-        if (!topLoadMenu) ListTile(title: Text("Load Off".i18n),
+        if (!topLoadMenu) ListTile(title: Text(AppLocalizations.of(context)!.loadOff),
           //leading: const Icon(Icons.power_off),
           enabled: loadMenuEnabled,
           onTap: () {
@@ -144,7 +145,7 @@ class MainDrawerDeviceOperations extends ConsumerWidget {
             load.setLoadOn(false);
           },
         ),
-        ListTile(title: Text("Clear Ah".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.clearAh),
           //leading: const Icon(Icons.battery_unknown),
           enabled: loadMenuEnabled,
           onTap: () {
@@ -152,56 +153,56 @@ class MainDrawerDeviceOperations extends ConsumerWidget {
             load.clearAh();
           },
         ),
-        ListTile(title: Text("Ra On".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.raOn),
           enabled: loadMenuEnabled,
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             load.setRaOn(true);
           },
         ),
-        ListTile(title: Text("Ra Off".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.raOff),
           enabled: loadMenuEnabled,
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             load.setRaOn(false);
           },
         ),
-        ListTile(title: Text("Zero Ra".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.zeroRa),
           enabled: loadMenuEnabled,
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             load.zeroRa();
           },
         ),
-        ListTile(title: Text("Zero I".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.zeroI),
           enabled: loadMenuEnabled,
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             load.zeroI();
           },
         ),
-        ListTile(title: Text("Clear Time".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.clearTime),
           enabled: loadMenuEnabled,
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             load.clearTime();
           },
         ),
-        ListTile(title: Text("Synchronize Time".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.synchronizeTime),
           enabled: loadMenuEnabled,
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             load.synchronizeTime();
           },
         ),
-        ListTile(title: Text("Turn off Buzzer".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.turnOffBuzzer),
           enabled: loadMenuEnabled,
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer
             load.setBuzzerTime(0);
           },
         ),
-        ListTile(title: Text("Mode".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.mode),
           enabled: loadMenuEnabled,
           trailing: const Icon(Icons.arrow_forward),
           onTap: () {
@@ -210,7 +211,7 @@ class MainDrawerDeviceOperations extends ConsumerWidget {
           },
         ),
         //const Divider(),
-        ListTile(title: Text("Delay/Period On/Off".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.delayPeriodOnOff),
           enabled: loadMenuEnabled,
           trailing: const Icon(Icons.arrow_forward),
           onTap: () {
@@ -226,7 +227,7 @@ class MainDrawerDeviceOperations extends ConsumerWidget {
 
 ///侧滑菜单-其他操作列表
 class MainDrawerOtherOperations extends ConsumerWidget {
-  const MainDrawerOtherOperations({Key? key}) : super(key: key);
+  const MainDrawerOtherOperations({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -235,7 +236,7 @@ class MainDrawerOtherOperations extends ConsumerWidget {
     
     return Column(
       children: <Widget>[
-        ListTile(title: Text("Test max capcity".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.testMaxCapacity),
           enabled: loadMenuEnabled,
           trailing: const Icon(Icons.arrow_forward),
           onTap: () {
@@ -243,7 +244,7 @@ class MainDrawerOtherOperations extends ConsumerWidget {
             Navigator.pushNamed(context, "/max_i_tester");
           },
         ),
-        ListTile(title: Text("Test short circuit".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.testShortCircuit),
           enabled: loadMenuEnabled,
           trailing: const Icon(Icons.arrow_forward),
           onTap: () {
@@ -252,7 +253,7 @@ class MainDrawerOtherOperations extends ConsumerWidget {
           },
         ),
         const Divider(),
-        ListTile(title: Text("Export".i18n),
+        ListTile(title: Text(AppLocalizations.of(context)!.export),
           trailing: const Icon(Icons.arrow_forward),
           onTap: () {
             Navigator.of(context).pop(); //关闭drawer

@@ -4,6 +4,7 @@
 /// 1. 导入此文件
 /// 2. 直接使用 await showNumKeyboardDialog()
 ///   参数 intNumber/doubleNumber 只能传入一个，如果传入两个，则行为未定义（内部实现可能会变化）
+library;
 
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,8 @@ class BottomKeyboardWidget extends StatefulWidget {
   final bool darkMode;
   final bool firstPressToClear; //第一次按键是否清除原先的数字
   
-  const BottomKeyboardWidget({Key? key, this.intNumber=0, this.doubleNumber, this.darkMode=false,
-        this.onValueChanged, this.firstPressToClear=true}) : super(key: key);
+  const BottomKeyboardWidget({super.key, this.intNumber=0, this.doubleNumber, this.darkMode=false,
+        this.onValueChanged, this.firstPressToClear=true});
   
   @override
   _BottomKeyboardWidgetState createState() => _BottomKeyboardWidgetState();
@@ -196,11 +197,11 @@ class NumButton extends StatelessWidget {
   final bool enabled;
   final bool darkMode;
   
-  const NumButton({Key? key, this.text, this.icon, this.callback, this.enabled=true, this.darkMode=false}) : super(key: key);
+  const NumButton({super.key, this.text, this.icon, this.callback, this.enabled=true, this.darkMode=false});
 
   @override
   Widget build(BuildContext context) {
-    var _width = MediaQuery.of(context).size.width / 3;
+    var width = MediaQuery.of(context).size.width / 3;
     Color txtColor = darkMode ? Colors.white60 : const Color(0xff333333);
     if (!enabled) {
       txtColor = darkMode ? Colors.grey[800]! : Colors.grey[200]!;
@@ -210,12 +211,12 @@ class NumButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
         side: BorderSide(color: darkMode ? Colors.white12 : const Color(0x10333333)),),
+      onPressed: callback,
       child: (text != null ? 
           Text(text!, style: TextStyle(
               color: txtColor, 
               fontSize: 20.0)) :
-          Icon(icon)),
-      onPressed: callback,)
-      .intoContainer(height: 50.0, width: _width);
+          Icon(icon)),)
+      .intoContainer(height: 50.0, width: width);
   }
 }

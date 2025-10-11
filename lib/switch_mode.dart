@@ -2,17 +2,18 @@
 /// 切换CC/CR/CP模式
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'i18n/switch_mode.i18n.dart';
+import '../l10n/app_localizations.dart';
 import 'common/globals.dart';
 import 'widgets/modal_dialogs.dart';
 import 'models/running_data_provider.dart';
 import 'models/connection_provider.dart';
 
 class SwitchModePage extends ConsumerStatefulWidget {
-  const SwitchModePage({Key? key}) : super(key: key);
+  const SwitchModePage({super.key});
   @override
   _SwitchModePageState createState() => _SwitchModePageState();
 }
@@ -25,7 +26,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
       _modeStr = rdProvider.mode;
       isCR = (_modeStr == "CR");
@@ -41,7 +42,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Switch Mode'.i18n)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.switchMode)),
       body: buildMainList(context),
     );
   }
@@ -57,9 +58,9 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
           SizedBox(width: 300, child: DropdownButton(value: _modeStr, 
             isExpanded: true,
             items: [
-              DropdownMenuItem(value: "CC", child: Text("CC Mode".i18n)),
-              DropdownMenuItem(value: "CR", child: Text("CR Mode".i18n)),
-              DropdownMenuItem(value: "CP", child: Text("CP Mode".i18n)),],
+              DropdownMenuItem(value: "CC", child: Text(AppLocalizations.of(context)!.ccMode)),
+              DropdownMenuItem(value: "CR", child: Text(AppLocalizations.of(context)!.crMode)),
+              DropdownMenuItem(value: "CP", child: Text(AppLocalizations.of(context)!.cpMode)),],
             onChanged: (newValue) {setState(() {
               _modeStr = newValue.toString();
               _modeParamctrller.text = "";
@@ -69,8 +70,8 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
             keyboardType: TextInputType.number,
             onTap: () {},
             decoration: InputDecoration(
-              labelText: isCR ? "set the resistor value (Ohm)".i18n 
-                : (isCP ? "set the power value (W)".i18n : ""),
+              labelText: isCR ? AppLocalizations.of(context)!.setTheResistorValueOhm 
+                : (isCP ? AppLocalizations.of(context)!.setThePowerValueW : ""),
               prefixIcon: isCR ? const Icon(Icons.dynamic_form_outlined) 
                 : (isCP ? const Icon(Icons.battery_charging_full) : null),
           ),),),
@@ -78,7 +79,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
             ConstrainedBox(constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               child: ElevatedButton(
                 onPressed: () => setNewMode(context), 
-                child: Text("Set".i18n)),
+                child: Text(AppLocalizations.of(context)!.set)),
             ),),
       ]),);
   }
@@ -89,22 +90,22 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
     
     if (_modeStr == "CC") {
       load.switchToCC();
-      await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CC mode successfully".i18n));
+      await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.setCcModeSuccessfully));
     } else if (_modeStr == "CR") {
       double? resistor = double.tryParse(_modeParamctrller.text);
       if ((resistor != null) && (resistor > 0.0) && (resistor < 655.0)) {
         load.switchToCR(resistor);
-        await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CR mode successfully".i18n));
+        await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.setCrModeSuccessfully));
       } else {
-        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Resistance must be greater than zero ohm and less than 655 ohms".i18n));
+        await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.error, content: Text(AppLocalizations.of(context)!.resistanceMustBeGreaterThanZeroOhmAndLessThan655Ohms));
       }
     } else if (_modeStr == "CP") {
       double? power = double.tryParse(_modeParamctrller.text);
       if ((power != null) && (power > 0.0) && (power < 650.0)) {
         load.switchToCP(power);
-        await showOkAlertDialog(context: context, title: "Success".i18n, content: Text("set CP mode successfully".i18n));
+        await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.setCpModeSuccessfully));
       } else {
-        await showOkAlertDialog(context: context, title: "Error".i18n, content: Text("Power must be greater than zero watt and less than 650 watts".i18n));
+        await showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.error, content: Text(AppLocalizations.of(context)!.powerMustBeGreaterThanZeroWattAndLessThan650Watts));
       }
     }
   }

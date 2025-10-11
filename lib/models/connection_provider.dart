@@ -2,6 +2,7 @@
 /// 封装串口连接基本信息数据结构为Provider使用，目前包含name/baudRate
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 //import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import '../common/globals.dart';

@@ -2,6 +2,7 @@
 /// 封装应用基本信息数据结构为Provider使用，目前包含theme/language/一些颜色设置
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
+library;
 import 'package:flutter/material.dart';
 import '../common/globals.dart';
 
