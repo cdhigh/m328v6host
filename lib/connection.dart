@@ -9,7 +9,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as sb_android;
+import 'package:bluetooth_connection_plugin/bluetooth_connection_plugin.dart' as sb_android;
 import 'common/my_widget_chain.dart';
 import 'common/widget_utils.dart';
 import 'common/globals.dart';
@@ -30,15 +30,16 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
   final _uniSerial = UniSerial();
   var _availablePorts = <String>[];
   final _baudCtrllers = <String, TextEditingController>{};
-  late final sb_android.FlutterBluetoothSerial _bluetooth;
+  // 蓝牙连接插件实例
+  // late final sb_android.FlutterBluetoothSerial _bluetooth;
   bool? _bluetoothIsOn;
-  sb_android.BluetoothState? _prevBluetoothIson;
+  // sb_android.BluetoothState? _prevBluetoothIson;
   Timer? _timerForUpdateBtState;
 
   @override
   void initState() {
     super.initState();
-    _bluetooth = sb_android.FlutterBluetoothSerial.instance;
+    // _bluetooth = sb_android.FlutterBluetoothSerial.instance;
     //定期刷新蓝牙状态
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       _timerForUpdateBtState = Timer.periodic(const Duration(seconds: 3), updateBluetoothState);
@@ -85,28 +86,36 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
 
   ///更新蓝牙状态
   void updateBluetoothState([dynamic _]) async {
-    final btState = await _bluetooth.state;
-    if (_prevBluetoothIson != btState) {
-      _prevBluetoothIson = btState;
-      initPorts();
-    }
-
-    if ((btState == sb_android.BluetoothState.STATE_ON) || (btState == sb_android.BluetoothState.STATE_BLE_ON)) {
-      setState(() {_bluetoothIsOn = true;});
-    } else {
+    try {
+      // 检查蓝牙是否可用
+      final devices = await sb_android.BluetoothConnectionPlugin.getPairedDevices();
+      final wasOn = _bluetoothIsOn;
+      _bluetoothIsOn = devices.isNotEmpty;
+      
+      if (wasOn != _bluetoothIsOn) {
+        initPorts();
+      }
+      
+      setState(() {});
+    } catch (e) {
+      debugPrint('蓝牙状态检查失败: $e');
       setState(() {_bluetoothIsOn = false;});
     }
   }
 
   ///申请开启蓝牙
   void requestOpenBT() async {
-    await _bluetooth.requestEnable();
+    // bluetooth_connection_plugin 不提供直接开启/关闭蓝牙的方法
+    // 用户需要在系统设置中手动开启蓝牙
+    showToast("请在系统设置中开启蓝牙");
     updateBluetoothState();
   }
 
   ///申请关闭蓝牙
   void requestCloseBT() async {
-    await _bluetooth.requestDisable();
+    // bluetooth_connection_plugin 不提供直接开启/关闭蓝牙的方法
+    // 用户需要在系统设置中手动关闭蓝牙
+    showToast("请在系统设置中关闭蓝牙");
     updateBluetoothState();
   }
 

@@ -42,27 +42,21 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   intl: ^0.20.2
   bot_toast: ^4.0.1
-  #package_info_plus: ^4.2.0
   fl_chart: ^1.1.1
   collection: ^1.17.2
   url_launcher: ^6.2.1
   segment_display: ^0.5.0
-  #flutter_libserialport: ^0.6.0 #for desktop
+  flutter_libserialport: ^0.6.0 #for desktop
   usb_serial: ^0.5.2  #for android
-  #flutter_bluetooth_serial: ^0.4.0  #for android
-  flutter_bluetooth_serial:
-    git:
-      url: https://github.com/brendabullorini/flutter_bluetooth_serial.git
-      ref: master
-  #serial_port_win32: ^0.4.9 #for windows
+  bluetooth_connection_plugin: ^1.5.0  #for android
+  serial_port_win32: ^2.2.0 #for windows
   permission_handler: ^11.3.1
   http: ^1.1.0 #auto check update
   pausable_timer: ^3.1.0+3 #query version of device
   flutter_switch: ^0.3.2 #on/off in AppBar
   syncfusion_flutter_xlsio: ^28.1.38
   syncfusion_officechart: ^28.1.38
-  syncfusion_flutter_gauges: ^28.1.38 
-  #filesystem_picker: ^2.0.0 #browse the file system and pick a folder
+  syncfusion_flutter_gauges: ^28.1.38
   path_provider: ^2.1.1
   path: ^1.8.3
   file_picker: ^10.3.3

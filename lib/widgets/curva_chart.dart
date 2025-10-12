@@ -6,7 +6,6 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-//import 'package:collection/collection.dart'; //for mapIndexed
 import '../common/globals.dart';
 import '../common/common_utils.dart';
 import '../models/volt_history_provider.dart';
@@ -18,17 +17,18 @@ LineChartData _fillCurvaData(VoltHistoryProvider vhProvider, AppInfoProvider app
     gridData: FlGridData(
       show: true,
       drawVerticalLine: true,
+      drawHorizontalLine: true,
       horizontalInterval: null,
       verticalInterval: null,
       getDrawingHorizontalLine: (value) {
         return const FlLine(
-          color: Color(0xff37434d),
+          color: const Color(0xff37434d),
           strokeWidth: 1,
         );
       },
       getDrawingVerticalLine: (value) {
         return const FlLine(
-          color: Color(0xff37434d),
+          color: const Color(0xff37434d),
           strokeWidth: 1,
         );
       },
@@ -46,7 +46,7 @@ LineChartData _fillCurvaData(VoltHistoryProvider vhProvider, AppInfoProvider app
             const style = TextStyle(
               color: Color(0xff68737d),
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 13,
             );
             Widget text;
             if (vhProvider.needDrawXTitle(value.toInt())) {
@@ -54,10 +54,9 @@ LineChartData _fillCurvaData(VoltHistoryProvider vhProvider, AppInfoProvider app
             } else {
               text = const Text('');
             }
-            // --- 修正：添加必需的 meta 参数 ---
             return SideTitleWidget(
               meta: meta,
-              space: 8.0, // 相当于旧的 margin
+              space: 5.0,
               child: text,
             );
           },
@@ -72,18 +71,17 @@ LineChartData _fillCurvaData(VoltHistoryProvider vhProvider, AppInfoProvider app
             const style = TextStyle(
               color: Color(0xff67727d),
               fontWeight: FontWeight.bold,
-              fontSize: 12,
+              fontSize: 11,
             );
             Widget text;
             if (vhProvider.needDrawYTitle(value)) {
-              text = Text(meta.formattedValue, style: style);
+              text = Text(value.toStringAsFixed(2), style: style);
             } else {
               text = const Text('');
             }
-            // --- 修正：添加必需的 meta 参数 ---
             return SideTitleWidget(
               meta: meta,
-              space: 5.0, // 相当于旧的 margin
+              space: 4.0,
               child: text,
             );
           },
@@ -103,6 +101,7 @@ LineChartData _fillCurvaData(VoltHistoryProvider vhProvider, AppInfoProvider app
         spots: vhProvider.mapIndexed<FlSpot>((idx, elem) => FlSpot(idx.toDouble(), elem)).toList(),
         isCurved: false,
         color: appInfo.curvaStartColor,
+        gradient: LinearGradient(colors: [appInfo.curvaStartColor, appInfo.curvaEndColor]),
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: const FlDotData(

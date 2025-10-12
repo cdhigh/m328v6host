@@ -6,6 +6,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:bluetooth_connection_plugin/bluetooth_connection_plugin.dart';
 import 'common/globals.dart';
 import 'models/app_info_provider.dart';
 import 'routes.dart';
@@ -13,6 +14,8 @@ import 'l10n/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // 初始化蓝牙连接插件
+  BluetoothConnectionPlugin.initialize();
   Global.init().then((e) => runApp(
     ProviderScope(
       child: const M328v6App()

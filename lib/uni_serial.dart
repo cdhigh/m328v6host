@@ -10,12 +10,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'l10n/app_localizations.dart';
 import 'package:usb_serial/usb_serial.dart' as serial_android;
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as sb_android;
+import 'package:bluetooth_connection_plugin/bluetooth_connection_plugin.dart' as sb_android;
 //import 'package:serial_port_win32/serial_port_win32.dart' as serial_win;
 
 //编译apk需要注释掉 flutter_libserialport，取消注释 flutter_libserialport_stub
-//import 'package:flutter_libserialport/flutter_libserialport.dart' as lib_serial;
-import 'flutter_libserialport_stub.dart' as lib_serial;
+import 'package:flutter_libserialport/flutter_libserialport.dart' as lib_serial;
+//import 'flutter_libserialport_stub.dart' as lib_serial;
 import 'common/globals.dart';
 import 'common/event_bus.dart';
 import 'common/widget_utils.dart';
@@ -28,8 +28,10 @@ class UniSerial {
   final _desc = <String, String>{}; //每个端口的描述
   final _portType = <String, String>{}; //每个端口的类型,"USB"/"BLUETOOTH"/"WIFI"/"NATIVE"/"UNKNOWN"
   lib_serial.SerialPortReader? _reader; //for desktop
-  StreamSubscription<Uint8List>? _streamrSubscript; //监听端口数据的流订阅句柄
-  final _bluetooth = sb_android.FlutterBluetoothSerial.instance;
+  StreamSubscription? _streamrSubscript; //监听端口数据的流订阅句柄
+  // 蓝牙连接插件实例
+  // final _bluetooth = sb_android.FlutterBluetoothSerial.instance;
+  sb_android.ClassicBluetoothManager? _bluetoothManager; // 蓝牙管理器
 
   //Singleton
   UniSerial._internal(); //私有构造函数
@@ -54,19 +56,16 @@ class UniSerial {
       }
 
       //然后是蓝牙串口，需要蓝牙开关打开才显示蓝牙设备
-      final btState = await _bluetooth.state;
-      if ((btState == sb_android.BluetoothState.STATE_ON) || (btState == sb_android.BluetoothState.STATE_BLE_ON)) {
-        try {
-          final blueList = await _bluetooth.getBondedDevices();
-          for (final d in blueList) {
-            //将MAC地址添加到名字中，方便后续连接
-            final bName = "${d.name ?? ""} [${d.address}]";
-            names.add(bName);
-            _portType[bName] = "BLUETOOTH";
-          }
-        } catch (e) {
-          debugPrint(e.toString());
+      try {
+        final blueList = await sb_android.BluetoothConnectionPlugin.getPairedDevices();
+        for (final d in blueList) {
+          //将MAC地址添加到名字中，方便后续连接
+          final bName = "${d['name'] ?? ""} [${d['address']}]";
+          names.add(bName);
+          _portType[bName] = "BLUETOOTH";
         }
+      } catch (e) {
+        debugPrint(e.toString());
       }
     } else {
       /*var availablePorts = <String>[];
@@ -103,28 +102,6 @@ class UniSerial {
     return _portType[name] ?? "UNKNOWN";
   }
 
-  ///带重试机制的蓝牙连接
-  Future<sb_android.BluetoothConnection> _connectWithRetry(String address, int maxRetries) async {
-    Exception? lastException;
-    
-    for (int attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        // 设置连接超时
-        final connection = await sb_android.BluetoothConnection.toAddress(address)
-            .timeout(const Duration(seconds: 10));
-        return connection;
-      } catch (e) {
-        lastException = e is Exception ? e : Exception(e.toString());
-        
-        // 如果不是最后一次尝试，等待一段时间后重试
-        if (attempt < maxRetries) {
-          await Future.delayed(Duration(milliseconds: 500 * attempt));
-        }
-      }
-    }
-    
-    throw lastException ?? Exception("Connection failed after $maxRetries attempts");
-  }
 
   ///格式化蓝牙连接错误信息
   String _formatBluetoothError(dynamic error, [BuildContext? context]) {
@@ -167,9 +144,16 @@ class UniSerial {
 
         final addr = name.substring(iStart + 1, iEnd);
         try {
-          // 添加连接超时和重试机制
-          final connection = await _connectWithRetry(addr, 3);
-          _port = connection;
+          // 使用 ClassicBluetoothManager 进行连接
+          _bluetoothManager = sb_android.ClassicBluetoothManager();
+          
+          // 先尝试直接连接
+          await sb_android.BluetoothConnectionPlugin.connectToDevice(addr);
+          
+          // 启动数据流以接收数据
+          await sb_android.BluetoothConnectionPlugin.startDataStreaming();
+          
+          _port = "bluetooth_connection"; // 标记为蓝牙连接
           _name = name;
           _baudRate = baudRate;
           return "";
@@ -239,9 +223,26 @@ class UniSerial {
     }
 
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
-      if (_port is sb_android.BluetoothConnection) {
-        sb_android.BluetoothConnection p = _port;
-        _streamrSubscript = p.input?.listen(func, onError: (_) {sendDisconnectBroadcast("-1");});
+      if (_port == "bluetooth_connection") {
+        // 监听蓝牙数据流
+        _streamrSubscript = sb_android.BluetoothConnectionPlugin.onDataReceived.listen(
+          (data) {
+            // 尝试使用 rawData 来保留控制字符
+            Uint8List dataBytes;
+            if (data.rawData.isNotEmpty) {
+              // 使用 rawData 如果可用
+              dataBytes = Uint8List.fromList(data.rawData.codeUnits);
+            } else {
+              // 回退到 data
+              final dataString = data.data;
+              dataBytes = Uint8List.fromList(dataString.codeUnits);
+            }
+            func(dataBytes);
+          },
+          onError: (error) {
+            sendDisconnectBroadcast("-1");
+          }
+        );
       } else {
         serial_android.UsbPort p = _port;
         _streamrSubscript = p.inputStream?.listen(func, onError: (_) {sendDisconnectBroadcast("-1");});
@@ -272,11 +273,11 @@ class UniSerial {
     }
 
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
-      if (_port is sb_android.BluetoothConnection) {
-        sb_android.BluetoothConnection p = _port;
+      if (_port == "bluetooth_connection") {
         try {
-          p.output.add(data);
-          await p.output.allSent;
+          // 将 Uint8List 转换为字符串发送
+          final dataString = String.fromCharCodes(data);
+          await sb_android.BluetoothConnectionPlugin.sendData(dataString);
         } catch (e) {
           sendDisconnectBroadcast("-1");
         }
@@ -301,6 +302,7 @@ class UniSerial {
     }
   }
 
+
   ///关闭串口
   void close() {
     try {
@@ -314,7 +316,23 @@ class UniSerial {
       debugPrint(e.toString());
     }
     try {
-      _port?.close();
+      if (_port == "bluetooth_connection") {
+        // 停止数据流并断开蓝牙连接（异步执行，不等待结果）
+        sb_android.BluetoothConnectionPlugin.stopDataStreaming().catchError((e) {
+          return <String, dynamic>{};
+        });
+        sb_android.BluetoothConnectionPlugin.disconnectDevice().catchError((e) {
+          return <String, dynamic>{};
+        });
+        
+        // 清理蓝牙管理器
+        _bluetoothManager?.dispose().catchError((e) {
+          // 忽略清理错误
+        });
+        _bluetoothManager = null;
+      } else {
+        _port?.close();
+      }
     } catch (e) {
       debugPrint(e.toString());
     }
