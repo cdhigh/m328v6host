@@ -252,6 +252,14 @@ class MainDrawerOtherOperations extends ConsumerWidget {
             Navigator.pushNamed(context, "/sc_tester");
           },
         ),
+        ListTile(title: Text(AppLocalizations.of(context)!.simulatedTerminal),
+          enabled: loadMenuEnabled,
+          trailing: const Icon(Icons.arrow_forward),
+          onTap: () {
+            Navigator.of(context).pop(); //关闭drawer
+            Navigator.pushNamed(context, "/terminal");
+          },
+        ),
         const Divider(),
         ListTile(title: Text(AppLocalizations.of(context)!.export),
           trailing: const Icon(Icons.arrow_forward),

@@ -869,4 +869,34 @@ class AppLocalizationsZh extends AppLocalizations {
   String bluetoothConnectionFailed(String error) {
     return '蓝牙连接失败: $error';
   }
+
+  @override
+  String get simulatedTerminal => '模拟终端';
+
+  @override
+  String get terminal => '终端';
+
+  @override
+  String get displayMode => '显示模式';
+
+  @override
+  String get decimal => '十进制';
+
+  @override
+  String get hexadecimal => '十六进制';
+
+  @override
+  String get terminalOutput => '终端输出';
+
+  @override
+  String get noDataReceived => '未收到数据';
+
+  @override
+  String get clearTerminal => '清空终端';
+
+  @override
+  String get terminalPaused => '终端已暂停';
+
+  @override
+  String get terminalResumed => '终端已恢复';
 }

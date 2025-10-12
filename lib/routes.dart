@@ -14,6 +14,7 @@ import 'export_data.dart';
 import 'load_stats_page.dart';
 import 'load_testers/max_i_tester.dart';
 import 'load_testers/short_circuit_tester.dart';
+import 'terminal_page.dart';
 
 //为什么用函数 onGenerateRoute, 而不用 变量 routes
 //是因为 MaterialApp通过onGenerateRoute才方便传递参数给其他路由，尽管现在还没使用此特性
@@ -34,6 +35,7 @@ MaterialPageRoute routesPath(RouteSettings settings) {
     '/export_stats': (context) => ExportLoadStatsPage(loadStats: settings.arguments as Map<String, List<LoadStatsModel>>),
     '/max_i_tester': (context) => const MaxITesterPage(),
     '/sc_tester': (context) => const ScTesterPage(),
+    '/terminal': (context) => const TerminalPage(),
   };
   WidgetBuilder? builder = routes[settings.name];
   builder ??= routes['/']!;

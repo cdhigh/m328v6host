@@ -942,5 +942,53 @@
         "type": "String"
       }
     }
+  },
+  "simulatedTerminal": "模拟终端",
+  "@simulatedTerminal": {
+    "description": "模拟终端菜单项"
+  },
+  "terminal": "终端",
+  "@terminal": {
+    "description": "终端页面标题"
+  },
+  "displayMode": "显示模式",
+  "@displayMode": {
+    "description": "显示模式标签"
+  },
+  "decimal": "十进制",
+  "@decimal": {
+    "description": "十进制显示模式"
+  },
+  "hexadecimal": "十六进制",
+  "@hexadecimal": {
+    "description": "十六进制显示模式"
+  },
+  "terminalOutput": "终端输出",
+  "@terminalOutput": {
+    "description": "终端输出标签"
+  },
+  "noDataReceived": "未收到数据",
+  "@noDataReceived": {
+    "description": "未收到数据消息"
+  },
+  "clearTerminal": "清空终端",
+  "@clearTerminal": {
+    "description": "清空终端按钮文本"
+  },
+  "pause": "暂停",
+  "@pause": {
+    "description": "暂停按钮文本"
+  },
+  "resume": "恢复",
+  "@resume": {
+    "description": "恢复按钮文本"
+  },
+  "terminalPaused": "终端已暂停",
+  "@terminalPaused": {
+    "description": "终端暂停状态消息"
+  },
+  "terminalResumed": "终端已恢复",
+  "@terminalResumed": {
+    "description": "终端恢复状态消息"
   }
 }

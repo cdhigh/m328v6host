@@ -892,4 +892,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String bluetoothConnectionFailed(String error) {
     return 'Bluetooth connection failed: $error';
   }
+
+  @override
+  String get simulatedTerminal => 'Simulated Terminal';
+
+  @override
+  String get terminal => 'Terminal';
+
+  @override
+  String get displayMode => 'Display Mode';
+
+  @override
+  String get decimal => 'Decimal';
+
+  @override
+  String get hexadecimal => 'Hexadecimal';
+
+  @override
+  String get terminalOutput => 'Terminal Output';
+
+  @override
+  String get noDataReceived => 'No data received';
+
+  @override
+  String get clearTerminal => 'Clear Terminal';
+
+  @override
+  String get terminalPaused => 'Terminal Paused';
+
+  @override
+  String get terminalResumed => 'Terminal Resumed';
 }

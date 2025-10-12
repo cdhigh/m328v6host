@@ -1550,5 +1550,53 @@
         "type": "String"
       }
     }
+  },
+  "simulatedTerminal": "Simulated Terminal",
+  "@simulatedTerminal": {
+    "description": "Simulated terminal menu item"
+  },
+  "terminal": "Terminal",
+  "@terminal": {
+    "description": "Terminal page title"
+  },
+  "displayMode": "Display Mode",
+  "@displayMode": {
+    "description": "Display mode label"
+  },
+  "decimal": "Decimal",
+  "@decimal": {
+    "description": "Decimal display mode"
+  },
+  "hexadecimal": "Hexadecimal",
+  "@hexadecimal": {
+    "description": "Hexadecimal display mode"
+  },
+  "terminalOutput": "Terminal Output",
+  "@terminalOutput": {
+    "description": "Terminal output label"
+  },
+  "noDataReceived": "No data received",
+  "@noDataReceived": {
+    "description": "No data received message"
+  },
+  "clearTerminal": "Clear Terminal",
+  "@clearTerminal": {
+    "description": "Clear terminal button text"
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "Pause button text"
+  },
+  "resume": "Resume",
+  "@resume": {
+    "description": "Resume button text"
+  },
+  "terminalPaused": "Terminal Paused",
+  "@terminalPaused": {
+    "description": "Terminal paused status message"
+  },
+  "terminalResumed": "Terminal Resumed",
+  "@terminalResumed": {
+    "description": "Terminal resumed status message"
   }
 }

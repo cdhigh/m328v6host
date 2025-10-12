@@ -1723,6 +1723,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bluetooth connection failed: {error}'**
   String bluetoothConnectionFailed(String error);
+
+  /// Simulated terminal menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Simulated Terminal'**
+  String get simulatedTerminal;
+
+  /// Terminal page title
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal'**
+  String get terminal;
+
+  /// Display mode label
+  ///
+  /// In en, this message translates to:
+  /// **'Display Mode'**
+  String get displayMode;
+
+  /// Decimal display mode
+  ///
+  /// In en, this message translates to:
+  /// **'Decimal'**
+  String get decimal;
+
+  /// Hexadecimal display mode
+  ///
+  /// In en, this message translates to:
+  /// **'Hexadecimal'**
+  String get hexadecimal;
+
+  /// Terminal output label
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal Output'**
+  String get terminalOutput;
+
+  /// No data received message
+  ///
+  /// In en, this message translates to:
+  /// **'No data received'**
+  String get noDataReceived;
+
+  /// Clear terminal button text
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Terminal'**
+  String get clearTerminal;
+
+  /// Terminal paused status message
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal Paused'**
+  String get terminalPaused;
+
+  /// Terminal resumed status message
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal Resumed'**
+  String get terminalResumed;
 }
 
 class _AppLocalizationsDelegate
