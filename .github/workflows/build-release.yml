@@ -83,7 +83,7 @@ jobs:
         run: |
           mkdir -p dist
           tar -czf dist/${{ env.APP_NAME }}-${{ steps.ver.outputs.ver }}-linux-x64.tar.gz \
-            -C build/linux/x64/runner bundle
+            -C build/linux/x64/release bundle
 
       - uses: actions/upload-artifact@v4
         with:
