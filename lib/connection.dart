@@ -49,11 +49,26 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
 
   ///初始化端口列表
   void initPorts([dynamic _]) async {
-    _availablePorts = await _uniSerial.getAvailablePortNames();
-    setState(() {
-      for (final d in _availablePorts) {
-        _baudCtrllers[d] = TextEditingController(text: Global.lastBaudRate.toString());
+    final newPorts = await _uniSerial.getAvailablePortNames();
+    if (!mounted) {
+      return;
+    }
+
+    //复用已有的controller，避免反复刷新时泄漏旧controller和重置用户输入的波特率
+    //同时清理已经消失的端口的controller
+    _baudCtrllers.removeWhere((key, value) {
+      if (!newPorts.contains(key)) {
+        value.dispose();
+        return true;
       }
+      return false;
+    });
+    for (final d in newPorts) {
+      _baudCtrllers[d] ??= TextEditingController(text: Global.lastBaudRate.toString());
+    }
+
+    setState(() {
+      _availablePorts = newPorts;
     });
   }
 
@@ -87,19 +102,22 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
   ///更新蓝牙状态
   void updateBluetoothState([dynamic _]) async {
     try {
-      // 检查蓝牙是否可用
+      // 检查蓝牙是否可用（以是否存在已配对设备作为近似判断）
       final devices = await sb_android.BluetoothConnectionPlugin.getPairedDevices();
       final wasOn = _bluetoothIsOn;
       _bluetoothIsOn = devices.isNotEmpty;
-      
+
       if (wasOn != _bluetoothIsOn) {
         initPorts();
+        if (mounted) {
+          setState(() {});
+        }
       }
-      
-      setState(() {});
     } catch (e) {
       debugPrint('蓝牙状态检查失败: $e');
-      setState(() {_bluetoothIsOn = false;});
+      if (mounted) {
+        setState(() {_bluetoothIsOn = false;});
+      }
     }
   }
 
@@ -194,7 +212,7 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
       }
     }
 
-    final connProvider = ref.watch<ConnectionProvider>(Global.connectionProvider);
+    final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
     String ret = "";
     try {
       ret = await _uniSerial.open(name, baudRate, mounted ? context : null);
@@ -236,22 +254,24 @@ class _ConnectionPageState extends ConsumerState<ConnectionPage> {
   }
 
   ///确认权限，如果没有权限，提示需要申请
+  ///注意：isDenied 表示用户尚未授权（包括从未申请过），此时调用request()才会弹出系统授权对话框
+  ///isPermanentlyDenied 时弹不出对话框，需要引导用户到系统设置中手动打开
   void requestPermission([dynamic _]) async {
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       //蓝牙功能需要定位权限
       var status = await Permission.location.status;
-      if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
+      if (status.isDenied) { //尚未授权，弹出申请对话框
         await Permission.location.request();
       }
 
       // Android 12+ 需要新的蓝牙权限
       status = await Permission.bluetoothConnect.status;
-      if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
+      if (status.isDenied) {
         await Permission.bluetoothConnect.request();
       }
 
       status = await Permission.bluetoothScan.status;
-      if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
+      if (status.isDenied) {
         await Permission.bluetoothScan.request();
       }
     }

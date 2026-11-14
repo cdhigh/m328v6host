@@ -922,4 +922,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get terminalResumed => 'Terminal Resumed';
+
+  @override
+  String get exportFileFailed =>
+      'Export file failed, please check the path and storage permission';
+
+  @override
+  String get timeFormatIsInvalid =>
+      'Invalid time format, please enter a time between 00:00:00 and 23:59:59';
+
+  @override
+  String get connectionLostDuringTest =>
+      'Connection lost during the test! The device MOS may still be forced. Please check the device manually after reconnecting';
 }

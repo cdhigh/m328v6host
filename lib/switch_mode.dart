@@ -27,7 +27,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
+      final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
       _modeStr = rdProvider.mode;
       isCR = (_modeStr == "CR");
       isCP = (_modeStr == "CP");
@@ -86,7 +86,7 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
 
   ///设置新的模式
   void setNewMode(BuildContext context) async {
-    final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
+    final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     
     if (_modeStr == "CC") {
       load.switchToCC();

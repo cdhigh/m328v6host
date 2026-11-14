@@ -84,6 +84,7 @@ extension MyWidgetChain on Widget {
       alignment: alignment,
       widthFactor: widthFactor,
       heightFactor: heightFactor,
+      child: this, //此前遗漏了child参数，导致被包裹的控件被丢弃
     );
   }
 

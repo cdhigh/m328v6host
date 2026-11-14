@@ -21,7 +21,8 @@ FINAL_APK_FILE = os.path.join(M328V6_DIR, "build", "app", "outputs", "flutter-ap
 VERSION_PAT = re.compile(r'^version: (.+)$')
 
 #"lib/common/globals.dart
-GLOBAL_VERSION_PAT = re.compile(r"^( *static +const +version += +[\"'])([0-9\.]+)([\"'].*)$")
+#版本号可能带有+N后缀（如1.3.0+1），因此中间部分不能限制为纯数字
+GLOBAL_VERSION_PAT = re.compile(r"^( *static +const +version += +[\"'])([^\"']+)([\"'].*)$")
 
 GLOBAL_VERSION_MASK = 0x10
 
@@ -108,7 +109,7 @@ def process():
             print("\n\nCopy apk file to {}\n\n".format(desktopApk))
             shutil.copyfile(FINAL_APK_FILE, desktopApk)
     except Exception as e:
-        print("\n\nCopy apk file failed: {}\n\n".format(ste(e)))
+        print("\n\nCopy apk file failed: {}\n\n".format(str(e)))
     
     elaspsedTime = datetime.datetime.now() - startTime
     print('\nExecution time : {}\n'.format(elaspsedTime))

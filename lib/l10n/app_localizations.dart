@@ -1783,6 +1783,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Terminal Resumed'**
   String get terminalResumed;
+
+  /// Message shown when exporting a file fails
+  ///
+  /// In en, this message translates to:
+  /// **'Export file failed, please check the path and storage permission'**
+  String get exportFileFailed;
+
+  /// Message shown when the entered time text cannot be parsed
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid time format, please enter a time between 00:00:00 and 23:59:59'**
+  String get timeFormatIsInvalid;
+
+  /// Warning shown when the serial connection is lost while the short-circuit test is running
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost during the test! The device MOS may still be forced. Please check the device manually after reconnecting'**
+  String get connectionLostDuringTest;
 }
 
 class _AppLocalizationsDelegate

@@ -11,7 +11,6 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../l10n/app_localizations.dart';
 import '../common/globals.dart';
 import '../common/widget_utils.dart';
-import '../common/common_utils.dart';
 import '../widgets/modal_dialogs.dart';
 import '../models/running_data_provider.dart';
 import '../models/connection_provider.dart';
@@ -411,8 +410,8 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
       return;
     }
 
-    final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
-    final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
+    final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
+    final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     if (rdProvider.vNow <= 0.0) {
       return;
     }
@@ -527,7 +526,7 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
   ///停止测试
   void stopTest() {
     _timer?.cancel();
-    final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
+    final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     load.setLoadOn(false);
     _testStatus = _TestStatus.stopped;
     setState((){});

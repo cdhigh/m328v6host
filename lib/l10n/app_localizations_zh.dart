@@ -899,4 +899,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get terminalResumed => '终端已恢复';
+
+  @override
+  String get exportFileFailed => '导出文件失败，请检查保存路径和存储权限';
+
+  @override
+  String get timeFormatIsInvalid => '时间格式不合法，请输入00:00:00～23:59:59之间的时间';
+
+  @override
+  String get connectionLostDuringTest =>
+      '测试过程中连接已断开！下位机MOS可能仍处于强制状态，重连后请手动检查下位机状态';
 }

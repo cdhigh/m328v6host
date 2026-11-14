@@ -11,7 +11,8 @@ String readableSeconds(int seconds) {
   } else if (seconds < 60 * 60) {
     return "${(seconds ~/ 60)}m${seconds % 60}s";
   } else {
-    return "${(seconds ~/ 3600)}h${(seconds % 3600)}m";
+    //小时部分的余数需要再换算为分钟，否则7260秒会显示成 2h60m
+    return "${(seconds ~/ 3600)}h${((seconds % 3600) ~/ 60)}m";
   }
 }
 

@@ -576,6 +576,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
     if (connProvider.name != "") {
       final newvSet = await showNumKeyboardDialog(context: context, doubleNumber: rdProvider.vSet);
+      if (!mounted) {
+        return;
+      }
       if (newvSet != null) {
         if (newvSet.toDouble() > 65.0) { //最高65V
           showToast(AppLocalizations.of(context)!.voltageMustBeLessThan65Volts);
@@ -593,6 +596,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
     if (connProvider.name != "") {
       final newiSet = await showNumKeyboardDialog(context: context, doubleNumber: rdProvider.iSet);
+      if (!mounted) {
+        return;
+      }
       if (newiSet != null) {
         if (newiSet.toDouble() > 15.0) { //最高15A
           showToast(AppLocalizations.of(context)!.currentMustBeLessThan15A);
@@ -609,7 +615,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
     if (connProvider.name != "") {
       final bool? ok = await showOkCancelAlertDialog(context: context, title: AppLocalizations.of(context)!.confirm, content: Text(AppLocalizations.of(context)!.clearAh));
-      if (ok == true) {
+      if ((ok == true) && mounted) {
         connProvider.load.clearAh();
       }
     }
@@ -631,11 +637,14 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           ),
       items: [
         PopupMenuItem(child: Text(AppLocalizations.of(context)!.clearCurvaData),
-          onTap: () {ref.watch<VoltHistoryProvider>(Global.vHistoryProvider).clear();}),
+          onTap: () {ref.read<VoltHistoryProvider>(Global.vHistoryProvider).clear();}),
         PopupMenuItem(enabled: _loadStats.isNotEmpty,
           onTap: () { //菜单本身就是一个页面，所以需要等此页面关闭后才能打开另一个页面，使用 addPostFrameCallback
             SchedulerBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushNamed(context, "/load_stats", 
+              if (!mounted) {
+                return;
+              }
+              Navigator.pushNamed(context, "/load_stats",
                 arguments: Map<String, List<LoadStatsModel>>.from({"stats": _loadStats}),);
             });
           }, child: Text(AppLocalizations.of(context)!.showLoadStats)),
@@ -663,7 +672,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
     }
     //debugPrint(String.fromCharCodes(bag));
 
-    final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
+    final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
     final first5Chars = (size > 5) ? String.fromCharCodes(bag, 0, 5) : "";
 
     if ((size >= 32) && (first5Chars == "EXTRA")) { //额外数据
@@ -723,7 +732,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       _timerForExtraData..reset()..start();
     } else if (size >= 29) {   //老版本M8V6定义的数据
       //debugPrint(String.fromCharCodes(bag));
-      final vhProvider = ref.watch<VoltHistoryProvider>(Global.vHistoryProvider);
+      final vhProvider = ref.read<VoltHistoryProvider>(Global.vHistoryProvider);
       int loadStatus = 0; //1-开始，2-结束
 
       int? iNow;
@@ -790,7 +799,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         final lStats = LoadStatsModel(initialV: rdProvider.vNow, initialAh: rdProvider.ah);
         lStats.rd = rdProvider.rd;
         lStats.ra = rdProvider.ra;
-        if (_loadStats.length > 16) { //仅保留最近16个记录
+        if (_loadStats.length >= 16) { //仅保留最近16个记录
           _loadStats.removeAt(0);
         }
         _loadStats.add(lStats); //新增一个统计数据

@@ -990,5 +990,17 @@
   "terminalResumed": "终端已恢复",
   "@terminalResumed": {
     "description": "终端恢复状态消息"
+  },
+  "exportFileFailed": "导出文件失败，请检查保存路径和存储权限",
+  "@exportFileFailed": {
+    "description": "导出文件失败时的提示"
+  },
+  "timeFormatIsInvalid": "时间格式不合法，请输入00:00:00～23:59:59之间的时间",
+  "@timeFormatIsInvalid": {
+    "description": "输入的时间文本无法解析时的提示"
+  },
+  "connectionLostDuringTest": "测试过程中连接已断开！下位机MOS可能仍处于强制状态，重连后请手动检查下位机状态",
+  "@connectionLostDuringTest": {
+    "description": "短路测试进行中串口连接断开时的警告"
   }
 }

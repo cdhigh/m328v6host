@@ -57,9 +57,9 @@ class Global {
 
   ///初始化全局信息，会在APP启动时执行，注意里面的代码绝对不允许出现异常
   static Future init() async {
-    prefs = await SharedPreferences.getInstance();
-    
     try {
+      prefs = await SharedPreferences.getInstance();
+
       firstTimeRuning = prefs.getBool('firstTimeRuning') ?? true;
       checkUpdateFrequency = prefs.getInt('checkUpdateFrequency') ?? 7;
       lastCheckUpdateTime = DateTime.fromMillisecondsSinceEpoch(prefs.getInt('lastCheckUpdateTime') ?? 0);

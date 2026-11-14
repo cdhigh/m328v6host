@@ -26,8 +26,6 @@ Future<SingleVersion?> checkUpdate(BuildContext context, {bool silent=true}) asy
     return null;
   }
 
-  Global.lastCheckUpdateTime = DateTime.now();
-  Global.saveProfile();
   if (!silent) {
     BotToast.showLoading();
   }
@@ -36,11 +34,16 @@ Future<SingleVersion?> checkUpdate(BuildContext context, {bool silent=true}) asy
     BotToast.closeAllLoading();
   }
   if (ret == null) {
+    //检查失败不更新时间戳，避免网络故障导致之后N天都不再自动检查
     if (!silent) {
       showToast(AppLocalizations.of(context)!.checkForUpdateFailed);
     }
     return null;
   }
+
+  //只有在成功获取到服务器信息后才记录检查时间
+  Global.lastCheckUpdateTime = DateTime.now();
+  Global.saveProfile();
 
   final lastest = ret.lastest;
   if (lastest.isEmpty || !isVersionGreaterThan(lastest, Global.version)) {

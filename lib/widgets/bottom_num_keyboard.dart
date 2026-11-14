@@ -50,13 +50,11 @@ class _BottomKeyboardWidgetState extends State<BottomKeyboardWidget> {
     super.initState();
     intNumber = widget.intNumber;
     doubleNumber = widget.doubleNumber;
-    if (doubleNumber == null) {
-      intNumber = 0;
-      text = '0';
-    } else if (doubleNumber != null) { //有时候浮点数会有很多位小数点，这里只取小数点后三位
+    if (doubleNumber != null) { //浮点模式：有时候浮点数会有很多位小数点，这里只取小数点后三位
       doubleNumber = (doubleNumber! * 1000).toInt() / 1000;
       text = doubleNumber.toString();
-    } else {
+    } else { //整数模式：显示传入的初始值
+      intNumber = intNumber ?? 0;
       text = intNumber.toString();
     }
   }

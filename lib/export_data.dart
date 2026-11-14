@@ -19,6 +19,7 @@ import 'common/iconfont.dart';
 import 'common/globals.dart';
 import 'common/common_utils.dart';
 import 'common/when.dart';
+import 'common/widget_utils.dart';
 import 'widgets/modal_dialogs.dart';
 import 'models/volt_history_provider.dart';
 
@@ -86,7 +87,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
             ),),
             IconButton(icon: const Icon(IconFont.dot3), onPressed: () async {
               final ret = await FilePicker.platform.getDirectoryPath(
-                dialogTitle: "Choose a directory", initialDirectory: _folderCtrller.text).catchError((e){debugPrint(e.toString());});
+                dialogTitle: "Choose a directory", initialDirectory: _folderCtrller.text).catchError((e){debugPrint(e.toString()); return null;});
               if (ret != null) {
                 setState(() {_folderCtrller.text = ret;});
               }
@@ -115,26 +116,36 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   }
 
   ///开始导出
-  void doExport() {
+  void doExport() async {
     if (_dotNum == 0) {
       return;
     }
 
     final fileName = p.join(_folderCtrller.text, _nameCtrller.text);
+    bool ret = false;
     if (_exportType == "XLSX") {
-      exportToXlsx(fileName);
+      ret = await exportToXlsx(fileName);
     } else if (_exportType == "TXT") {
-      exportToTxt(fileName);
+      ret = await exportToTxt(fileName);
     } else {
       return;
     }
 
-    showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.exportFileSuccess(_exportType)));
+    //等待写盘完成后才提示结果，避免写盘失败还提示成功
+    if (!mounted) {
+      return;
+    }
+    if (ret) {
+      showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.exportFileSuccess(_exportType)));
+    } else {
+      showToast(AppLocalizations.of(context)!.exportFileFailed);
+    }
   }
 
   ///导出为XLSX
   ///fileName: 路径+文件名
-  void exportToXlsx(String fileName) async {
+  ///返回是否写盘成功
+  Future<bool> exportToXlsx(String fileName) async {
     //生成XLSX实例
     final workbook = xlsio.Workbook();
     final sheet = workbook.worksheets[0];
@@ -183,27 +194,40 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     //开始保存文件
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
-    File(fileName).writeAsBytes(bytes);
+    try {
+      await File(fileName).writeAsBytes(bytes);
+      return true;
+    } catch (e) {
+      debugPrint('Export xlsx failed: $e');
+      return false;
+    }
   }
 
   ///导出为Txt，一行一个数据
   ///fileName: 路径+文件名
-  void exportToTxt(String fileName) async {
+  ///返回是否写盘成功
+  Future<bool> exportToTxt(String fileName) async {
     final file = File(fileName);
     final list = _vhProvider.vHistory;
-    
+
     var remarkText = _remarkCtrller.text.trim();
-    
-    if (Platform.isWindows) {
-      if (remarkText.isNotEmpty) {
-        remarkText += "\r\n";
+
+    try {
+      if (Platform.isWindows) {
+        if (remarkText.isNotEmpty) {
+          remarkText += "\r\n";
+        }
+        await file.writeAsString(remarkText + list.join("\r\n"));
+      } else {
+        if (remarkText.isNotEmpty) {
+          remarkText += "\n";
+        }
+        await file.writeAsString(remarkText + list.join("\n"));
       }
-      file.writeAsString(remarkText + list.join("\r\n"));
-    } else {
-      if (remarkText.isNotEmpty) {
-        remarkText += "\n";
-      }
-      file.writeAsString(remarkText + list.join("\n"));
+      return true;
+    } catch (e) {
+      debugPrint('Export txt failed: $e');
+      return false;
     }
   }
 
@@ -211,7 +235,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   void requestPermission([_]) async {
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       var status = await Permission.storage.status;
-      if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
+      if (status.isDenied) { //尚未授权，弹出申请对话框
         await Permission.storage.request();
       }
     }
@@ -237,7 +261,9 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     } else {
       ret = "";
     }
-    setState((){_folderCtrller.text = ret;});
+    if (mounted) {
+      setState((){_folderCtrller.text = ret;});
+    }
   }
 
 }

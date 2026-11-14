@@ -20,7 +20,6 @@ class MainDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orientation = MediaQuery.of(context).orientation;
-    final controller = ScrollController();
     final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
     final connProvider = ref.watch<ConnectionProvider>(Global.connectionProvider);
     final serial = connProvider.serial;
@@ -41,7 +40,7 @@ class MainDrawer extends ConsumerWidget {
 
     final portConnected = (portName != "");
 
-    return SingleChildScrollView(controller: controller,
+    return SingleChildScrollView(
         child: Column(children: <Widget>[
           UserAccountsDrawerHeader(accountName: Text(AppLocalizations.of(context)!.m328v6ElectronicLoad + 
             (Global.version != "" ? " V${Global.version}" : "")),

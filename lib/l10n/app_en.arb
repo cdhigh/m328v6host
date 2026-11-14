@@ -1598,5 +1598,17 @@
   "terminalResumed": "Terminal Resumed",
   "@terminalResumed": {
     "description": "Terminal resumed status message"
+  },
+  "exportFileFailed": "Export file failed, please check the path and storage permission",
+  "@exportFileFailed": {
+    "description": "Message shown when exporting a file fails"
+  },
+  "timeFormatIsInvalid": "Invalid time format, please enter a time between 00:00:00 and 23:59:59",
+  "@timeFormatIsInvalid": {
+    "description": "Message shown when the entered time text cannot be parsed"
+  },
+  "connectionLostDuringTest": "Connection lost during the test! The device MOS may still be forced. Please check the device manually after reconnecting",
+  "@connectionLostDuringTest": {
+    "description": "Warning shown when the serial connection is lost while the short-circuit test is running"
   }
 }

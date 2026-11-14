@@ -29,6 +29,11 @@ class UniSerial {
   final _portType = <String, String>{}; //每个端口的类型,"USB"/"BLUETOOTH"/"WIFI"/"NATIVE"/"UNKNOWN"
   lib_serial.SerialPortReader? _reader; //for desktop
   StreamSubscription? _streamrSubscript; //监听端口数据的流订阅句柄
+  //已注册的数据监听函数列表，内部订阅只创建一次，数据到达后分发给所有监听者
+  //这样可以支持多个页面同时监听串口数据（如主页和终端页），避免旧实现中
+  //后注册者覆盖订阅句柄导致旧监听者无法被取消（重连后数据被重复处理），
+  //或者桌面端创建多个reader瓜分同一端口数据的问题
+  final _listenFunctions = <void Function(Uint8List)>[];
   // 蓝牙连接插件实例
   // final _bluetooth = sb_android.FlutterBluetoothSerial.instance;
   sb_android.ClassicBluetoothManager? _bluetoothManager; // 蓝牙管理器
@@ -215,55 +220,70 @@ class UniSerial {
     }
   }
 
-  ///注册接收数据监听函数，此函数可能会抛出异常
+  ///注册接收数据监听函数，支持注册多个监听者，此函数可能会抛出异常
+  ///监听者不再需要时（如页面dispose）应调用 unregisterListenFunction() 移除
   bool registerListenFunction(Function(Uint8List) func) {
     assert(_port != null);
     if (_port == null) {
       return false;
     }
 
-    if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
-      if (_port == "bluetooth_connection") {
-        // 监听蓝牙数据流
-        _streamrSubscript = sb_android.BluetoothConnectionPlugin.onDataReceived.listen(
-          (data) {
-            // 尝试使用 rawData 来保留控制字符
-            Uint8List dataBytes;
-            if (data.rawData.isNotEmpty) {
-              // 使用 rawData 如果可用
-              dataBytes = Uint8List.fromList(data.rawData.codeUnits);
-            } else {
-              // 回退到 data
-              final dataString = data.data;
-              dataBytes = Uint8List.fromList(dataString.codeUnits);
-            }
-            func(dataBytes);
-          },
-          onError: (error) {
-            sendDisconnectBroadcast("-1");
-          }
-        );
-      } else {
-        serial_android.UsbPort p = _port;
-        _streamrSubscript = p.inputStream?.listen(func, onError: (_) {sendDisconnectBroadcast("-1");});
-      }
-    } else {
-      //Windows需要先注册监听函数，再打开端口
-      /*(_port as serial_win.SerialPort).readOnListenFunction = func;
-      try {
-        if (!_port.isOpened) {
-          _port.open();
-        }
-      } catch (e) {
-        debugPrint(e.toString());
-        return false;
-      }*/
-
-      _reader = lib_serial.SerialPortReader(_port);
-      _streamrSubscript = _reader!.stream.listen(func, onDone: () {sendDisconnectBroadcast("-1");}, onError: (_) {sendDisconnectBroadcast("-1");});
+    //避免重复注册同一个监听函数
+    if (!_listenFunctions.contains(func)) {
+      _listenFunctions.add(func);
     }
-    
+
+    //内部订阅只创建一次，数据到达后统一分发给所有监听者
+    if (_streamrSubscript == null) {
+      if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
+        if (_port == "bluetooth_connection") {
+          // 监听蓝牙数据流
+          _streamrSubscript = sb_android.BluetoothConnectionPlugin.onDataReceived.listen(
+            _onBluetoothDataReceived,
+            onError: (error) {
+              sendDisconnectBroadcast("-1");
+            }
+          );
+        } else {
+          serial_android.UsbPort p = _port;
+          _streamrSubscript = p.inputStream?.listen(_dispatchReceivedData, onError: (_) {sendDisconnectBroadcast("-1");});
+        }
+      } else {
+        _reader = lib_serial.SerialPortReader(_port);
+        _streamrSubscript = _reader!.stream.listen(_dispatchReceivedData, onDone: () {sendDisconnectBroadcast("-1");}, onError: (_) {sendDisconnectBroadcast("-1");});
+      }
+    }
+
     return true;
+  }
+
+  ///移除一个监听函数，如果之后没有其他监听者，串口数据将不再被处理
+  ///注意此函数不会关闭内部订阅，由close()统一关闭
+  void unregisterListenFunction(Function(Uint8List) func) {
+    _listenFunctions.remove(func);
+  }
+
+  ///蓝牙数据到达，将字符串转换为字节后分发给所有监听者
+  void _onBluetoothDataReceived(dynamic data) {
+    // 尝试使用 rawData 来保留控制字符
+    Uint8List dataBytes;
+    if (data.rawData.isNotEmpty) {
+      // 使用 rawData 如果可用
+      dataBytes = Uint8List.fromList(data.rawData.codeUnits);
+    } else {
+      // 回退到 data
+      final dataString = data.data;
+      dataBytes = Uint8List.fromList(dataString.codeUnits);
+    }
+    _dispatchReceivedData(dataBytes);
+  }
+
+  ///将串口数据分发给所有监听者
+  ///遍历一份快照，避免某个监听者在回调中注册/注销其他监听者时下标错位
+  void _dispatchReceivedData(Uint8List data) {
+    for (final func in List<void Function(Uint8List)>.from(_listenFunctions)) {
+      func(data);
+    }
   }
 
   ///往串口写一个字节串，此函数可能会抛出异常
@@ -276,17 +296,24 @@ class UniSerial {
       if (_port == "bluetooth_connection") {
         try {
           // 将 Uint8List 转换为字符串发送
+          // 注意：蓝牙插件sendData只接受字符串，大于0x7F的字节会被UTF-8编码破坏，
+          // 好在下位机协议只使用ASCII字符(0x0A~0x7E)
           final dataString = String.fromCharCodes(data);
           await sb_android.BluetoothConnectionPlugin.sendData(dataString);
         } catch (e) {
-          sendDisconnectBroadcast("-1");
+          //如果异常是close()主动关闭导致的，不再广播异常断开，避免误触发自动重连
+          if (_port != null) {
+            sendDisconnectBroadcast("-1");
+          }
         }
       } else {
         serial_android.UsbPort p = _port;
         try {
           await p.write(data);
         } catch (e) {
-          sendDisconnectBroadcast("-1");
+          if (_port != null) {
+            sendDisconnectBroadcast("-1");
+          }
         }
       }
     } else {
@@ -297,7 +324,9 @@ class UniSerial {
         p.write(data);
         p.drain();
       } catch (e) {
-        sendDisconnectBroadcast("-1");
+        if (_port != null) {
+          sendDisconnectBroadcast("-1");
+        }
       }
     }
   }
@@ -340,7 +369,9 @@ class UniSerial {
     _port = null;
     _reader = null;
     _streamrSubscript = null;
+    _listenFunctions.clear(); //清空所有监听者，重连后需要重新注册
     _desc.clear();
+    _portType.clear();
     _name = "";
     _baudRate = 19200;
   }

@@ -259,6 +259,7 @@ extension When on DateTime {
   }
 
   ///简单的分析时分秒结构的字符串: 12:01:01
+  ///解析失败返回 DateTime(1970)，调用方可以使用 isInvalidDateTime() 判断
   static DateTime parseTimeOnly(String text) {
     int? second = 0;
     int? minute = 0;
@@ -282,12 +283,15 @@ extension When on DateTime {
       hour = null;
     }
 
-    if ((hour != null) && (minute != null) && (second != null) 
-      && (hour >= 0) && (hour < 23)
+    if ((hour != null) && (minute != null) && (second != null)
+      && (hour >= 0) && (hour <= 23) //23点也是合法的小时数
       && (minute >= 0) && (minute < 60) && (second >= 0) && (second < 60)) {
       return DateTime(2022, 1, 1, hour, minute, second);
     } else {
       return invalidTime;
     }
   }
+
+  ///判断一个由 parseTimeOnly() 返回的时间是否为解析失败的哨兵值
+  static bool isInvalidDateTime(DateTime t) => (t.year == 1970);
 }

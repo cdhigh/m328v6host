@@ -42,7 +42,7 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
 
     //在此界面时定时查询设备的预约时间/周期时间
     _timerForData = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
+      final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
       load.queryDelayOn();
       Future.delayed(const Duration(milliseconds: 100), load.queryDelayOff);
       Future.delayed(const Duration(milliseconds: 200), load.queryPeriodOn);
@@ -175,8 +175,13 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
 
   ///设置预约开时间
   void setDelayOn() async {
-    final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
-    final seconds = totalSeconds(getDelayOnTime());
+    final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
+    final time = getDelayOnTime();
+    if (When.isInvalidDateTime(time)) { //输入的时间格式非法，不能静默当作0秒下发
+      showSimpleSnackBar(context, AppLocalizations.of(context)!.timeFormatIsInvalid);
+      return;
+    }
+    final seconds = totalSeconds(time);
     if (seconds > 0xffff) {
       showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
       return;
@@ -188,8 +193,13 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
 
   ///设置预约关时间
   void setDelayOff() async {
-    final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
-    final seconds = totalSeconds(getDelayOffTime());
+    final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
+    final time = getDelayOffTime();
+    if (When.isInvalidDateTime(time)) {
+      showSimpleSnackBar(context, AppLocalizations.of(context)!.timeFormatIsInvalid);
+      return;
+    }
+    final seconds = totalSeconds(time);
     if (seconds > 0xffff) {
       showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
       return;
@@ -201,9 +211,15 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
 
   ///设置周期开关时间
   void setPeriodOnOff() async {
-    final load = ref.watch<ConnectionProvider>(Global.connectionProvider).load;
-    final onSeconds = totalSeconds(getPeriodOnTime());
-    final offSeconds = totalSeconds(getPeriodOffTime());
+    final load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
+    final onTime = getPeriodOnTime();
+    final offTime = getPeriodOffTime();
+    if (When.isInvalidDateTime(onTime) || When.isInvalidDateTime(offTime)) {
+      showSimpleSnackBar(context, AppLocalizations.of(context)!.timeFormatIsInvalid);
+      return;
+    }
+    final onSeconds = totalSeconds(onTime);
+    final offSeconds = totalSeconds(offTime);
     if ((onSeconds > 0xffff) || (offSeconds > 0xffff)) {
       showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
       return;
@@ -294,7 +310,9 @@ class _DelayPeriodOnOffPageState extends ConsumerState<DelayPeriodOnOffPage> {
     
     if ((picked != null) && (picked != initial)){
       if ((picked.hour * 3600 + picked.minute * 60) > 0xffff) { //要16位整数能保存
-        showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
+        if (mounted) {
+          showSimpleSnackBar(context, AppLocalizations.of(context)!.timeMustBeLessThan18Hours);
+        }
         return null;
       } else {
         return picked;

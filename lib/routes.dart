@@ -38,7 +38,11 @@ MaterialPageRoute routesPath(RouteSettings settings) {
     '/terminal': (context) => const TerminalPage(),
   };
   WidgetBuilder? builder = routes[settings.name];
-  builder ??= routes['/']!;
+  if (builder == null) {
+    //打印未注册的路由名，避免路由名拼写错误被静默回退到主页难以发现
+    debugPrint('Unknown route: ${settings.name}');
+    builder = routes['/']!;
+  }
   return MaterialPageRoute(builder: (ctx) => builder!(ctx));
 }
 

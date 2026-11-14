@@ -3,7 +3,6 @@
 /// Author: cdhigh <https://github.com/cdhigh>
 /// 
 library;
-import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +23,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isHexMode = false;
   bool _isPaused = false;
-  StreamSubscription? _serialSubscription;
+  bool _registered = false; //是否已经注册了串口监听
   static const int _maxLines = 500;
 
   @override
@@ -35,7 +34,11 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
 
   @override
   void dispose() {
-    _serialSubscription?.cancel();
+    //串口订阅由UniSerial统一管理，这里只注销自己的监听函数
+    //不能直接cancel订阅，否则会连带破坏主页等其他监听者
+    if (_registered) {
+      ref.read<ConnectionProvider>(Global.connectionProvider).serial.unregisterListenFunction(_onSerialDataReceived);
+    }
     _scrollController.dispose();
     super.dispose();
   }
@@ -43,8 +46,10 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
   void _setupSerialListener() {
     final connProvider = ref.read<ConnectionProvider>(Global.connectionProvider);
     if (connProvider.name.isNotEmpty) {
-      // 注册串口数据监听
-      connProvider.serial.registerListenFunction(_onSerialDataReceived);
+      // 注册串口数据监听（UniSerial支持多个监听者共存，不影响主页的监听）
+      if (connProvider.serial.registerListenFunction(_onSerialDataReceived)) {
+        _registered = true;
+      }
     }
   }
 

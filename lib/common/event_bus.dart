@@ -56,17 +56,19 @@ class EventBus {
       return;
     }
 
-    int len = list.length - 1;
+    //遍历一份快照，防止异步派发期间订阅者列表被增删导致下标错位或访问到已被移除的订阅者
+    final snapshot = List<EventCallback>.from(list);
+    int len = snapshot.length - 1;
     //反向遍历，防止订阅者在回调中移除自身带来的下标错位
     if (sendAsync) { //异步方式
       return Future(() {
         for (var i = len; i > -1; --i) {
-          list[i](arg);
+          snapshot[i](arg);
         }
       }).catchError((e){debugPrint(e.toString()); return null;});
     } else {
       for (var i = len; i > -1; --i) {
-        list[i](arg);
+        snapshot[i](arg);
       }
     }
   }

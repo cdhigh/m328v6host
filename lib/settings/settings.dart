@@ -76,9 +76,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       SettingTile(title: AppLocalizations.of(context)!.currentVersion, subTitle: (Global.version != "") ? ("V${Global.version}") : ""),
       SettingTile(title: AppLocalizations.of(context)!.checkFrequency, subTitle: displayCheckFrequency())
         .intoInkWell(onTap: onTapCheckFrequency),
-      SettingTile(title: AppLocalizations.of(context)!.checkForUpdateNow, subTitle: "https//github.com/cdhigh/m328v6host")
+      SettingTile(title: AppLocalizations.of(context)!.checkForUpdateNow, subTitle: "https://github.com/cdhigh/m328v6host")
         .intoInkWell(onTap: checkUpdateNow, onLongPress: () {
-          pasteText("https//github.com/cdhigh/m328v6host");
+          pasteText("https://github.com/cdhigh/m328v6host");
           showToast(AppLocalizations.of(context)!.theLinkOfTheOfficialSiteHasBeenCopiedToTheClipboard);
         }),
 
@@ -131,7 +131,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       );
 
     if (ret != null) {
-      ref.watch(Global.infoProvider).setLanguage(ret);
+      ref.read(Global.infoProvider).setLanguage(ret);
     }
     }
 
@@ -198,7 +198,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         }
       );
 
-    ref.watch(Global.infoProvider).setTheme(ret ?? '');
+    //只在用户确实选择了主题时才更新，取消/关闭对话框不改变原有设置
+    if (ret != null) {
+      ref.read(Global.infoProvider).setTheme(ret);
+    }
     }
 
   ///构建主页背景颜色显示块
@@ -236,7 +239,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   ///点击了选择主页背景颜色
   void onTapHomePageBackgroundColor() async {
-    final appInfo = ref.watch(Global.infoProvider);
+    final appInfo = ref.read(Global.infoProvider);
     var newColor = await showColorPickerDialog(context: context, initialColor: Global.homePageBackgroundColor);
     if (newColor != null) {
       appInfo.setHomePageBackgroundColor(newColor);
@@ -245,7 +248,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   ///点击了选择曲线开始颜色
   void onTapCurvaStartColor() async {
-    final appInfo = ref.watch(Global.infoProvider);
+    final appInfo = ref.read(Global.infoProvider);
     var newColor = await showColorPickerDialog(context: context, initialColor: Global.curvaStartColor);
     if (newColor != null) {
       appInfo.setCurvaColor(startColor: newColor);
@@ -254,7 +257,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   ///点击了选择曲线结束颜色
   void onTapCurvaEndColor() async {
-    final appInfo = ref.watch(Global.infoProvider);
+    final appInfo = ref.read(Global.infoProvider);
     var newColor = await showColorPickerDialog(context: context, initialColor: Global.curvaEndColor);
     if (newColor != null) {
       appInfo.setCurvaColor(endColor: newColor);
@@ -296,12 +299,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         }
       );
 
-    setState(() => Global.keepScreenOn = ret ?? KeepScreenOption.never);
-    Global.saveProfile();
-    if (Global.keepScreenOn == KeepScreenOption.never) {
-      WakelockPlus.disable();
-    } else if (Global.keepScreenOn == KeepScreenOption.always) {
-      WakelockPlus.enable();
+    //只在用户确实选择了选项时才更新，取消/关闭对话框不改变原有设置
+    if (ret != null) {
+      setState(() => Global.keepScreenOn = ret);
+      Global.saveProfile();
+      if (Global.keepScreenOn == KeepScreenOption.never) {
+        WakelockPlus.disable();
+      } else if (Global.keepScreenOn == KeepScreenOption.always) {
+        WakelockPlus.enable();
+      }
     }
     }
 
@@ -358,6 +364,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     if ((ret != null) && (ret > 0) && (ret < 10)) {
       setState(() {Global.curvaFilterDotNum = ret;});
+      Global.saveProfile(); //持久化，否则重启后丢失
       Global.bus.sendBroadcast(EventBus.curvaFilterDotNumChanged, arg: ret.toString());
     }
   }
@@ -376,6 +383,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         showToast(AppLocalizations.of(context)!.theValueMustBeGreaterThan0000AndLessThan1000);
       } else {
         setState(() {Global.curvaFilterThreshold = value;});
+        Global.saveProfile(); //持久化，否则重启后丢失
       }
     }
   }
@@ -421,8 +429,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         }
       );
 
-    setState(() {Global.checkUpdateFrequency = ret ?? 0;});
-    Global.saveProfile();
+    //只在用户确实选择了选项时才更新，取消/关闭对话框不改变原有设置
+    if (ret != null) {
+      setState(() {Global.checkUpdateFrequency = ret;});
+      Global.saveProfile();
+    }
     }
 
   ///点击了现在检查新版本

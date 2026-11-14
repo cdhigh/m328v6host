@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import '../common/globals.dart';
+import '../common/event_bus.dart';
 import '../common/widget_utils.dart';
 import '../models/running_data_provider.dart';
 import '../models/connection_provider.dart';
@@ -32,24 +33,52 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
   int _scTime = 1; //短路时间
   int _gapTime = 1; //间隔时间
   _TestStatus _testStatus = _TestStatus.waiting;
+  //断开连接时是否正在测试中，用于重连后自动尝试恢复下位机的MOS状态
+  bool _testingWhenConnectionLost = false;
   late M328v6Load _load;
-  
+
   @override
   void initState() {
     super.initState();
+    _load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
+    //监听连接状态：测试过程中连接断开时，下位机的MOS可能仍处于强制短路状态，
+    //除了提示用户手动检查外，重连成功后自动下发恢复命令
+    Global.bus.addListener(EventBus.connectionChanged, onConnectionChanged);
   }
 
   @override
   void dispose() {
+    Global.bus.removeListener(EventBus.connectionChanged, onConnectionChanged);
     _load.restoreMos();
     //恢复默认上报方式
     Future.delayed(const Duration(milliseconds: 100), () => _load.setDataReportType(baseData: 1, extraData: true));
     super.dispose();
   }
 
+  ///连接状态变化
+  void onConnectionChanged(String isConnect) {
+    if (!mounted) {
+      return;
+    }
+    if (isConnect != "1") { //连接断开
+      if (_testStatus != _TestStatus.waiting) { //正在测试中，停止本地的测试流程并警告用户
+        _testStatus = _TestStatus.waiting;
+        _testingWhenConnectionLost = true;
+        setState((){});
+        showToast(AppLocalizations.of(context)!.connectionLostDuringTest);
+      }
+    } else { //重连成功
+      if (_testingWhenConnectionLost) {
+        _testingWhenConnectionLost = false;
+        //自动尝试恢复下位机的MOS工作状态和默认上报方式
+        _load.restoreMos();
+        Future.delayed(const Duration(milliseconds: 200), () => _load.setDataReportType(baseData: 1, extraData: true));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    _load = ref.read<ConnectionProvider>(Global.connectionProvider).load;
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.shortCircuitTester)),
       body: buildMainList(context),

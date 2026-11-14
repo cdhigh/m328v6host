@@ -20,7 +20,15 @@ void main() {
     ProviderScope(
       child: const M328v6App()
     ),
-  ));
+  )).catchError((e) {
+    //全局配置初始化失败（如SharedPreferences异常）时也要启动界面，避免白屏卡死
+    debugPrint('Global.init failed: $e');
+    runApp(
+      ProviderScope(
+        child: const M328v6App()
+      ),
+    );
+  });
 }
 
 class M328v6App extends ConsumerWidget {

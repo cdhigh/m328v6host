@@ -14,6 +14,7 @@ import 'package:file_picker/file_picker.dart';
 import '../l10n/app_localizations.dart';
 import 'common/when.dart';
 import 'common/iconfont.dart';
+import 'common/widget_utils.dart';
 import 'widgets/modal_dialogs.dart';
 import 'models/load_stats_model.dart';
 export 'models/load_stats_model.dart';
@@ -235,7 +236,7 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
             ),),
             IconButton(icon: const Icon(IconFont.dot3), onPressed: () async {
               final ret = await FilePicker.platform.getDirectoryPath(
-                dialogTitle: "Choose a directory", initialDirectory: _folderCtrller.text).catchError((e){debugPrint(e.toString());});
+                dialogTitle: "Choose a directory", initialDirectory: _folderCtrller.text).catchError((e){debugPrint(e.toString()); return null;});
               if (ret != null) {
                 setState(() {_folderCtrller.text = ret;});
               }
@@ -257,7 +258,7 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
   }
 
   ///开始导出
-  void doExport() {
+  void doExport() async {
     final loadStats = widget.loadStats["stats"];
     if ((loadStats == null) || (loadStats.isEmpty)) {
       return;
@@ -268,11 +269,25 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
     //生成XLSX实例
     final workbook = xlsio.Workbook(loadStats.length);
     var wsIdx = 0;
+    //记录已使用的sheet名，保证唯一性
+    final usedSheetNames = <String>{};
     for (final stats in loadStats) {
       final sheet = workbook.worksheets[wsIdx];
-      //XLSX名字不允许特殊字符
-      final remark = stats.remark.replaceAll(":", "-").replaceAll(r"\", "-").replaceAll("/", "-").replaceAll("：", "-");
-      sheet.name = remark.isEmpty ? stats.startTime.format('yyyy-mm-dd HH-MM-SS') : remark;
+      //XLSX的sheet名字不允许特殊字符(: \ / ? * [ ])，长度不能超过31，且不允许重复
+      var remark = stats.remark.replaceAll(RegExp(r'[:\\/\?\*\[\]\r\n：]'), '-');
+      remark = remark.trim();
+      var sheetName = remark.isEmpty ? stats.startTime.format('yyyy-mm-dd HH-MM-SS') : remark;
+      if (sheetName.length > 31) {
+        sheetName = sheetName.substring(0, 31);
+      }
+      var uniqueName = sheetName;
+      var suffix = 2;
+      while (usedSheetNames.contains(uniqueName)) {
+        final tail = '_${suffix++}';
+        uniqueName = sheetName.substring(0, (31 - tail.length > 0) ? (31 - tail.length) : sheetName.length) + tail;
+      }
+      usedSheetNames.add(uniqueName);
+      sheet.name = uniqueName;
       var row = 1;
       //填充数据
       sheet.getRangeByName('A$row').setText(AppLocalizations.of(context)!.item);
@@ -292,7 +307,7 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
       sheet.getRangeByName('C$row').setText('V');
       row++;
       sheet.getRangeByName('A$row').setText(AppLocalizations.of(context)!.initialI);
-      sheet.getRangeByName('B$row').setNumber(stats.initialI);
+      sheet.getRangeByName('B$row').setNumber(stats.initialI ?? 0.0);
       sheet.getRangeByName('C$row').setText('A');
       row++;
       sheet.getRangeByName('A$row').setText(AppLocalizations.of(context)!.endI);
@@ -316,7 +331,7 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
       sheet.getRangeByName('C$row').setText('Ah');
       row++;
       sheet.getRangeByName('A$row').setText(AppLocalizations.of(context)!.initialWh);
-      sheet.getRangeByName('B$row').setNumber(stats.initialWh);
+      sheet.getRangeByName('B$row').setNumber(stats.initialWh ?? 0.0);
       sheet.getRangeByName('C$row').setText('Wh');
       row++;
       sheet.getRangeByName('A$row').setText(AppLocalizations.of(context)!.wh);
@@ -382,16 +397,29 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
     //开始保存文件
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
-    File(fileName).writeAsBytes(bytes);
+    bool ret = true;
+    try {
+      await File(fileName).writeAsBytes(bytes);
+    } catch (e) {
+      debugPrint('Export load stats failed: $e');
+      ret = false;
+    }
 
-    showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.exportLoadStatsFileSuccess));
+    if (!mounted) {
+      return;
+    }
+    if (ret) {
+      showOkAlertDialog(context: context, title: AppLocalizations.of(context)!.success, content: Text(AppLocalizations.of(context)!.exportLoadStatsFileSuccess));
+    } else {
+      showToast(AppLocalizations.of(context)!.exportFileFailed);
+    }
   }
 
   ///确认权限，如果没有权限，提示需要申请
   void requestPermission([_]) async {
     if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
       var status = await Permission.storage.status;
-      if (!status.isPermanentlyDenied && !status.isDenied) { //之前没有拒绝过
+      if (status.isDenied) { //尚未授权，弹出申请对话框
         await Permission.storage.request();
       }
     }
@@ -417,6 +445,8 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
     } else {
       ret = "";
     }
-    setState((){_folderCtrller.text = ret;});
+    if (mounted) {
+      setState((){_folderCtrller.text = ret;});
+    }
   }
 }
