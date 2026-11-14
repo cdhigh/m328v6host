@@ -61,6 +61,12 @@ dependencies:
   path: ^1.8.3
   file_picker: ^10.3.3
 
+# image 4.11.0 calls ZLibDecoder.decodeLazy (archive >=4.1.3) but only declares
+# archive ^4.0.9, while syncfusion_officechart caps archive at <4.1.0. Pin image
+# to the last release that really works with archive 4.0.9.
+dependency_overrides:
+  image: 4.10.2
+
 dev_dependencies:
   #flutter_test:
   #  sdk: flutter
