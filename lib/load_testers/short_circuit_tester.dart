@@ -49,6 +49,7 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
   @override
   void dispose() {
     Global.bus.removeListener(EventBus.connectionChanged, onConnectionChanged);
+    _cntCtrller.dispose();
     _load.restoreMos();
     //恢复默认上报方式
     Future.delayed(const Duration(milliseconds: 100), () => _load.setDataReportType(baseData: 1, extraData: true));
@@ -270,6 +271,8 @@ class _ScTesterPageState extends ConsumerState<ScTesterPage> {
     _load.restoreMos();
     _testCnt++;
     if (_testCnt >= maxTestCnt) { //测试结束
+      //恢复默认上报方式
+      Future.delayed(const Duration(milliseconds: 100), () => _load.setDataReportType(baseData: 1, extraData: true));
       setState((){_testStatus = _TestStatus.waiting;});
     } else {
       setState((){_testStatus = _TestStatus.gapping;});

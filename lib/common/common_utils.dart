@@ -21,14 +21,10 @@ String readableSeconds(int seconds) {
 bool isVersionGreaterThan(String newVersion, String currVersion){
   final newV = newVersion.replaceAll("+", ".").split(".");
   final currV = currVersion.replaceAll("+", ".").split(".");
-  final maxSeg = min(newV.length, currV.length);
-  for (var i = 0 ; i <= maxSeg - 1; i++) {
-    final vn = int.tryParse(newV[i]);
-    final vc = int.tryParse(currV[i]);
-    if ((vn == null) || (vc == null)) {
-      return false;
-    }
-    
+  final maxSeg = max(newV.length, currV.length);
+  for (var i = 0 ; i < maxSeg; i++) {
+    final vn = (i < newV.length) ? (int.tryParse(newV[i]) ?? 0) : 0;
+    final vc = (i < currV.length) ? (int.tryParse(currV[i]) ?? 0) : 0;
     if (vn != vc) {
       return (vn > vc);
     }

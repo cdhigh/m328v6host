@@ -93,9 +93,9 @@ LineChartData _fillCurvaData(VoltHistoryProvider vhProvider, AppInfoProvider app
         border: Border.all(color: const Color(0xff37434d), width: 1)
     ),
     minX: 0,
-    maxX: ((vhProvider.dotNum / 10).ceil() * 10.0),
-    minY: vhProvider.minV,
-    maxY: vhProvider.maxV,
+    maxX: (vhProvider.dotNum <= 0) ? 10.0 : ((vhProvider.dotNum / 10).ceil() * 10.0),
+    minY: (vhProvider.dotNum <= 0) ? 0.0 : ((vhProvider.minV == vhProvider.maxV) ? (vhProvider.minV - 0.5) : vhProvider.minV),
+    maxY: (vhProvider.dotNum <= 0) ? 10.0 : ((vhProvider.minV == vhProvider.maxV) ? (vhProvider.maxV + 0.5) : vhProvider.maxV),
     lineBarsData: [
       LineChartBarData(
         spots: vhProvider.mapIndexed<FlSpot>((idx, elem) => FlSpot(idx.toDouble(), elem)).toList(),

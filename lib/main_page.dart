@@ -680,22 +680,22 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       int? wh;
       int? rSet;
       int? pSet;
-      int? vSet = int.tryParse(String.fromCharCodes(bag, 6, 11));
-      int? iSet = int.tryParse(String.fromCharCodes(bag, 12, 17));
-      int? tempe1 = int.tryParse(String.fromCharCodes(bag, 18, 20));
-      int? tempe2 = int.tryParse(String.fromCharCodes(bag, 21, 23));
-      String mode = String.fromCharCodes(bag, 24, 26);
+      int? vSet = int.tryParse(String.fromCharCodes(bag, 6, 11).trim());
+      int? iSet = int.tryParse(String.fromCharCodes(bag, 12, 17).trim());
+      int? tempe1 = int.tryParse(String.fromCharCodes(bag, 18, 20).trim());
+      int? tempe2 = int.tryParse(String.fromCharCodes(bag, 21, 23).trim());
+      String mode = String.fromCharCodes(bag, 24, 26).trim();
       if (mode == "CC") {
-        wh = int.tryParse(String.fromCharCodes(bag, 27, 32));
+        wh = int.tryParse(String.fromCharCodes(bag, 27, 32).trim());
         rSet = 0;
         pSet = 0;
       } else if (mode == "Wh") {
-        wh = int.tryParse(String.fromCharCodes(bag, 27, 32));
+        wh = int.tryParse(String.fromCharCodes(bag, 27, 32).trim());
       } else if (mode == "CR") {
-        rSet = int.tryParse(String.fromCharCodes(bag, 27, 32));
+        rSet = int.tryParse(String.fromCharCodes(bag, 27, 32).trim());
         pSet = 0;
       } else if (mode == "CP") {
-        pSet = int.tryParse(String.fromCharCodes(bag, 27, 32));
+        pSet = int.tryParse(String.fromCharCodes(bag, 27, 32).trim());
         rSet = 0;
       } else {
         mode = "";
@@ -730,21 +730,21 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       //每次收到EXTRA数据就复位请求额外数据的定时器
       //只有连续3s没有收到额外数据才重新下发请求命令
       _timerForExtraData..reset()..start();
-    } else if (size >= 29) {   //老版本M8V6定义的数据
+    } else if (size >= 31) {   //老版本M8V6定义的数据，完整包为31字节包含\r\n
       //debugPrint(String.fromCharCodes(bag));
       final vhProvider = ref.read<VoltHistoryProvider>(Global.vHistoryProvider);
       int loadStatus = 0; //1-开始，2-结束
 
       int? iNow;
-      int? vNow = int.tryParse(String.fromCharCodes(bag, 6, 11));
-      int? ah = int.tryParse(String.fromCharCodes(bag, 12, 17));
-      int? rd = int.tryParse(String.fromCharCodes(bag, 18, 23));
-      int? ra = int.tryParse(String.fromCharCodes(bag, 24, 29));
+      int? vNow = int.tryParse(String.fromCharCodes(bag, 6, 11).trim());
+      int? ah = int.tryParse(String.fromCharCodes(bag, 12, 17).trim());
+      int? rd = int.tryParse(String.fromCharCodes(bag, 18, 23).trim());
+      int? ra = int.tryParse(String.fromCharCodes(bag, 24, 29).trim());
       
       bool isOff = true;
-      if (first5Chars != "OFF  ") {
+      if (first5Chars.trim() != "OFF") {
         isOff = false;
-        iNow = int.tryParse(first5Chars);
+        iNow = int.tryParse(first5Chars.trim());
       }
 
       //从未放电到放电状态，则自动清除原先的曲线数据，如果需要，启用屏幕常亮
@@ -845,8 +845,9 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       
       rdProvider.notifyDataChanged();
     } else if ((size >= 13) && (bag[6] == ",".codeUnitAt(0))) { //VIL数据(实时电压电流LOG)
-      rdProvider.vNow = double.tryParse(String.fromCharCodes(bag, 0, 6)) ?? 0.0;
-      rdProvider.iNow = double.tryParse(String.fromCharCodes(bag, 7, 13)) ?? 0.0;
+      rdProvider.vNow = double.tryParse(String.fromCharCodes(bag, 0, 6).trim()) ?? 0.0;
+      final iEnd = (size - 2 >= 7) ? (size - 2) : size;
+      rdProvider.iNow = double.tryParse(String.fromCharCodes(bag, 7, iEnd).trim()) ?? 0.0;
       rdProvider.notifyDataChanged();
     } else if (bag.first == ">".codeUnitAt(0)) { //其他回复命令
       final respCmd = bag[1];
@@ -859,7 +860,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
       } else if (respCmd == 'D'.codeUnitAt(0)) { //预约开关负载的返回命令
         if (size >= 9) {
           final subCmd = String.fromCharCodes(bag, 2, 4);
-          final value = int.tryParse(String.fromCharCodes(bag, 4, 9));
+          final value = int.tryParse(String.fromCharCodes(bag, 4, 9).trim());
           if (value != null) {
             switch (subCmd) {
               case "QO": //DQO00000: 预约开时间
@@ -880,7 +881,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         }
       } else if (respCmd == "V".codeUnitAt(0)) { //设置/查询当前电压的返回包
         if (size >= 7) {
-          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
+          final value = int.tryParse(String.fromCharCodes(bag, 2, 7).trim());
           if ((value != null) && (value >= 0) && (value <= 65000)) {
             rdProvider.vNow = value / 1000;
             rdProvider.powerIn = calP(value, (rdProvider.iNow * 1000).toInt());
@@ -890,7 +891,7 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
         }
       } else if (respCmd == "I".codeUnitAt(0)) {//设置/查询当前电流的返回包
         if (size >= 7) {
-          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
+          final value = int.tryParse(String.fromCharCodes(bag, 2, 7).trim());
           if ((value != null) && (value >= 0) && (value <= 15000)) {
             rdProvider.iNow = value / 1000;
             rdProvider.powerIn = calP((rdProvider.vNow * 1000).toInt(), value);
@@ -899,27 +900,8 @@ class _MainPageState extends ConsumerState<MainPage> with AutomaticKeepAliveClie
           }
         }
       }
-    } else if (bag.first == "?".codeUnitAt(0)) { //电压电流的返回
-      final respCmd = bag[1];
-      if (respCmd == "V".codeUnitAt(0)) { //设置/查询当前电压的返回包
-        if (size >= 7) {
-          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
-          if ((value != null) && (value >= 0) && (value <= 65000)) {
-            rdProvider.vNow = value / 1000;
-            rdProvider.powerIn = calP(value, (rdProvider.iNow * 1000).toInt());
-            rdProvider.notifyDataChanged();
-          }
-        }
-      } else if (respCmd == "I".codeUnitAt(0)) {//设置/查询当前电流的返回包
-        if (size >= 7) {
-          final value = int.tryParse(String.fromCharCodes(bag, 2, 7));
-          if ((value != null) && (value >= 0) && (value <= 15000)) {
-            rdProvider.iNow = value / 1000;
-            rdProvider.powerIn = calP((rdProvider.vNow * 1000).toInt(), value);
-            rdProvider.notifyDataChanged();
-          }
-        }
-      }
+    } else if (bag.first == "?".codeUnitAt(0)) { //下位机返回的命令执行失败应答
+      debugPrint("Lower machine command failed: ${String.fromCharCodes(bag)}");
     }
   }
 

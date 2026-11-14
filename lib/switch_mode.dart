@@ -27,8 +27,10 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final rdProvider = ref.read<RunningDataProvider>(Global.runningDataProvider);
-      _modeStr = rdProvider.mode;
+      final currentMode = rdProvider.mode;
+      _modeStr = const ["CC", "CR", "CP"].contains(currentMode) ? currentMode : "CC";
       isCR = (_modeStr == "CR");
       isCP = (_modeStr == "CP");
       if (isCR) {
@@ -36,7 +38,14 @@ class _SwitchModePageState extends ConsumerState<SwitchModePage> {
       } else if (isCP) {
         _modeParamctrller.text = rdProvider.pSet.toStringAsFixed(2);
       }
+      setState(() {});
     });
+  }
+
+  @override
+  void dispose() {
+    _modeParamctrller.dispose();
+    super.dispose();
   }
 
   @override

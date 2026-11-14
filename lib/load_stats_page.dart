@@ -284,7 +284,8 @@ class _ExportLoadStatsPageState extends ConsumerState<ExportLoadStatsPage> {
       var suffix = 2;
       while (usedSheetNames.contains(uniqueName)) {
         final tail = '_${suffix++}';
-        uniqueName = sheetName.substring(0, (31 - tail.length > 0) ? (31 - tail.length) : sheetName.length) + tail;
+        final maxPrefixLen = (31 - tail.length).clamp(0, sheetName.length);
+        uniqueName = sheetName.substring(0, maxPrefixLen) + tail;
       }
       usedSheetNames.add(uniqueName);
       sheet.name = uniqueName;

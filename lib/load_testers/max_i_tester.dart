@@ -62,6 +62,10 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
   @override
   void dispose() {
     _timer?.cancel();
+    _startCurrentCtrller.dispose();
+    _endCurrentCtrller.dispose();
+    _currentStepCtrller.dispose();
+    _endConditionCtrller.dispose();
     super.dispose();
   }
 
@@ -95,7 +99,7 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
     final scrWidth = MediaQuery.of(context).size.width;
     final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
     final startBtnEnabled = (rdProvider.vNow > 0.0) && ([_TestStatus.waiting, _TestStatus.finish, _TestStatus.stopped].contains(_testStatus));
-    final stopPauseBtnEnabled = (rdProvider.vNow > 0.0) && ([_TestStatus.testing, _TestStatus.paused].contains(_testStatus));
+    final stopPauseBtnEnabled = [_TestStatus.testing, _TestStatus.paused].contains(_testStatus);
     
     if (_testStatus == _TestStatus.testing) {
       updateMax(rdProvider.powerIn, rdProvider.vNow, rdProvider.iNow);
@@ -259,7 +263,7 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
     
     final rdProvider = ref.watch<RunningDataProvider>(Global.runningDataProvider);
     final startBtnEnabled = (rdProvider.vNow > 0.0) && ([_TestStatus.waiting, _TestStatus.finish, _TestStatus.stopped].contains(_testStatus));
-    final stopPauseBtnEnabled = (rdProvider.vNow > 0.0) && ([_TestStatus.testing, _TestStatus.paused].contains(_testStatus));
+    final stopPauseBtnEnabled = [_TestStatus.testing, _TestStatus.paused].contains(_testStatus);
     
     if (_testStatus == _TestStatus.testing) {
       _maxCurrent = max<double>(_maxCurrent, rdProvider.iNow); //保存最大电流
@@ -487,8 +491,12 @@ class _MaxITesterPageState extends ConsumerState<MaxITesterPage> {
           _stepTime = 1;
         }
         Future.delayed(Duration(milliseconds: (_stepTime * 1000) - 500), () {
+          if (!mounted || _testStatus != _TestStatus.testing) return;
           load.setI(65.535);
-          Future.delayed(const Duration(milliseconds: 100), () => load.setV(65.535));
+          Future.delayed(const Duration(milliseconds: 100), () {
+            if (!mounted || _testStatus != _TestStatus.testing) return;
+            load.setV(65.535);
+          });
         });
         _timer?..reset()..start();
       }

@@ -32,7 +32,12 @@ class SerialRespBuffer {
   ///往缓冲区中添加一个数据
   void add(int elem) {
     //下位机仅会上传ASCII字符（需要包括0x0d/0x0a）
-    if ((elem < 0x0a) || (elem > 0x7e) || isFull) {
+    if ((elem < 0x0a) || (elem > 0x7e)) {
+      return;
+    }
+
+    if (isFull) {
+      _prevChar = 0; //缓冲区满时丢弃字节并重置前导字符，防止截断片段形成虚假换行边界
       return;
     }
 
@@ -66,7 +71,7 @@ class SerialRespBuffer {
       return ret;
     }
 
-    int prev = _buf[_start];
+    int prev = 0;
     int curr;
     while (_count > 0) {
       curr = _buf[_start];
@@ -87,7 +92,7 @@ class SerialRespBuffer {
     _packageCount--;
 
     //校验包的完整性
-    if (ret.last == 0x0a) {
+    if (ret.isNotEmpty && ret.last == 0x0a) {
       return ret;
     } else {
       return <int>[];

@@ -121,7 +121,7 @@ def process():
             print("\n\nCompressing release directory to {}\n\n".format(desktopZip))
             zipDirectoryToFile(FINAL_EXE_DIR, desktopZip)
     except Exception as e:
-        print("\n\nCompress release directory failed: {}\n\n".format(ste(e)))
+        print("\n\nCompress release directory failed: {}\n\n".format(str(e)))
     
     elaspsedTime = datetime.datetime.now() - startTime
     print('\nExecution time : {}\n'.format(elaspsedTime))
