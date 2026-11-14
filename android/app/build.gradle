@@ -30,6 +30,9 @@ if (flutterVersionName == null) {
 android {
     namespace "com.tekzone.m328v6"
     compileSdkVersion flutter.compileSdkVersion
+    // jni (transitive dep of flutter_libserialport) requires NDK 28.2.x;
+    // without this the flutter plugin defaults to NDK 27 and CI downloads both.
+    ndkVersion "28.2.13676358"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
