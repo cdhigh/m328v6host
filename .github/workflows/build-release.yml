@@ -122,12 +122,10 @@ jobs:
             echo "Configuring release keystore..."
             echo "$KEYSTORE_BASE64" | tr -d '\r' | base64 --decode > android/app/keystore.jks
             if [ -s android/app/keystore.jks ]; then
-              cat > android/key.properties <<EOF
-storePassword=$KEYSTORE_PASSWORD
-keyPassword=${KEY_PASSWORD:-$KEYSTORE_PASSWORD}
-keyAlias=$KEY_ALIAS
-storeFile=keystore.jks
-EOF
+              echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
+              echo "keyPassword=${KEY_PASSWORD:-$KEYSTORE_PASSWORD}" >> android/key.properties
+              echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+              echo "storeFile=keystore.jks" >> android/key.properties
               echo "Release keystore configured successfully."
             else
               echo "::error::Keystore file is empty after decoding. Please verify the base64 string in secrets."
