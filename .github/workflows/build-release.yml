@@ -111,6 +111,32 @@ jobs:
         id: ver
         run: echo "ver=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)" >> "$GITHUB_OUTPUT"
 
+      - name: Setup Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 || secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS || secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Configuring release keystore..."
+            echo "$KEYSTORE_BASE64" | tr -d '\r' | base64 --decode > android/app/keystore.jks
+            if [ -s android/app/keystore.jks ]; then
+              cat > android/key.properties <<EOF
+storePassword=$KEYSTORE_PASSWORD
+keyPassword=${KEY_PASSWORD:-$KEYSTORE_PASSWORD}
+keyAlias=$KEY_ALIAS
+storeFile=keystore.jks
+EOF
+              echo "Release keystore configured successfully."
+            else
+              echo "::error::Keystore file is empty after decoding. Please verify the base64 string in secrets."
+              exit 1
+            fi
+          else
+            echo "::warning::KEYSTORE_BASE64 secret is not set; falling back to debug signing."
+          fi
+
       - name: Build
         run: |
           flutter pub get
@@ -121,6 +147,15 @@ jobs:
           mkdir -p dist
           cp build/app/outputs/flutter-apk/app-release.apk \
             dist/${{ env.APP_NAME }}-${{ steps.ver.outputs.ver }}-android.apk
+
+      - name: Verify APK Signature
+        run: |
+          APK_FILE="dist/${{ env.APP_NAME }}-${{ steps.ver.outputs.ver }}-android.apk"
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$APKSIGNER" ] && [ -x "$APKSIGNER" ]; then
+            echo "== APK Signature Details =="
+            "$APKSIGNER" verify --print-certs "$APK_FILE" || true
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
